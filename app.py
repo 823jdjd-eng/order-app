@@ -1,6 +1,9 @@
 from datetime import datetime
+import json
 import os
 import sqlite3
+import urllib.error
+import urllib.request
 from functools import wraps
 
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
@@ -360,6 +363,67 @@ def list_my_orders():
     username = session.get("username")
     my_orders = [order for order in orders if order.get("customer") == username]
     return jsonify(list(reversed(my_orders)))
+
+
+@app.post("/api/ai/chat")
+def ai_chat():
+    data = request.get_json(silent=True) or {}
+    message = data.get("message", "").strip()
+
+    if not message:
+        return jsonify({"message": "请输入你的点餐需求"}), 400
+
+    api_key = os.environ.get("ZHIPU_API_KEY", "").strip()
+    if not api_key:
+        return jsonify({"reply": "智谱 API Key 还没有配置。请先在服务器环境变量里设置 ZHIPU_API_KEY。"})
+
+    menu_text = "\n".join(
+        f"- {dish['name']}：{dish['category']}，￥{dish['price']}，{dish['description']}"
+        for dish in MENU
+    )
+    payload = {
+        "model": os.environ.get("ZHIPU_MODEL", "glm-4-flash"),
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "你是拾味小馆的 AI 点餐助手。你只围绕本店菜单推荐菜品，"
+                    "需要根据用户的人数、预算、口味、忌口进行搭配，并给出总价估算。"
+                    "回复要简洁、亲切，适合手机点餐页面展示。\n\n"
+                    f"本店菜单：\n{menu_text}"
+                ),
+            },
+            {"role": "user", "content": message},
+        ],
+        "temperature": 0.7,
+        "stream": False,
+    }
+
+    req = urllib.request.Request(
+        "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=30) as response:
+            result = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        return jsonify({"message": f"智谱接口返回错误：{exc.code}", "detail": detail}), 502
+    except Exception as exc:
+        return jsonify({"message": f"AI 服务暂时不可用：{exc}"}), 502
+
+    try:
+        reply = result["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError):
+        return jsonify({"message": "智谱接口返回格式异常", "detail": result}), 502
+
+    return jsonify({"reply": reply})
 
 
 @app.patch("/api/orders/<int:order_id>")

@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.env
+order_app.db
+instance/
+.venv/
+venv/

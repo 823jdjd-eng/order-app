@@ -188,6 +188,30 @@
       gap: 12px;
     }
 
+    .home-categories {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 0 0 14px;
+    }
+
+    .home-category {
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      font-weight: 950;
+      text-align: center;
+    }
+
+    .home-category span {
+      font-size: 22px;
+    }
+
     .food-card,
     .dish,
     .panel,
@@ -424,6 +448,237 @@
     .cart-total strong {
       color: var(--red);
       font-size: 25px;
+    }
+
+    .confirm-page {
+      background: #f7f8fa;
+      min-height: calc(100vh - 86px);
+    }
+
+    .confirm-top {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 14px;
+      background: rgba(247, 248, 250, 0.96);
+      backdrop-filter: blur(12px);
+    }
+
+    .back-button {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .confirm-title {
+      text-align: center;
+      font-weight: 950;
+      color: #303746;
+    }
+
+    .confirm-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin: 0 14px;
+      border-radius: 18px 18px 0 0;
+      overflow: hidden;
+      background: #eef2f4;
+    }
+
+    .confirm-tab {
+      min-height: 58px;
+      background: transparent;
+      color: #535d6b;
+      font-size: 19px;
+      font-weight: 950;
+    }
+
+    .confirm-tab.active {
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .confirm-card {
+      margin: 0 14px 12px;
+      padding: 16px;
+      border-radius: 0 0 16px 16px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .confirm-card.rounded {
+      border-radius: 16px;
+    }
+
+    .confirm-card.standalone {
+      margin-top: 12px;
+      border-radius: 16px;
+    }
+
+    .confirm-address {
+      display: grid;
+      gap: 8px;
+    }
+
+    .address-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 950;
+    }
+
+    .orange-link {
+      color: #ff6b00;
+      background: transparent;
+      padding: 0;
+      font-weight: 950;
+    }
+
+    .confirm-field {
+      display: grid;
+      gap: 8px;
+      padding: 13px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .confirm-field:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .confirm-field label {
+      color: var(--ink);
+      font-weight: 950;
+    }
+
+    .confirm-field input,
+    .confirm-field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8faf9;
+      padding: 11px 12px;
+      outline: none;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .confirm-field textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    .confirm-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+      font-weight: 900;
+    }
+
+    .confirm-row:first-child {
+      border-top: 0;
+    }
+
+    .confirm-shop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .confirm-item {
+      display: grid;
+      grid-template-columns: 62px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .confirm-item img {
+      width: 62px;
+      height: 62px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .confirm-item h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+    }
+
+    .coupon-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .coupon-option {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ffd7cf;
+      border-radius: 12px;
+      background: #fff8f6;
+      color: #d83b27;
+      font-weight: 950;
+    }
+
+    .coupon-option.disabled {
+      opacity: 0.45;
+    }
+
+    .coupon-option.active {
+      border-color: var(--red);
+      background: #fff0ed;
+    }
+
+    .pay-sticky {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 12;
+      width: min(480px, 100%);
+      transform: translateX(-50%);
+      padding: 14px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+    }
+
+    .pay-summary {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-weight: 950;
+    }
+
+    .pay-button {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 12px;
+      background: #ff6b00;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 950;
     }
 
     .ai-hero {
@@ -763,7 +1018,7 @@
           </div>
           <div class="search">
             <input id="home-search" placeholder="搜索想吃的菜">
-            <button data-go="order">搜索</button>
+            <button id="home-search-button" type="button">搜索</button>
           </div>
         </header>
 
@@ -772,6 +1027,12 @@
             <h1>今天吃点好的</h1>
             <p>只保留美食点单体验，清爽、直接、好下单。</p>
           </article>
+
+          <div class="home-categories">
+            <button class="home-category" data-home-category="主食"><span>🍚</span>主食</button>
+            <button class="home-category" data-home-category="小菜"><span>🥗</span>小菜</button>
+            <button class="home-category" data-home-category="饮品"><span>🥤</span>饮品</button>
+          </div>
 
           <div class="section-head">
             <h2>招牌推荐</h2>
@@ -800,7 +1061,7 @@
         <h1 class="page-title">点餐</h1>
         <div class="search" style="margin-top:12px;">
           <input id="order-search" placeholder="搜索菜品">
-          <button>搜索</button>
+          <button id="order-search-button" type="button">搜索</button>
         </div>
         <div class="order-layout">
           <aside class="category-list">
@@ -863,6 +1124,62 @@
           <button class="pill" data-profile-panel="history" data-go="profile">浏览记录</button>
         </div>
         <div id="cart-content"></div>
+      </section>
+
+      <section class="page confirm-page" data-page="confirm">
+        <div class="confirm-top">
+          <button class="back-button" data-go="cart">‹</button>
+          <div class="confirm-title">适量点餐，环保健康</div>
+        </div>
+        <section class="confirm-card standalone">
+          <div class="confirm-field">
+            <label>制作方式</label>
+            <div class="address-main">
+              <span>店内制作</span>
+              <span class="muted">到店点单 / 店内取餐</span>
+            </div>
+          </div>
+          <div class="confirm-field">
+            <label for="confirm-phone">手机号</label>
+            <input id="confirm-phone" inputmode="tel" placeholder="用于商家联系你">
+          </div>
+          <div class="confirm-field">
+            <label for="confirm-time">预计时间</label>
+            <input id="confirm-time" placeholder="例如：现在制作 / 18:30 取餐">
+          </div>
+          <div class="confirm-field">
+            <label for="confirm-remark">备注</label>
+            <textarea id="confirm-remark" placeholder="口味、忌口、餐具数量等"></textarea>
+          </div>
+        </section>
+        <section class="confirm-card rounded">
+          <div class="confirm-shop">
+            <span>闪购 拾味小馆</span>
+            <span class="muted">准时达</span>
+          </div>
+          <div id="confirm-items"></div>
+          <div class="confirm-row">
+            <span>打包费</span>
+            <span>￥<span id="packing-fee">2.0</span></span>
+          </div>
+          <div class="confirm-row">
+            <span>店铺活动/券</span>
+            <span style="color:var(--red);">-￥<span id="coupon-discount">0.0</span></span>
+          </div>
+          <div class="coupon-list" id="coupon-list"></div>
+          <div class="confirm-row">
+            <span>合计</span>
+            <span><span class="muted">已优惠 ￥<span id="discount-total">0.0</span></span> <strong class="price">￥<span id="confirm-payable">0.0</span></strong></span>
+          </div>
+        </section>
+        <div style="height:118px;"></div>
+        <div class="pay-sticky">
+          <div class="pay-summary">
+            <span>共<span id="confirm-count">0</span>件</span>
+            <span>已优惠 ￥<span id="pay-discount">0.0</span></span>
+          </div>
+          <button class="pay-button" id="pay-submit">立即支付 ￥<span id="pay-total">0.0</span></button>
+        </div>
       </section>
 
       <section class="page" data-page="profile">
@@ -954,6 +1271,8 @@
     let activeCategory = "全部";
     let authMode = "login";
     let profilePanel = "orders";
+    let selectedCouponId = null;
+    let availableCoupons = [];
 
     const pages = document.querySelectorAll(".page");
     const navItems = document.querySelectorAll(".nav-item");
@@ -970,6 +1289,8 @@
     const confirmWrap = document.querySelector("#confirm-wrap");
     const authPassword = document.querySelector("#auth-password");
     const authConfirm = document.querySelector("#auth-confirm");
+    const confirmItems = document.querySelector("#confirm-items");
+    const couponList = document.querySelector("#coupon-list");
 
     function storedIds(key) {
       return JSON.parse(localStorage.getItem(key) || "[]");
@@ -1011,18 +1332,22 @@
       document.querySelector("#cart-bar").style.display = tab === "cart" ? "grid" : "none";
       if (tab === "cart") renderCart();
       if (tab === "profile") renderProfilePanel();
+      if (tab === "confirm") renderConfirm();
     }
 
     async function updateLocation() {
-      const setLocation = (text) => {
+      const setLocation = (text, persist = false) => {
         document.querySelector("#location-text").textContent = `📍 ${text}`;
         document.querySelectorAll(".location-copy").forEach((node) => node.textContent = `📍 ${text}`);
+        if (persist) {
+          localStorage.setItem("lastLocation", text);
+        }
       };
 
       setLocation("正在定位...");
 
       if (!navigator.geolocation) {
-        setLocation("设置收货地址");
+        setLocation("点击允许后显示地址");
         return;
       }
 
@@ -1032,24 +1357,14 @@
           const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=zh-CN`);
           const data = await response.json();
           const address = data.address || {};
-          setLocation(address.neighbourhood || address.suburb || address.road || address.city || data.display_name || "当前位置");
+          setLocation(address.neighbourhood || address.suburb || address.road || address.city || data.display_name || "当前位置", true);
         } catch {
-          setLocation(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
+          setLocation(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`, true);
         }
       }, () => {
-        const savedAddress = localStorage.getItem("deliveryAddress");
-        setLocation(savedAddress || "设置收货地址");
+        const savedAddress = localStorage.getItem("lastLocation");
+        setLocation(savedAddress || "点击允许后显示地址");
       }, { enableHighAccuracy: false, timeout: 8000 });
-    }
-
-    function setManualAddress() {
-      const current = localStorage.getItem("deliveryAddress") || "";
-      const address = window.prompt("请输入收货地址", current);
-      if (address && address.trim()) {
-        localStorage.setItem("deliveryAddress", address.trim());
-        document.querySelector("#location-text").textContent = `📍 ${address.trim()}`;
-        document.querySelectorAll(".location-copy").forEach((node) => node.textContent = `📍 ${address.trim()}`);
-      }
     }
 
     function openAuth(mode = "login") {
@@ -1106,6 +1421,15 @@
       };
     }
 
+    async function loadCoupons(total) {
+      const response = await fetch(`/api/my/coupons?total=${encodeURIComponent(total)}`);
+      if (response.status === 401) {
+        availableCoupons = [];
+        return;
+      }
+      availableCoupons = await response.json();
+    }
+
     function renderCart() {
       const { items, count, total } = cartStats();
       cartTotal.textContent = `￥${total}`;
@@ -1144,13 +1468,70 @@
       `;
     }
 
+    async function renderConfirm() {
+      const { items, count, total } = cartStats();
+      if (items.length === 0) {
+        switchTab("cart");
+        return;
+      }
+
+      const packingFee = 2;
+      await loadCoupons(total + packingFee);
+      const currentCoupon = availableCoupons.find((coupon) => coupon.id === selectedCouponId && coupon.available);
+      const couponDiscount = currentCoupon ? Math.min(Number(currentCoupon.amount), total + packingFee) : 0;
+      const discount = couponDiscount;
+      const payable = Math.max(total + packingFee - discount, 0);
+
+      document.querySelector("#confirm-count").textContent = count;
+      document.querySelector("#coupon-discount").textContent = couponDiscount.toFixed(1);
+      document.querySelector("#discount-total").textContent = discount.toFixed(1);
+      document.querySelector("#pay-discount").textContent = discount.toFixed(1);
+      document.querySelector("#confirm-payable").textContent = payable.toFixed(1);
+      document.querySelector("#pay-total").textContent = payable.toFixed(1);
+
+      confirmItems.innerHTML = items.map((item) => `
+        <div class="confirm-item">
+          <img src="${item.image}" alt="${item.name}">
+          <div>
+            <h3>${item.name}</h3>
+            <div class="muted">${item.description}</div>
+            <div class="muted">x ${item.quantity}</div>
+          </div>
+          <strong>￥${(item.price * item.quantity).toFixed(1)}</strong>
+        </div>
+      `).join("");
+
+      if (availableCoupons.length === 0) {
+        couponList.innerHTML = '<div class="muted">暂无可用优惠券，可让商家后台发券</div>';
+      } else {
+        couponList.innerHTML = availableCoupons.map((coupon) => `
+          <button class="coupon-option ${coupon.available ? "" : "disabled"} ${selectedCouponId === coupon.id ? "active" : ""}"
+            data-coupon-id="${coupon.id}" ${coupon.available ? "" : "disabled"}>
+            <span>${coupon.title}：满￥${coupon.min_amount} 减￥${coupon.amount}</span>
+            <span>${selectedCouponId === coupon.id ? "已选" : "使用"}</span>
+          </button>
+        `).join("");
+      }
+    }
+
     function filterDishes() {
       const keyword = document.querySelector("#order-search").value.trim().toLowerCase();
       document.querySelectorAll("[data-dish]").forEach((dish) => {
         const categoryMatch = activeCategory === "全部" || dish.dataset.category === activeCategory;
-        const keywordMatch = !keyword || dish.dataset.name.toLowerCase().includes(keyword);
+        const dishInfo = `${dish.dataset.name} ${dish.dataset.category}`.toLowerCase();
+        const keywordMatch = !keyword || dishInfo.includes(keyword);
         dish.hidden = !(categoryMatch && keywordMatch);
       });
+    }
+
+    function openOrderWithSearch(keyword = "", category = "全部") {
+      activeCategory = category;
+      document.querySelector("#order-search").value = keyword;
+      document.querySelectorAll(".category").forEach((button) => {
+        button.classList.toggle("active", button.dataset.category === category);
+      });
+      switchTab("order");
+      filterDishes();
     }
 
     async function renderOrders() {
@@ -1172,8 +1553,10 @@
             <span class="status-badge">${order.status}</span>
           </div>
           <div class="muted">${order.created_at}</div>
+          <div class="muted">店内制作 · 预计：${order.estimated_time || "未填写"} · 手机：${order.phone || "未填写"}</div>
           <div>${order.items.map((item) => `${item.name} x${item.quantity}`).join("，")}</div>
-          <div class="price">￥${order.total}</div>
+          <div class="muted">备注：${order.remark || "无"}</div>
+          <div class="price">￥${Number(order.payable || order.total).toFixed(1)}</div>
         </div>
       `).join("");
     }
@@ -1232,17 +1615,24 @@
       const viewId = event.target.closest("[data-view]")?.dataset.view;
       const nextPanel = event.target.closest("[data-profile-panel]")?.dataset.profilePanel;
       const locate = event.target.closest("[data-locate]");
+      const couponId = event.target.closest("[data-coupon-id]")?.dataset.couponId;
+      const homeCategory = event.target.closest("[data-home-category]")?.dataset.homeCategory;
 
       if (viewId) recordView(viewId);
       if (tab) switchTab(tab);
       if (go) switchTab(go);
+      if (homeCategory) openOrderWithSearch("", homeCategory);
       if (addId) addDish(addId);
       if (plusId) changeQuantity(plusId, 1);
       if (minusId) changeQuantity(minusId, -1);
       if (authOpen) openAuth(authOpen);
       if (authModeButton) openAuth(authModeButton);
       if (favId) toggleFavorite(favId);
-      if (locate) setManualAddress();
+      if (locate) updateLocation();
+      if (couponId) {
+        selectedCouponId = selectedCouponId === Number(couponId) ? null : Number(couponId);
+        renderConfirm();
+      }
       if (nextPanel) {
         profilePanel = nextPanel;
         renderProfilePanel();
@@ -1258,11 +1648,21 @@
     });
 
     document.querySelector("#order-search").addEventListener("input", filterDishes);
+    document.querySelector("#order-search-button").addEventListener("click", filterDishes);
+    document.querySelector("#home-search-button").addEventListener("click", () => {
+      openOrderWithSearch(document.querySelector("#home-search").value.trim());
+    });
     document.querySelector("#home-search").addEventListener("keydown", (event) => {
-      if (event.key === "Enter") switchTab("order");
+      if (event.key === "Enter") openOrderWithSearch(event.target.value.trim());
     });
 
     document.querySelector("#checkout").addEventListener("click", async () => {
+      const { items } = cartStats();
+      if (items.length === 0) return;
+      switchTab("confirm");
+    });
+
+    document.querySelector("#pay-submit").addEventListener("click", async () => {
       const { items } = cartStats();
       if (items.length === 0) return;
 
@@ -1270,7 +1670,12 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((item) => ({ id: item.id, quantity: item.quantity }))
+          items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
+          coupon_id: selectedCouponId,
+          phone: document.querySelector("#confirm-phone").value.trim(),
+          estimated_time: document.querySelector("#confirm-time").value.trim(),
+          remark: document.querySelector("#confirm-remark").value.trim(),
+          delivery_method: "dine_in"
         })
       });
 
@@ -1282,6 +1687,7 @@
       if (!response.ok) return;
       const order = await response.json();
       cart.clear();
+      selectedCouponId = null;
       renderCart();
       profilePanel = "orders";
       switchTab("profile");

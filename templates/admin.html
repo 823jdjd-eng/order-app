@@ -177,6 +177,74 @@
       font-size: 28px;
     }
 
+    .coupon-admin {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .admin-panel {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .admin-panel h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .coupon-form {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0 10px;
+      font: inherit;
+    }
+
+    .user-list {
+      display: grid;
+      gap: 8px;
+      max-height: 154px;
+      overflow: auto;
+    }
+
+    .user-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      background: #fff8ef;
+      font-weight: 900;
+    }
+
+    .coupon-message {
+      min-height: 22px;
+      margin-top: 10px;
+      color: var(--green);
+      font-weight: 900;
+    }
+
     .orders {
       display: grid;
       gap: 12px;
@@ -286,7 +354,9 @@
 
       .topbar,
       .order-head,
-      .stats {
+      .stats,
+      .coupon-admin,
+      .coupon-form {
         grid-template-columns: 1fr;
       }
 
@@ -357,6 +427,36 @@
       </div>
     </section>
 
+    <section class="coupon-admin">
+      <div class="admin-panel">
+        <h2>给用户发优惠券</h2>
+        <form class="coupon-form" id="coupon-form">
+          <div class="field">
+            <label for="coupon-username">用户名</label>
+            <input id="coupon-username" name="username" placeholder="输入顾客用户名" required>
+          </div>
+          <div class="field">
+            <label for="coupon-title">券名称</label>
+            <input id="coupon-title" name="title" value="店铺优惠券" required>
+          </div>
+          <div class="field">
+            <label for="coupon-amount">优惠金额</label>
+            <input id="coupon-amount" name="amount" type="number" min="1" step="0.1" value="5" required>
+          </div>
+          <div class="field">
+            <label for="coupon-min">使用门槛</label>
+            <input id="coupon-min" name="min_amount" type="number" min="0" step="0.1" value="20">
+          </div>
+          <button class="action finish" type="submit">发券</button>
+        </form>
+        <div class="coupon-message" id="coupon-message"></div>
+      </div>
+      <div class="admin-panel">
+        <h2>用户列表</h2>
+        <div class="user-list" id="user-list">正在加载用户...</div>
+      </div>
+    </section>
+
     <section class="orders" id="orders">
       <div class="empty">暂无订单<br>在前台提交一单试试看</div>
     </section>
@@ -399,6 +499,9 @@
     const orderCount = document.querySelector("#order-count");
     const pendingCount = document.querySelector("#pending-count");
     const revenue = document.querySelector("#revenue");
+    const couponForm = document.querySelector("#coupon-form");
+    const couponMessage = document.querySelector("#coupon-message");
+    const userList = document.querySelector("#user-list");
 
     async function loadOrders() {
       const response = await fetch("/api/orders");
@@ -411,7 +514,7 @@
     function renderStats(orders) {
       orderCount.textContent = orders.length;
       pendingCount.textContent = orders.filter((order) => order.status !== "已完成" && order.status !== "已取消").length;
-      revenue.textContent = `￥${orders.reduce((sum, order) => sum + order.total, 0)}`;
+      revenue.textContent = `￥${orders.reduce((sum, order) => sum + order.payable, 0).toFixed(1)}`;
     }
 
     function renderOrders(orders) {
@@ -428,9 +531,19 @@
               <div class="time">${order.created_at}</div>
             </div>
             <span class="badge">${order.status}</span>
-            <span class="total">￥${order.total}</span>
+            <span class="total">￥${Number(order.payable).toFixed(1)}</span>
           </div>
           <div class="items">
+            <div class="item">
+              <span>顾客：${order.customer}</span>
+              <span>店内制作</span>
+              <span class="subtotal">预计：${order.estimated_time || "未填写"}</span>
+            </div>
+            <div class="item">
+              <span>手机号：${order.phone || "未填写"}</span>
+              <span>备注</span>
+              <span class="subtotal">${order.remark || "无"}</span>
+            </div>
             ${order.items.map((item) => `
               <div class="item">
                 <span>${item.name}</span>
@@ -438,6 +551,11 @@
                 <span class="subtotal">￥${item.subtotal}</span>
               </div>
             `).join("")}
+            <div class="item">
+              <span>订单类型：${order.delivery_method === "dine_in" ? "店内点单" : order.delivery_method}</span>
+              <span>优惠 ￥${Number(order.discount || 0).toFixed(1)}</span>
+              <span class="subtotal">原价 ￥${Number(order.total).toFixed(1)} / 实付 ￥${Number(order.payable).toFixed(1)}</span>
+            </div>
           </div>
           <div class="actions">
             <button class="action" data-id="${order.id}" data-status="制作中">接单制作</button>
@@ -457,15 +575,55 @@
       await loadOrders();
     }
 
+    async function loadUsers() {
+      const response = await fetch("/api/admin/users");
+      const users = await response.json();
+      const customers = users.filter((user) => user.role !== "admin");
+      if (customers.length === 0) {
+        userList.textContent = "还没有顾客账号";
+        return;
+      }
+      userList.innerHTML = customers.map((user) => `
+        <div class="user-row">
+          <span>${user.username}</span>
+          <button class="admin-link" data-fill-user="${user.username}">填入</button>
+        </div>
+      `).join("");
+    }
+
+    couponForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(couponForm);
+      const response = await fetch("/api/admin/coupons", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.get("username").trim(),
+          title: formData.get("title").trim(),
+          amount: Number(formData.get("amount")),
+          min_amount: Number(formData.get("min_amount") || 0)
+        })
+      });
+      const result = await response.json();
+      couponMessage.textContent = response.ok
+        ? `已给 ${result.username} 发放 ￥${result.amount} 优惠券`
+        : (result.message || "发券失败");
+    });
+
     document.addEventListener("click", (event) => {
       const id = event.target.dataset.id;
       const status = event.target.dataset.status;
+      const fillUser = event.target.dataset.fillUser;
       if (id && status) {
         updateStatus(id, status);
+      }
+      if (fillUser) {
+        document.querySelector("#coupon-username").value = fillUser;
       }
     });
 
     loadOrders();
+    loadUsers();
     setInterval(loadOrders, 2000);
     {% endif %}
   </script>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ "注册" if mode == "register" else "登录" }}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --ink: #17202e;
+      --muted: #7b8491;
+      --line: #e8e2d9;
+      --paper: #fffdf8;
+      --soft: #f7f1e8;
+      --brand: #e84c2a;
+      --shadow: 0 18px 45px rgba(34, 26, 18, 0.12);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(23, 32, 46, 0.84), rgba(23, 32, 46, 0.38)),
+        url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1800&q=82") center/cover;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    .card {
+      width: min(420px, calc(100% - 28px));
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, 0.94);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      letter-spacing: 0;
+    }
+
+    .hint {
+      margin: 0 0 22px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    input {
+      width: 100%;
+      min-height: 46px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 13px;
+      font: inherit;
+      outline: none;
+    }
+
+    .error {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #fff0ec;
+      color: #a8321d;
+      font-weight: 800;
+    }
+
+    button {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      font: inherit;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .switch {
+      margin: 18px 0 0;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    a {
+      color: var(--brand);
+      font-weight: 900;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    {% if mode == "register" %}
+      <h1>注册账号</h1>
+      <p class="hint">注册后就可以用顾客身份提交订单。</p>
+    {% else %}
+      <h1>登录账号</h1>
+      <p class="hint">顾客登录后可以下单，商家登录后可以查看后台。</p>
+    {% endif %}
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+      <input type="hidden" name="next" value="{{ next_url or url_for('index') }}">
+      <label for="username">用户名</label>
+      <input id="username" name="username" autocomplete="username" required>
+
+      <label for="password">密码</label>
+      <input id="password" name="password" type="password" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required>
+
+      {% if mode == "register" %}
+        <label for="confirm_password">确认密码</label>
+        <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" required>
+      {% endif %}
+
+      <button type="submit">{{ "注册并进入" if mode == "register" else "登录" }}</button>
+    </form>
+
+    {% if mode == "register" %}
+      <p class="switch">已经有账号？<a href="{{ url_for('login') }}">去登录</a></p>
+    {% else %}
+      <p class="switch">还没有账号？<a href="{{ url_for('register') }}">去注册</a></p>
+    {% endif %}
+  </main>
+</body>
+</html>

@@ -245,6 +245,112 @@
       font-weight: 900;
     }
 
+    .user-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .danger-link {
+      color: #b8321a;
+      font-size: 13px;
+      font-weight: 900;
+      background: transparent;
+      border: 0;
+    }
+
+    .chat-admin {
+      margin-bottom: 16px;
+    }
+
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .thread-list {
+      display: grid;
+      gap: 8px;
+      max-height: 360px;
+      overflow: auto;
+    }
+
+    .thread-item {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff8ef;
+      color: var(--ink);
+      text-align: left;
+      font-weight: 900;
+    }
+
+    .thread-item.active {
+      border-color: var(--brand);
+      background: #fff1e8;
+    }
+
+    .thread-item span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .admin-chat-box {
+      min-height: 320px;
+      max-height: 360px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .admin-message {
+      max-width: 78%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #f0eee8;
+      line-height: 1.55;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .admin-message.merchant {
+      align-self: flex-end;
+      background: #dff7ee;
+      color: #0c684f;
+    }
+
+    .admin-message time {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .admin-chat-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .admin-chat-form input {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      font: inherit;
+    }
+
     .orders {
       display: grid;
       gap: 12px;
@@ -356,7 +462,8 @@
       .order-head,
       .stats,
       .coupon-admin,
-      .coupon-form {
+      .coupon-form,
+      .chat-layout {
         grid-template-columns: 1fr;
       }
 
@@ -457,6 +564,22 @@
       </div>
     </section>
 
+    <section class="admin-panel chat-admin">
+      <h2>顾客消息</h2>
+      <div class="chat-layout">
+        <div class="thread-list" id="thread-list">正在加载消息...</div>
+        <div>
+          <div class="admin-chat-box" id="admin-chat-box">
+            <div class="empty">选择一个顾客后即可回复消息</div>
+          </div>
+          <form class="admin-chat-form" id="admin-chat-form">
+            <input id="admin-chat-input" placeholder="回复顾客消息">
+            <button class="action finish" type="submit">发送</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section class="orders" id="orders">
       <div class="empty">暂无订单<br>在前台提交一单试试看</div>
     </section>
@@ -502,6 +625,21 @@
     const couponForm = document.querySelector("#coupon-form");
     const couponMessage = document.querySelector("#coupon-message");
     const userList = document.querySelector("#user-list");
+    const threadList = document.querySelector("#thread-list");
+    const adminChatBox = document.querySelector("#admin-chat-box");
+    const adminChatForm = document.querySelector("#admin-chat-form");
+    const adminChatInput = document.querySelector("#admin-chat-input");
+    let activeThreadUserId = null;
+    let messageThreads = [];
+
+    function escapeHTML(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
     async function loadOrders() {
       const response = await fetch("/api/orders");
@@ -592,10 +730,95 @@
       }
       userList.innerHTML = customers.map((user) => `
         <div class="user-row">
-          <span>${user.username}</span>
-          <button class="admin-link" data-fill-user="${user.username}">填入</button>
+          <span>${user.nickname || user.username}</span>
+          <div class="user-actions">
+            <button class="admin-link" data-fill-user="${user.username}">填入</button>
+            <button class="danger-link" data-delete-user="${user.id}" data-delete-user-name="${user.nickname || user.username}">删除</button>
+          </div>
         </div>
       `).join("");
+    }
+
+    async function deleteUser(id, name) {
+      if (!confirm(`确定删除 ${name} 的登录信息吗？删除后该用户需要重新注册。`)) return;
+      const response = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+      const result = await response.json();
+      if (!response.ok) {
+        alert(result.message || "删除失败");
+        return;
+      }
+      if (activeThreadUserId === Number(id)) {
+        activeThreadUserId = null;
+        adminChatBox.innerHTML = '<div class="empty">选择一个顾客后即可回复消息</div>';
+      }
+      await loadUsers();
+      await loadThreads();
+    }
+
+    function renderThreadList() {
+      const threadsWithMessages = messageThreads.filter((thread) => thread.messages.length > 0);
+      const threads = threadsWithMessages.length ? threadsWithMessages : messageThreads;
+      if (!threads.length) {
+        threadList.textContent = "还没有顾客消息";
+        return;
+      }
+      if (!activeThreadUserId || !threads.some((thread) => thread.user.id === activeThreadUserId)) {
+        activeThreadUserId = threads[0].user.id;
+      }
+      threadList.innerHTML = threads.map((thread) => {
+        const last = thread.messages[thread.messages.length - 1];
+        return `
+          <button class="thread-item ${thread.user.id === activeThreadUserId ? "active" : ""}" data-thread-user="${thread.user.id}">
+            ${escapeHTML(thread.user.nickname || thread.user.username)}
+            <span>${last ? escapeHTML(last.body).slice(0, 30) : "暂无消息"}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderAdminChat() {
+      const thread = messageThreads.find((item) => item.user.id === activeThreadUserId);
+      if (!thread) {
+        adminChatBox.innerHTML = '<div class="empty">选择一个顾客后即可回复消息</div>';
+        return;
+      }
+      if (!thread.messages.length) {
+        adminChatBox.innerHTML = `<div class="empty">${escapeHTML(thread.user.nickname || thread.user.username)} 还没有发过消息<br>你可以先发一条问候。</div>`;
+        return;
+      }
+      adminChatBox.innerHTML = thread.messages.map((message) => `
+        <div class="admin-message ${message.sender === "merchant" ? "merchant" : "customer"}">
+          ${escapeHTML(message.body)}
+          <time>${message.sender === "merchant" ? "商家" : escapeHTML(thread.user.nickname || thread.user.username)} · ${message.created_at}</time>
+        </div>
+      `).join("");
+      adminChatBox.scrollTop = adminChatBox.scrollHeight;
+    }
+
+    async function loadThreads() {
+      const response = await fetch("/api/admin/messages");
+      const data = await response.json();
+      messageThreads = data.threads || [];
+      renderThreadList();
+      renderAdminChat();
+    }
+
+    async function sendAdminMessage(body) {
+      if (!activeThreadUserId) {
+        alert("请先选择一个顾客");
+        return;
+      }
+      const response = await fetch("/api/admin/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: activeThreadUserId, body })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        alert(result.message || "发送失败");
+        return;
+      }
+      await loadThreads();
     }
 
     couponForm.addEventListener("submit", async (event) => {
@@ -622,6 +845,9 @@
       const status = event.target.dataset.status;
       const deleteId = event.target.dataset.deleteId;
       const fillUser = event.target.dataset.fillUser;
+      const deleteUserId = event.target.dataset.deleteUser;
+      const deleteUserName = event.target.dataset.deleteUserName;
+      const threadUser = event.target.closest("[data-thread-user]")?.dataset.threadUser;
       if (id && status) {
         updateStatus(id, status);
       }
@@ -631,11 +857,29 @@
       if (fillUser) {
         document.querySelector("#coupon-username").value = fillUser;
       }
+      if (deleteUserId) {
+        deleteUser(deleteUserId, deleteUserName);
+      }
+      if (threadUser) {
+        activeThreadUserId = Number(threadUser);
+        renderThreadList();
+        renderAdminChat();
+      }
+    });
+
+    adminChatForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const body = adminChatInput.value.trim();
+      if (!body) return;
+      adminChatInput.value = "";
+      await sendAdminMessage(body);
     });
 
     loadOrders();
     loadUsers();
+    loadThreads();
     setInterval(loadOrders, 2000);
+    setInterval(loadThreads, 2500);
     {% endif %}
   </script>
 </body>

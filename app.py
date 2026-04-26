@@ -209,6 +209,18 @@ def init_db():
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                sender TEXT NOT NULL,
+                body TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
         for dish in MENU:
             conn.execute(
                 "INSERT OR IGNORE INTO dish_stats (dish_id, sales) VALUES (?, ?)",
@@ -353,6 +365,16 @@ def serialize_coupon(row):
         "created_at": row["created_at"],
         "used_at": row["used_at"],
         "order_id": row["order_id"],
+    }
+
+
+def serialize_message(row):
+    return {
+        "id": row["id"],
+        "user_id": row["user_id"],
+        "sender": row["sender"],
+        "body": row["body"],
+        "created_at": row["created_at"],
     }
 
 
@@ -779,9 +801,133 @@ def redeem_points():
 def list_users():
     with get_db() as conn:
         rows = conn.execute(
-            "SELECT id, username, role, created_at FROM users ORDER BY id DESC"
+            "SELECT id, username, nickname, role, created_at FROM users ORDER BY id DESC"
         ).fetchall()
     return jsonify([dict(row) for row in rows])
+
+
+@app.delete("/api/admin/users/<int:user_id>")
+@admin_required
+def delete_user(user_id):
+    with get_db() as conn:
+        user = conn.execute(
+            "SELECT id, username, role FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+        if user is None:
+            return jsonify({"message": "用户不存在"}), 404
+        if user["role"] == "admin":
+            return jsonify({"message": "不能删除商家账号"}), 400
+        conn.execute("DELETE FROM coupons WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM messages WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    return jsonify({"message": "用户登录信息已删除", "username": user["username"]})
+
+
+@app.get("/api/my/messages")
+@login_required
+def list_my_messages():
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, user_id, sender, body, created_at
+            FROM messages
+            WHERE user_id = ?
+            ORDER BY id ASC
+            """,
+            (session["user_id"],),
+        ).fetchall()
+    return jsonify([serialize_message(row) for row in rows])
+
+
+@app.post("/api/my/messages")
+@login_required
+def create_my_message():
+    data = request.get_json(silent=True) or {}
+    body = data.get("body", "").strip()
+    if not body:
+        return jsonify({"message": "请输入消息内容"}), 400
+    with get_db() as conn:
+        cursor = conn.execute(
+            """
+            INSERT INTO messages (user_id, sender, body, created_at)
+            VALUES (?, 'customer', ?, ?)
+            """,
+            (session["user_id"], body, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        )
+        row = conn.execute(
+            "SELECT id, user_id, sender, body, created_at FROM messages WHERE id = ?",
+            (cursor.lastrowid,),
+        ).fetchone()
+    return jsonify(serialize_message(row)), 201
+
+
+@app.get("/api/admin/messages")
+@admin_required
+def list_admin_messages():
+    with get_db() as conn:
+        users = conn.execute(
+            """
+            SELECT users.id, users.username, users.nickname, users.avatar_url, users.role,
+                   MAX(messages.id) AS last_message_id,
+                   MAX(messages.created_at) AS last_message_at
+            FROM users
+            LEFT JOIN messages ON messages.user_id = users.id
+            WHERE users.role != 'admin'
+            GROUP BY users.id
+            ORDER BY COALESCE(last_message_id, users.id) DESC
+            """
+        ).fetchall()
+        threads = []
+        for user in users:
+            message_rows = conn.execute(
+                """
+                SELECT id, user_id, sender, body, created_at
+                FROM messages
+                WHERE user_id = ?
+                ORDER BY id ASC
+                """,
+                (user["id"],),
+            ).fetchall()
+            threads.append(
+                {
+                    "user": public_user(user),
+                    "messages": [serialize_message(row) for row in message_rows],
+                    "last_message_at": user["last_message_at"],
+                }
+            )
+    return jsonify({"threads": threads})
+
+
+@app.post("/api/admin/messages")
+@admin_required
+def create_admin_message():
+    data = request.get_json(silent=True) or {}
+    user_id = int(data.get("user_id", 0) or 0)
+    body = data.get("body", "").strip()
+    if not user_id:
+        return jsonify({"message": "请选择顾客"}), 400
+    if not body:
+        return jsonify({"message": "请输入回复内容"}), 400
+    with get_db() as conn:
+        user = conn.execute(
+            "SELECT id FROM users WHERE id = ? AND role != 'admin'",
+            (user_id,),
+        ).fetchone()
+        if user is None:
+            return jsonify({"message": "用户不存在"}), 404
+        cursor = conn.execute(
+            """
+            INSERT INTO messages (user_id, sender, body, created_at)
+            VALUES (?, 'merchant', ?, ?)
+            """,
+            (user_id, body, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        )
+        row = conn.execute(
+            "SELECT id, user_id, sender, body, created_at FROM messages WHERE id = ?",
+            (cursor.lastrowid,),
+        ).fetchone()
+    return jsonify(serialize_message(row)), 201
 
 
 @app.post("/api/admin/coupons")

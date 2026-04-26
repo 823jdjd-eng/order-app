@@ -66,6 +66,185 @@ FALLBACK_IMAGES = {
     "饮品": "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=640&q=80",
 }
 
+MENU = [
+    {
+        "id": 101,
+        "name": "土豆炖豆角",
+        "category": "现做炖菜",
+        "price": 20,
+        "tag": "锅气现炖",
+        "sales": 0,
+        "description": "土豆绵软，豆角入味，东北家常炖菜",
+        "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=640&q=80",
+        "options": [
+            {"id": "fentiao", "name": "加粉条", "price": 5},
+            {"id": "paigu", "name": "加排骨", "price": 10},
+        ],
+    },
+    {
+        "id": 102,
+        "name": "白菜炖豆腐",
+        "category": "现做炖菜",
+        "price": 10,
+        "tag": "清爽热乎",
+        "sales": 0,
+        "description": "白菜清甜，豆腐嫩滑，汤汁鲜暖",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=640&q=80",
+        "options": [{"id": "fentiao", "name": "加粉条", "price": 5}],
+    },
+    {
+        "id": 103,
+        "name": "小鸡炖土豆",
+        "category": "现做炖菜",
+        "price": 30,
+        "tag": "招牌硬菜",
+        "sales": 0,
+        "description": "鸡肉鲜嫩，土豆吸满汤汁，适合配米饭",
+        "image": "https://images.unsplash.com/photo-1604909052743-94e838986d24?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 104,
+        "name": "炒干豆腐",
+        "category": "精品炒菜",
+        "price": 15,
+        "tag": "家常小炒",
+        "sales": 0,
+        "description": "干豆腐软韧入味，大火快炒更香",
+        "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=640&q=80",
+        "options": [{"id": "rouding", "name": "加肉丁", "price": 5}],
+    },
+    {
+        "id": 105,
+        "name": "豆腐炒鸡蛋",
+        "category": "精品炒菜",
+        "price": 13,
+        "tag": "鲜嫩",
+        "sales": 0,
+        "description": "豆腐细嫩，鸡蛋香软，口味清爽",
+        "image": "https://images.unsplash.com/photo-1582169296194-e4d644c48063?auto=format&fit=crop&w=640&q=80",
+        "options": [{"id": "rouding", "name": "加肉丁", "price": 5}],
+    },
+    {
+        "id": 106,
+        "name": "韭菜炒鸡蛋",
+        "category": "精品炒菜",
+        "price": 15,
+        "tag": "鲜香",
+        "sales": 0,
+        "description": "韭菜鲜香，鸡蛋蓬松，现炒上桌",
+        "image": "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=640&q=80",
+        "options": [{"id": "rouding", "name": "加肉丁", "price": 5}],
+    },
+    {
+        "id": 107,
+        "name": "土豆丝炒鸡蛋",
+        "category": "精品炒菜",
+        "price": 13,
+        "tag": "下饭",
+        "sales": 0,
+        "description": "土豆丝爽口，鸡蛋香软，家常味十足",
+        "image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=640&q=80",
+        "options": [{"id": "rouding", "name": "加肉丁", "price": 5}],
+    },
+    {
+        "id": 108,
+        "name": "蒜苔炒肉",
+        "category": "精品炒菜",
+        "price": 18,
+        "tag": "人气",
+        "sales": 0,
+        "description": "蒜苔脆香，肉片鲜嫩，米饭好搭档",
+        "image": "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 109,
+        "name": "现焖米饭",
+        "category": "主食",
+        "price": 3,
+        "tag": "现焖",
+        "sales": 0,
+        "description": "一人份现焖米饭，颗粒饱满",
+        "image": "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 110,
+        "name": "烀饼",
+        "category": "主食",
+        "price": 10,
+        "tag": "炖菜限定",
+        "sales": 0,
+        "description": "炖菜点单推荐搭配，吸汤更香",
+        "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 111,
+        "name": "可口可乐",
+        "category": "饮品",
+        "price": 4,
+        "tag": "冰爽",
+        "sales": 0,
+        "description": "经典汽水，冰镇更爽",
+        "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 112,
+        "name": "芬达",
+        "category": "饮品",
+        "price": 4,
+        "tag": "橙味",
+        "sales": 0,
+        "description": "橙味汽水，甜爽解腻",
+        "image": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 113,
+        "name": "雪碧",
+        "category": "饮品",
+        "price": 4,
+        "tag": "清爽",
+        "sales": 0,
+        "description": "柠檬味汽水，清爽提神",
+        "image": "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 114,
+        "name": "大窑",
+        "category": "饮品",
+        "price": 7,
+        "tag": "大瓶",
+        "sales": 0,
+        "description": "东北餐桌经典汽水，分量更足",
+        "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+    {
+        "id": 115,
+        "name": "美年达",
+        "category": "饮品",
+        "price": 4,
+        "tag": "果味",
+        "sales": 0,
+        "description": "果味汽水，适合搭配热菜",
+        "image": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=640&q=80",
+        "options": [],
+    },
+]
+
+CATEGORY_ORDER = ["现做炖菜", "精品炒菜", "主食", "饮品"]
+FALLBACK_IMAGES = {
+    "现做炖菜": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=640&q=80",
+    "精品炒菜": "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=640&q=80",
+    "主食": "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=640&q=80",
+    "饮品": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=640&q=80",
+}
+
 
 def menu_item(dish_id):
     return next((dish for dish in MENU if dish["id"] == int(dish_id)), None)
@@ -197,10 +376,12 @@ def init_db():
                 quantity INTEGER NOT NULL,
                 subtotal REAL NOT NULL,
                 image TEXT,
+                options TEXT,
                 FOREIGN KEY(order_id) REFERENCES orders(id)
             )
             """
         )
+        ensure_column(conn, "order_items", "options", "TEXT")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS dish_stats (
@@ -236,11 +417,21 @@ def init_db():
                 "INSERT INTO users (username, password_hash, role, created_at) VALUES (?, ?, ?, ?)",
                 (
                     "admin",
-                    generate_password_hash("admin123"),
+                    generate_password_hash("admin12345"),
                     "admin",
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 ),
             )
+        else:
+            admin_hash = conn.execute(
+                "SELECT password_hash FROM users WHERE username = ?",
+                ("admin",),
+            ).fetchone()["password_hash"]
+            if check_password_hash(admin_hash, "admin123"):
+                conn.execute(
+                    "UPDATE users SET password_hash = ? WHERE username = ?",
+                    (generate_password_hash("admin12345"), "admin"),
+                )
 
 
 def current_user():
@@ -345,10 +536,18 @@ def fetch_orders(where="", params=()):
         result = []
         for row in rows:
             item_rows = conn.execute(
-                "SELECT dish_id AS id, name, price, quantity, subtotal, image FROM order_items WHERE order_id = ?",
+                "SELECT dish_id AS id, name, price, quantity, subtotal, image, options FROM order_items WHERE order_id = ?",
                 (row["id"],),
             ).fetchall()
-            result.append(serialize_order(row, [dict(item) for item in item_rows]))
+            items = []
+            for item in item_rows:
+                item_dict = dict(item)
+                try:
+                    item_dict["options"] = json.loads(item_dict.get("options") or "[]")
+                except (TypeError, ValueError):
+                    item_dict["options"] = []
+                items.append(item_dict)
+            result.append(serialize_order(row, items))
         return result
 
 
@@ -551,16 +750,30 @@ def create_order():
         if dish is None or quantity <= 0:
             continue
 
-        subtotal = dish["price"] * quantity
+        option_ids = {str(option_id) for option_id in item.get("options", [])}
+        selected_options = [
+            option for option in dish.get("options", [])
+            if str(option.get("id")) in option_ids
+        ]
+        option_total = sum(float(option["price"]) for option in selected_options)
+        unit_price = float(dish["price"]) + option_total
+        display_name = dish["name"]
+        if selected_options:
+            display_name = "{}（{}）".format(
+                dish["name"],
+                "、".join(option["name"] for option in selected_options),
+            )
+        subtotal = unit_price * quantity
         total += subtotal
         order_items.append(
             {
                 "id": dish["id"],
-                "name": dish["name"],
-                "price": dish["price"],
+                "name": display_name,
+                "price": unit_price,
                 "quantity": quantity,
                 "subtotal": subtotal,
                 "image": dish["image"],
+                "options": selected_options,
             }
         )
 
@@ -615,8 +828,8 @@ def create_order():
             conn.execute(
                 """
                 INSERT INTO order_items
-                (order_id, dish_id, name, price, quantity, subtotal, image)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (order_id, dish_id, name, price, quantity, subtotal, image, options)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     order_id,
@@ -626,6 +839,7 @@ def create_order():
                     item["quantity"],
                     item["subtotal"],
                     item["image"],
+                    json.dumps(item["options"], ensure_ascii=False),
                 ),
             )
             conn.execute("INSERT OR IGNORE INTO dish_stats (dish_id, sales) VALUES (?, 0)", (item["id"],))
@@ -975,6 +1189,30 @@ def create_coupon():
     return jsonify(serialize_coupon(row)), 201
 
 
+@app.post("/api/admin/password")
+@admin_required
+def update_admin_password():
+    data = request.get_json(silent=True) or {}
+    current_password = data.get("current_password", "")
+    new_password = data.get("new_password", "")
+    confirm_password = data.get("confirm_password", "")
+    user = current_user()
+
+    if not authenticate(user["username"], current_password):
+        return jsonify({"message": "当前密码不正确"}), 400
+    if len(new_password) < 6:
+        return jsonify({"message": "新密码至少 6 位"}), 400
+    if new_password != confirm_password:
+        return jsonify({"message": "两次输入的新密码不一致"}), 400
+
+    with get_db() as conn:
+        conn.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (generate_password_hash(new_password), user["id"]),
+        )
+    return jsonify({"message": "后台密码已更新"})
+
+
 @app.post("/api/ai/recommend")
 def ai_recommend():
     data = request.get_json(silent=True) or {}
@@ -987,17 +1225,17 @@ def ai_recommend():
         budget = max(int(number) for number in digits)
 
     if blind_box:
-        selected_ids = [1, 17, 25]
+        selected_ids = [101, 109, 111]
     elif "辣" in message:
-        selected_ids = [4, 21, 31]
+        selected_ids = [108, 109, 113]
     elif "清淡" in message or "不辣" in message:
-        selected_ids = [14, 15, 32]
+        selected_ids = [102, 109, 113]
     elif "饮" in message or "喝" in message:
-        selected_ids = [25, 26, 33]
+        selected_ids = [111, 112, 114]
     elif "两" in message or "2" in message:
-        selected_ids = [2, 15, 25]
+        selected_ids = [103, 106, 109, 111]
     else:
-        selected_ids = [1, 15, 25]
+        selected_ids = [101, 109, 111]
 
     selected = [menu_item(dish_id) for dish_id in selected_ids]
     selected = [dish for dish in selected if dish]

@@ -190,7 +190,7 @@
 
     .home-categories {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       margin: 0 0 14px;
     }
@@ -537,6 +537,42 @@
 
     .detail-section {
       padding: 18px 0 0;
+    }
+
+    .option-list {
+      display: grid;
+      gap: 10px;
+      padding: 14px 0 18px;
+      border-bottom: 10px solid #f4f6f6;
+    }
+
+    .option-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    .option-card {
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      font-weight: 900;
+    }
+
+    .option-card input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--mint-strong);
+    }
+
+    .option-card span:last-child {
+      color: var(--red);
     }
 
     .detail-section h2 {
@@ -1514,9 +1550,12 @@
           </article>
 
           <div class="home-categories">
-            <button class="home-category" data-home-category="主食"><span>🍚</span>主食</button>
-            <button class="home-category" data-home-category="小菜"><span>🥗</span>小菜</button>
-            <button class="home-category" data-home-category="饮品"><span>🥤</span>饮品</button>
+            {% for category in categories %}
+              <button class="home-category" data-home-category="{{ category }}">
+                <span>{% if category == "现做炖菜" %}🍲{% elif category == "精品炒菜" %}🍳{% elif category == "主食" %}🍚{% else %}🥤{% endif %}</span>
+                {{ category }}
+              </button>
+            {% endfor %}
           </div>
 
           <article class="checkin-card">
@@ -1572,7 +1611,10 @@
                 <img src="{{ dish.image }}" alt="{{ dish.name }}">
                 <div>
                   <h3>{{ dish.name }}</h3>
-                  <p>{{ dish.description }} · 月售 <span data-sales="{{ dish.id }}">{{ dish.sales }}</span></p>
+                  <p>
+                    {{ dish.description }}{% if dish.options %} · 可选配菜{% endif %}
+                    · 月售 <span data-sales="{{ dish.id }}">{{ dish.sales }}</span>
+                  </p>
                   <div class="dish-bottom">
                     <span class="price">￥{{ dish.price }}</span>
                     <div class="qty-row">
@@ -1608,6 +1650,7 @@
             <h1 id="detail-name">菜品详情</h1>
             <button class="detail-add" id="detail-add" type="button">加入购物车</button>
           </div>
+          <div class="option-list" id="detail-options"></div>
           <div class="detail-section">
             <h2>商品详情</h2>
             <div class="detail-row"><span>原料</span><span id="detail-ingredients">精选食材</span></div>
@@ -1885,6 +1928,8 @@
 
     function dishEmoji(name = "美食", category = "") {
       if (category === "饮品" || /茶|汁|奶|咖啡|豆浆|气泡/.test(name)) return "🥤";
+      if (category === "现做炖菜" || /炖/.test(name)) return "🍲";
+      if (category === "精品炒菜" || /炒/.test(name)) return "🍳";
       if (/蛋|鸡|肉|排|翅|鱼|虾|牛/.test(name)) return "🍱";
       if (/面|粉|馄饨|河粉/.test(name)) return "🍜";
       if (/饭|炒饭|卤肉/.test(name)) return "🍚";
@@ -2090,53 +2135,111 @@
       authModal.setAttribute("aria-hidden", "true");
     }
 
-    function addDish(id) {
+    function normalizedOptions(dish, optionIds = []) {
+      const selected = new Set(optionIds.map((item) => String(item)));
+      return (dish.options || []).filter((option) => selected.has(String(option.id)));
+    }
+
+    function cartKey(id, options = []) {
+      return `${Number(id)}|${options.map((option) => option.id).sort().join(",")}`;
+    }
+
+    function optionTotal(options = []) {
+      return options.reduce((sum, option) => sum + Number(option.price || 0), 0);
+    }
+
+    function cartQuantityForDish(id) {
+      return Array.from(cart.values())
+        .filter((item) => Number(item.id) === Number(id))
+        .reduce((sum, item) => sum + item.quantity, 0);
+    }
+
+    function selectedDetailOptions() {
+      return Array.from(document.querySelectorAll("#detail-options input:checked"))
+        .map((input) => input.value);
+    }
+
+    function addDish(id, optionIds = []) {
       const dish = dishById(id);
-      const current = cart.get(Number(id)) || { ...dish, quantity: 0 };
+      if (!dish) return;
+      const options = normalizedOptions(dish, optionIds);
+      const key = cartKey(id, options);
+      const current = cart.get(key) || {
+        ...dish,
+        key,
+        basePrice: Number(dish.price),
+        price: Number(dish.price) + optionTotal(options),
+        options,
+        quantity: 0
+      };
       current.quantity += 1;
-      cart.set(Number(id), current);
+      cart.set(key, current);
       recordView(id);
       renderCart();
       if (detailDishId === Number(id)) renderDishDetail();
     }
 
-    function changeQuantity(id, delta) {
-      const numberId = Number(id);
-      const item = cart.get(numberId);
-      if (!item && delta > 0) return addDish(numberId);
+    function changeQuantity(id, delta, optionIds = []) {
+      const dish = dishById(id);
+      if (!dish) return;
+      const options = normalizedOptions(dish, optionIds);
+      const key = cartKey(id, options);
+      const item = cart.get(key);
+      if (!item && delta > 0) return addDish(id, optionIds);
       if (!item) return;
       item.quantity += delta;
       if (item.quantity <= 0) {
-        cart.delete(numberId);
+        cart.delete(key);
       } else {
-        cart.set(numberId, item);
+        cart.set(key, item);
       }
       renderCart();
-      if (detailDishId === numberId) renderDishDetail();
+      if (detailDishId === Number(id)) renderDishDetail();
+    }
+
+    function changeCartItem(key, delta) {
+      const item = cart.get(key);
+      if (!item) return;
+      item.quantity += delta;
+      if (item.quantity <= 0) {
+        cart.delete(key);
+      } else {
+        cart.set(key, item);
+      }
+      renderCart();
+      if (detailDishId === Number(item.id)) renderDishDetail();
     }
 
     function detailMeta(dish) {
       if (dish.category === "饮品") {
         return {
-          ingredients: `${dish.name.replace(/[冷热冰]/g, "")}、茶汤或鲜榨果汁、冰块`,
+          ingredients: `${dish.name}、冰块`,
           portion: "1杯",
-          method: dish.name.includes("热") ? "热饮" : "冷饮",
+          method: "冷藏饮品",
           taste: dish.description || "清爽解腻"
         };
       }
-      if (dish.category === "小菜") {
+      if (dish.category === "精品炒菜") {
         return {
-          ingredients: `${dish.name}主料、蒜香调味、秘制酱汁`,
-          portion: "1小份",
-          method: dish.name.includes("凉") ? "凉拌" : "现炒/现炸",
-          taste: dish.description || "鲜香开胃"
+          ingredients: `${dish.name}主料、葱姜蒜、雨石屋家常调味`,
+          portion: "1盘",
+          method: "大火现炒",
+          taste: dish.description || "家常鲜香"
+        };
+      }
+      if (dish.category === "现做炖菜") {
+        return {
+          ingredients: `${dish.name}主料、东北炖菜汤底、可选配菜`,
+          portion: "1份",
+          method: "现做慢炖",
+          taste: dish.description || "热乎入味"
         };
       }
       return {
-        ingredients: `${dish.name}主料、米饭/面食、时蔬、雨石屋秘制酱汁`,
+        ingredients: `${dish.name}、当日现备`,
         portion: "1人份",
-        method: dish.name.includes("面") ? "煮" : "炒/炖",
-        taste: dish.description || "家常鲜香"
+        method: "现做/现取",
+        taste: dish.description || "热乎管饱"
       };
     }
 
@@ -2156,15 +2259,27 @@
       const save = Math.max(original - dish.price, 0);
       const discount = original ? (dish.price / original * 10).toFixed(2) : "10";
       const meta = detailMeta(dish);
-      const quantity = cart.get(Number(dish.id))?.quantity || 0;
+      const quantity = cartQuantityForDish(dish.id);
+      const selectedIds = selectedDetailOptions();
+      const selectedOptions = normalizedOptions(dish, selectedIds);
+      const currentPrice = Number(dish.price) + optionTotal(selectedOptions);
 
       document.querySelector("#detail-image").src = dish.image;
       document.querySelector("#detail-image").alt = dish.name;
-      document.querySelector("#detail-price").textContent = Number(dish.price).toFixed(1);
+      document.querySelector("#detail-price").textContent = currentPrice.toFixed(1);
       document.querySelector("#detail-original").textContent = original.toFixed(1);
       document.querySelector("#detail-discount").textContent = `${discount}折 · 约省¥${save.toFixed(1)} · 可叠加优惠券`;
       document.querySelector("#detail-sales").textContent = dish.sales || 0;
       document.querySelector("#detail-name").textContent = dish.name;
+      document.querySelector("#detail-options").innerHTML = (dish.options || []).length
+        ? `<h2 class="option-title">配菜可选</h2>${dish.options.map((option) => `
+            <label class="option-card">
+              <input type="checkbox" value="${option.id}" data-detail-option ${selectedIds.includes(String(option.id)) ? "checked" : ""}>
+              <strong>${option.name}</strong>
+              <span>+￥${Number(option.price).toFixed(1)}</span>
+            </label>
+          `).join("")}`
+        : "";
       document.querySelector("#detail-ingredients").textContent = meta.ingredients;
       document.querySelector("#detail-portion").textContent = meta.portion;
       document.querySelector("#detail-method").textContent = meta.method;
@@ -2263,8 +2378,7 @@
       cartBadge.textContent = count;
 
       document.querySelectorAll("[data-count]").forEach((node) => {
-        const item = cart.get(Number(node.dataset.count));
-        node.textContent = item ? item.quantity : 0;
+        node.textContent = cartQuantityForDish(node.dataset.count);
       });
 
       if (items.length === 0) {
@@ -2279,13 +2393,13 @@
               <img src="${item.image}" alt="${item.name}">
               <div>
                 <h3>${item.name}</h3>
-                <div class="muted">规格：${item.category}</div>
+                <div class="muted">${item.category}${item.options.length ? " · " + item.options.map((option) => option.name).join("、") : ""}</div>
                 <div class="price">￥${item.price}</div>
               </div>
               <div class="qty-row">
-                <button class="round" data-minus="${item.id}">-</button>
+                <button class="round" data-cart-minus="${item.key}">-</button>
                 <strong>${item.quantity}</strong>
-                <button class="round" data-add="${item.id}">+</button>
+                <button class="round" data-cart-plus="${item.key}">+</button>
               </div>
             </div>
           `).join("")}
@@ -2365,7 +2479,7 @@
           <img src="${item.image}" alt="${item.name}">
           <div>
             <h3>${item.name}</h3>
-            <div class="muted">${item.description}</div>
+            <div class="muted">${item.description}${item.options.length ? " · " + item.options.map((option) => option.name).join("、") : ""}</div>
             <div class="muted">x ${item.quantity}</div>
           </div>
           <strong>￥${(item.price * item.quantity).toFixed(1)}</strong>
@@ -2541,6 +2655,8 @@
       const cancelOrderId = event.target.closest("[data-cancel-order]")?.dataset.cancelOrder;
       const removeFavoriteId = event.target.closest("[data-remove-favorite]")?.dataset.removeFavorite;
       const cartOpen = event.target.closest("[data-cart-open]");
+      const cartPlus = event.target.closest("[data-cart-plus]")?.dataset.cartPlus;
+      const cartMinus = event.target.closest("[data-cart-minus]")?.dataset.cartMinus;
       const clickedControl = event.target.closest("button,input,textarea,select,a");
 
       if (viewId && !clickedControl) {
@@ -2555,6 +2671,8 @@
       if (addId) addDish(addId);
       if (plusId) changeQuantity(plusId, 1);
       if (minusId) changeQuantity(minusId, -1);
+      if (cartPlus) changeCartItem(cartPlus, 1);
+      if (cartMinus) changeCartItem(cartMinus, -1);
       if (authOpen) openAuth(authOpen);
       if (authModeButton) openAuth(authModeButton);
       if (favId) toggleFavorite(favId);
@@ -2591,14 +2709,18 @@
       if (event.target.id === "profile-checkin" || event.target.id === "checkin-button") doCheckin();
       if (event.target.id === "redeem-coupon") redeemCoupon();
       if (event.target.id === "detail-add" && detailDishId) {
-        addDish(detailDishId);
+        addDish(detailDishId, selectedDetailOptions());
         renderDishDetail();
       }
       if (event.target.id === "detail-minus" && detailDishId) {
-        changeQuantity(detailDishId, -1);
+        changeQuantity(detailDishId, -1, selectedDetailOptions());
         renderDishDetail();
       }
       if (event.target.id === "detail-cart") openCart();
+    });
+
+    document.addEventListener("change", (event) => {
+      if (event.target.matches("[data-detail-option]")) renderDishDetail();
     });
 
     async function deleteMyOrder(id) {
@@ -2714,12 +2836,20 @@
     document.querySelector("#pay-submit").addEventListener("click", async () => {
       const { items } = cartStats();
       if (items.length === 0) return;
+      if (items.some((item) => item.name === "烀饼") && !items.some((item) => item.category === "现做炖菜")) {
+        await showToast("烀饼仅支持搭配现做炖菜点单，请先添加一份炖菜。", "搭配提示");
+        return;
+      }
 
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
+          items: items.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+            options: item.options.map((option) => option.id)
+          })),
           coupon_id: selectedCouponId,
           phone: document.querySelector("#confirm-phone").value.trim(),
           estimated_time: document.querySelector("#confirm-time").value.trim(),

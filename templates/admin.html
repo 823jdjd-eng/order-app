@@ -14,7 +14,7 @@
       --muted: #7b8491;
       --line: #e8e2d9;
       --paper: #fffdf8;
-      --soft: #f7f1e8;
+      --soft: #f4efe7;
       --brand: #e84c2a;
       --green: #16806a;
       --shadow: 0 16px 40px rgba(34, 26, 18, 0.09);
@@ -23,7 +23,9 @@
     body {
       margin: 0;
       color: var(--ink);
-      background: var(--soft);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(232, 76, 42, 0.14), transparent 28%),
+        linear-gradient(135deg, #fbf8f2 0%, #eef5ef 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
     }
 
@@ -44,6 +46,12 @@
       gap: 18px;
       align-items: center;
       margin-bottom: 18px;
+      padding: 22px;
+      border: 1px solid rgba(232, 76, 42, 0.15);
+      border-radius: 18px;
+      background: rgba(255, 253, 248, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
     }
 
     h1 {
@@ -61,7 +69,7 @@
       min-width: 168px;
       padding: 12px 14px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 999px;
       background: var(--paper);
       box-shadow: var(--shadow);
       color: var(--green);
@@ -158,10 +166,42 @@
       margin-bottom: 16px;
     }
 
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 16px;
+    }
+
+    .admin-tab {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 18px;
+      background: rgba(255, 253, 248, 0.82);
+      color: var(--ink);
+      font-weight: 950;
+      box-shadow: 0 10px 22px rgba(34, 26, 18, 0.05);
+    }
+
+    .admin-tab.active {
+      border-color: transparent;
+      background: var(--ink);
+      color: #fff;
+    }
+
+    [data-admin-view]:not(.active) {
+      display: none !important;
+    }
+
+    [data-admin-view].active {
+      display: grid;
+    }
+
     .stat {
       padding: 18px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 16px;
       background: var(--paper);
       box-shadow: var(--shadow);
     }
@@ -184,10 +224,14 @@
       margin-bottom: 16px;
     }
 
+    .admin-view-users {
+      grid-template-columns: 1fr;
+    }
+
     .admin-panel {
       padding: 18px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 16px;
       background: var(--paper);
       box-shadow: var(--shadow);
     }
@@ -231,11 +275,23 @@
     .user-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      padding: 9px 10px;
-      border-radius: 7px;
+      padding: 12px;
+      border-radius: 12px;
       background: #fff8ef;
       font-weight: 900;
+    }
+
+    .user-row strong,
+    .user-row small {
+      display: block;
+    }
+
+    .user-row small {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .coupon-message {
@@ -490,10 +546,10 @@
           {% endif %}
           <div class="login-error" id="admin-login-error"></div>
           <label for="admin-username">商家账号</label>
-          <input id="admin-username" name="username" autocomplete="username" value="admin" required>
+          <input id="admin-username" name="username" autocomplete="username" required>
 
           <label for="admin-password">密码</label>
-          <input id="admin-password" name="password" type="password" autocomplete="current-password" placeholder="默认 admin123" required>
+          <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
 
           <button class="login-submit" type="submit">登录后台</button>
           <div class="login-foot">
@@ -519,7 +575,13 @@
       </div>
     </header>
 
-    <section class="stats">
+    <nav class="admin-tabs">
+      <button class="admin-tab active" data-admin-tab="orders" type="button">订单工作台</button>
+      <button class="admin-tab" data-admin-tab="messages" type="button">顾客消息</button>
+      <button class="admin-tab" data-admin-tab="users" type="button">客户与设置</button>
+    </nav>
+
+    <section class="stats active" data-admin-view="orders">
       <div class="stat">
         <span>今日订单</span>
         <strong id="order-count">0</strong>
@@ -534,7 +596,7 @@
       </div>
     </section>
 
-    <section class="coupon-admin">
+    <section class="coupon-admin admin-view-users" data-admin-view="users">
       <div class="admin-panel">
         <h2>给用户发优惠券</h2>
         <form class="coupon-form" id="coupon-form">
@@ -562,9 +624,28 @@
         <h2>用户列表</h2>
         <div class="user-list" id="user-list">正在加载用户...</div>
       </div>
+      <div class="admin-panel">
+        <h2>修改后台密码</h2>
+        <form class="coupon-form" id="password-form">
+          <div class="field">
+            <label for="current-password">当前密码</label>
+            <input id="current-password" name="current_password" type="password" required>
+          </div>
+          <div class="field">
+            <label for="new-password">新密码</label>
+            <input id="new-password" name="new_password" type="password" minlength="6" required>
+          </div>
+          <div class="field">
+            <label for="confirm-password">确认新密码</label>
+            <input id="confirm-password" name="confirm_password" type="password" minlength="6" required>
+          </div>
+          <button class="action finish" type="submit">保存密码</button>
+        </form>
+        <div class="coupon-message" id="password-message"></div>
+      </div>
     </section>
 
-    <section class="admin-panel chat-admin">
+    <section class="admin-panel chat-admin" data-admin-view="messages">
       <h2>顾客消息</h2>
       <div class="chat-layout">
         <div class="thread-list" id="thread-list">正在加载消息...</div>
@@ -580,7 +661,7 @@
       </div>
     </section>
 
-    <section class="orders" id="orders">
+    <section class="orders active" id="orders" data-admin-view="orders">
       <div class="empty">暂无订单<br>在前台提交一单试试看</div>
     </section>
     {% endif %}
@@ -625,6 +706,8 @@
     const couponForm = document.querySelector("#coupon-form");
     const couponMessage = document.querySelector("#coupon-message");
     const userList = document.querySelector("#user-list");
+    const passwordForm = document.querySelector("#password-form");
+    const passwordMessage = document.querySelector("#password-message");
     const threadList = document.querySelector("#thread-list");
     const adminChatBox = document.querySelector("#admin-chat-box");
     const adminChatForm = document.querySelector("#admin-chat-form");
@@ -639,6 +722,18 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
+
+    function switchAdminTab(tab) {
+      document.querySelectorAll("[data-admin-tab]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.adminTab === tab);
+      });
+      document.querySelectorAll("[data-admin-view]").forEach((view) => {
+        view.classList.toggle("active", view.dataset.adminView === tab);
+      });
+      if (tab === "messages") loadThreads();
+      if (tab === "users") loadUsers();
+      if (tab === "orders") loadOrders();
     }
 
     async function loadOrders() {
@@ -730,7 +825,10 @@
       }
       userList.innerHTML = customers.map((user) => `
         <div class="user-row">
-          <span>${user.nickname || user.username}</span>
+          <span>
+            <strong>${user.nickname || user.username}</strong>
+            <small>登录名：${user.username}</small>
+          </span>
           <div class="user-actions">
             <button class="admin-link" data-fill-user="${user.username}">填入</button>
             <button class="danger-link" data-delete-user="${user.id}" data-delete-user-name="${user.nickname || user.username}">删除</button>
@@ -840,6 +938,23 @@
         : (result.message || "发券失败");
     });
 
+    passwordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(passwordForm);
+      const response = await fetch("/api/admin/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          current_password: formData.get("current_password"),
+          new_password: formData.get("new_password"),
+          confirm_password: formData.get("confirm_password")
+        })
+      });
+      const result = await response.json();
+      passwordMessage.textContent = result.message || (response.ok ? "密码已更新" : "修改失败");
+      if (response.ok) passwordForm.reset();
+    });
+
     document.addEventListener("click", (event) => {
       const id = event.target.dataset.id;
       const status = event.target.dataset.status;
@@ -848,6 +963,10 @@
       const deleteUserId = event.target.dataset.deleteUser;
       const deleteUserName = event.target.dataset.deleteUserName;
       const threadUser = event.target.closest("[data-thread-user]")?.dataset.threadUser;
+      const adminTab = event.target.closest("[data-admin-tab]")?.dataset.adminTab;
+      if (adminTab) {
+        switchAdminTab(adminTab);
+      }
       if (id && status) {
         updateStatus(id, status);
       }

@@ -1089,7 +1089,10 @@ def list_admin_messages():
             LEFT JOIN messages ON messages.user_id = users.id
             WHERE users.role != 'admin'
             GROUP BY users.id
-            ORDER BY COALESCE(last_message_id, users.id) DESC
+            ORDER BY
+                CASE WHEN MAX(messages.id) IS NULL THEN 0 ELSE 1 END DESC,
+                MAX(messages.id) DESC,
+                users.id DESC
             """
         ).fetchall()
         threads = []
@@ -1107,6 +1110,7 @@ def list_admin_messages():
                 {
                     "user": public_user(user),
                     "messages": [serialize_message(row) for row in message_rows],
+                    "last_message_id": user["last_message_id"] or 0,
                     "last_message_at": user["last_message_at"],
                 }
             )

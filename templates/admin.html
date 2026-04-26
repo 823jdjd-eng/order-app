@@ -714,6 +714,8 @@
     const adminChatInput = document.querySelector("#admin-chat-input");
     let activeThreadUserId = null;
     let messageThreads = [];
+    let newestMessageId = 0;
+    let manualThreadSelected = false;
 
     function escapeHTML(value = "") {
       return String(value)
@@ -854,8 +856,7 @@
     }
 
     function renderThreadList() {
-      const threadsWithMessages = messageThreads.filter((thread) => thread.messages.length > 0);
-      const threads = threadsWithMessages.length ? threadsWithMessages : messageThreads;
+      const threads = messageThreads;
       if (!threads.length) {
         threadList.textContent = "还没有顾客消息";
         return;
@@ -868,6 +869,7 @@
         return `
           <button class="thread-item ${thread.user.id === activeThreadUserId ? "active" : ""}" data-thread-user="${thread.user.id}">
             ${escapeHTML(thread.user.nickname || thread.user.username)}
+            <span>登录名：${escapeHTML(thread.user.username)}</span>
             <span>${last ? escapeHTML(last.body).slice(0, 30) : "暂无消息"}</span>
           </button>
         `;
@@ -897,6 +899,13 @@
       const response = await fetch("/api/admin/messages");
       const data = await response.json();
       messageThreads = data.threads || [];
+      const latestThread = messageThreads.find((thread) => thread.messages.length > 0);
+      const latestMessageId = latestThread ? Number(latestThread.last_message_id || 0) : 0;
+      if (latestThread && (!manualThreadSelected || latestMessageId > newestMessageId)) {
+        activeThreadUserId = latestThread.user.id;
+        manualThreadSelected = false;
+      }
+      newestMessageId = Math.max(newestMessageId, latestMessageId);
       renderThreadList();
       renderAdminChat();
     }
@@ -981,6 +990,7 @@
       }
       if (threadUser) {
         activeThreadUserId = Number(threadUser);
+        manualThreadSelected = true;
         renderThreadList();
         renderAdminChat();
       }

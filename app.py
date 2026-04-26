@@ -84,6 +84,15 @@ def reward_for_streak(streak):
     return ((streak - 8) % 6) + 2
 
 
+def parse_iso_date(value):
+    if not value:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -668,7 +677,7 @@ def my_wallet():
     checked_today = user["last_checkin_date"] == today_text
     next_streak = user["checkin_streak"] if checked_today else user["checkin_streak"] + 1
     if user["last_checkin_date"]:
-        last_day = date.fromisoformat(user["last_checkin_date"])
+        last_day = parse_iso_date(user["last_checkin_date"])
         if not checked_today and last_day != date.today() - timedelta(days=1):
             next_streak = 1
     return jsonify(
@@ -709,7 +718,7 @@ def checkin():
 
         streak = 1
         if user["last_checkin_date"]:
-            last_day = date.fromisoformat(user["last_checkin_date"])
+            last_day = parse_iso_date(user["last_checkin_date"])
             if last_day == today - timedelta(days=1):
                 streak = user["checkin_streak"] + 1
 

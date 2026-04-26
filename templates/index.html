@@ -1765,6 +1765,8 @@
     function showToast(message, title = "提示") {
       dialogTitle.textContent = title;
       dialogMessage.textContent = message;
+      dialogOk.textContent = "确定";
+      dialogCancel.textContent = "取消";
       dialogCancel.hidden = true;
       appDialog.classList.add("open");
       appDialog.setAttribute("aria-hidden", "false");
@@ -1777,9 +1779,11 @@
       });
     }
 
-    function askConfirm(message, title = "确认操作") {
+    function askConfirm(message, title = "确认操作", okText = "确定", cancelText = "取消") {
       dialogTitle.textContent = title;
       dialogMessage.textContent = message;
+      dialogOk.textContent = okText;
+      dialogCancel.textContent = cancelText;
       dialogCancel.hidden = false;
       appDialog.classList.add("open");
       appDialog.setAttribute("aria-hidden", "false");
@@ -2031,15 +2035,22 @@
     }
 
     async function doCheckin() {
-      const response = await fetch("/api/my/checkin", { method: "POST" });
-      if (response.status === 401) {
-        openAuth("login");
-        return;
+      checkinButton.disabled = true;
+      try {
+        const response = await fetch("/api/my/checkin", { method: "POST" });
+        if (response.status === 401) {
+          openAuth("login");
+          checkinButton.disabled = false;
+          return;
+        }
+        const result = await response.json();
+        await loadWallet();
+        renderProfilePanel();
+        await showToast(result.message || "签到成功", response.ok ? "签到成功" : "签到失败");
+      } catch {
+        checkinButton.disabled = false;
+        await showToast("网络异常，稍后再试。", "签到失败");
       }
-      const result = await response.json();
-      await loadWallet();
-      if (profilePanel === "points") renderProfilePanel();
-      showToast(result.message || "签到成功", "签到成功");
     }
 
     async function redeemCoupon() {
@@ -2203,7 +2214,10 @@
           <div>${order.items.map((item) => `${item.name} x${item.quantity}`).join("，")}</div>
           <div class="muted">备注：${order.remark || "无"}</div>
           <div class="price">￥${Number(order.payable || order.total).toFixed(1)}</div>
-          <button class="pill" data-delete-order="${order.id}" type="button" style="margin-top:8px;">删除订单</button>
+          <div class="tool-row" style="margin-top:10px;margin-bottom:0;">
+            ${["已完成", "已取消"].includes(order.status) ? "" : `<button class="pill" data-cancel-order="${order.id}" type="button">取消订单</button>`}
+            <button class="pill" data-delete-order="${order.id}" type="button">删除记录</button>
+          </div>
         </div>
       `).join("");
     }
@@ -2292,6 +2306,7 @@
       const couponId = event.target.closest("[data-coupon-id]")?.dataset.couponId;
       const homeCategory = event.target.closest("[data-home-category]")?.dataset.homeCategory;
       const deleteOrderId = event.target.closest("[data-delete-order]")?.dataset.deleteOrder;
+      const cancelOrderId = event.target.closest("[data-cancel-order]")?.dataset.cancelOrder;
       const removeFavoriteId = event.target.closest("[data-remove-favorite]")?.dataset.removeFavorite;
       const clickedControl = event.target.closest("button,input,textarea,select,a");
 
@@ -2316,6 +2331,9 @@
       }
       if (deleteOrderId) {
         deleteMyOrder(deleteOrderId);
+      }
+      if (cancelOrderId) {
+        cancelMyOrder(cancelOrderId);
       }
       if (removeFavoriteId) {
         const numberId = Number(removeFavoriteId);
@@ -2350,12 +2368,28 @@
     });
 
     async function deleteMyOrder(id) {
-      if (!await askConfirm(`确定删除 #${id} 号订单吗？`, "删除订单")) return;
+      if (!await askConfirm(`确定从你的订单列表移除 #${id} 号订单吗？商家后台不会被删除。`, "删除记录")) return;
       const response = await fetch(`/api/my/orders/${id}`, { method: "DELETE" });
       if (response.status === 401) {
         openAuth("login");
         return;
       }
+      renderProfilePanel();
+    }
+
+    async function cancelMyOrder(id) {
+      if (!await askConfirm(`确定取消 #${id} 号订单吗？取消后商家也会看到已取消状态。`, "取消订单")) return;
+      const response = await fetch(`/api/my/orders/${id}/cancel`, { method: "POST" });
+      if (response.status === 401) {
+        openAuth("login");
+        return;
+      }
+      const result = await response.json();
+      if (!response.ok) {
+        await showToast(result.message || "取消失败", "取消失败");
+        return;
+      }
+      await showToast("订单已取消", "取消成功");
       renderProfilePanel();
     }
 
@@ -2459,9 +2493,18 @@
       await loadWallet();
       renderCart();
       profilePanel = "orders";
-      switchTab("profile");
-      renderProfilePanel();
-      showToast(`下单成功：${order.id} 号订单，共 ￥${order.total}`, "下单成功");
+      const keepOrdering = await askConfirm(
+        `下单成功：${order.id} 号订单\n实付 ￥${Number(order.payable || order.total).toFixed(1)}\n是否继续下单？`,
+        "下单成功",
+        "继续下单",
+        "查看订单"
+      );
+      if (keepOrdering) {
+        openOrderWithSearch("", "全部");
+      } else {
+        switchTab("profile");
+        renderProfilePanel();
+      }
     });
 
     document.querySelector("#ai-form").addEventListener("submit", async (event) => {

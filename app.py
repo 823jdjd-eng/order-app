@@ -165,6 +165,8 @@ def init_db():
                 estimated_time TEXT,
                 delivery_method TEXT NOT NULL DEFAULT 'delivery',
                 status TEXT NOT NULL DEFAULT '已下单',
+                customer_deleted INTEGER NOT NULL DEFAULT 0,
+                admin_deleted INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT NOT NULL,
                 FOREIGN KEY(user_id) REFERENCES users(id),
                 FOREIGN KEY(coupon_id) REFERENCES coupons(id)
@@ -173,6 +175,8 @@ def init_db():
         )
         ensure_column(conn, "orders", "remark", "TEXT")
         ensure_column(conn, "orders", "estimated_time", "TEXT")
+        ensure_column(conn, "orders", "customer_deleted", "INTEGER NOT NULL DEFAULT 0")
+        ensure_column(conn, "orders", "admin_deleted", "INTEGER NOT NULL DEFAULT 0")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS order_items (
@@ -611,13 +615,13 @@ def create_order():
 @app.get("/api/orders")
 @admin_required
 def list_orders():
-    return jsonify(fetch_orders())
+    return jsonify(fetch_orders("WHERE admin_deleted = 0"))
 
 
 @app.get("/api/my/orders")
 @login_required
 def list_my_orders():
-    return jsonify(fetch_orders("WHERE user_id = ?", (session["user_id"],)))
+    return jsonify(fetch_orders("WHERE user_id = ? AND customer_deleted = 0", (session["user_id"],)))
 
 
 @app.get("/api/my/coupons")
@@ -979,13 +983,8 @@ def delete_order(order_id):
         order = conn.execute("SELECT id FROM orders WHERE id = ?", (order_id,)).fetchone()
         if order is None:
             return jsonify({"message": "订单不存在"}), 404
-        conn.execute(
-            "UPDATE coupons SET status = 'unused', used_at = NULL, order_id = NULL WHERE order_id = ?",
-            (order_id,),
-        )
-        conn.execute("DELETE FROM order_items WHERE order_id = ?", (order_id,))
-        conn.execute("DELETE FROM orders WHERE id = ?", (order_id,))
-    return jsonify({"message": "订单已删除"})
+        conn.execute("UPDATE orders SET admin_deleted = 1 WHERE id = ?", (order_id,))
+    return jsonify({"message": "订单已从商家后台移除"})
 
 
 @app.delete("/api/my/orders/<int:order_id>")
@@ -999,13 +998,29 @@ def delete_my_order(order_id):
         ).fetchone()
         if order is None:
             return jsonify({"message": "订单不存在"}), 404
+        conn.execute("UPDATE orders SET customer_deleted = 1 WHERE id = ?", (order_id,))
+    return jsonify({"message": "订单已从你的列表移除"})
+
+
+@app.post("/api/my/orders/<int:order_id>/cancel")
+@login_required
+def cancel_my_order(order_id):
+    user_id = session["user_id"]
+    with get_db() as conn:
+        order = conn.execute(
+            "SELECT id, status FROM orders WHERE id = ? AND user_id = ?",
+            (order_id, user_id),
+        ).fetchone()
+        if order is None:
+            return jsonify({"message": "订单不存在"}), 404
+        if order["status"] in {"已完成", "已取消"}:
+            return jsonify({"message": "当前订单不能取消"}), 400
+        conn.execute("UPDATE orders SET status = '已取消' WHERE id = ?", (order_id,))
         conn.execute(
             "UPDATE coupons SET status = 'unused', used_at = NULL, order_id = NULL WHERE order_id = ?",
             (order_id,),
         )
-        conn.execute("DELETE FROM order_items WHERE order_id = ?", (order_id,))
-        conn.execute("DELETE FROM orders WHERE id = ?", (order_id,))
-    return jsonify({"message": "订单已删除"})
+    return jsonify(fetch_orders("WHERE id = ?", (order_id,))[0])
 
 
 init_db()

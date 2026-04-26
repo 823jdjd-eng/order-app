@@ -1,4 +1,5 @@
-from datetime import datetime
+import base64
+from datetime import date, datetime, timedelta
 import json
 import os
 import sqlite3
@@ -8,11 +9,14 @@ from functools import wraps
 
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
 DB_PATH = os.path.join(app.root_path, "order_app.db")
+UPLOAD_FOLDER = os.path.join(app.root_path, "static", "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 MENU = [
@@ -56,6 +60,30 @@ CATEGORY_ORDER = ["主食", "小菜", "饮品"]
 orders = []
 
 
+FALLBACK_IMAGES = {
+    "主食": "https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?auto=format&fit=crop&w=640&q=80",
+    "小菜": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=640&q=80",
+    "饮品": "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=640&q=80",
+}
+
+
+def menu_item(dish_id):
+    return next((dish for dish in MENU if dish["id"] == int(dish_id)), None)
+
+
+def menu_with_sales():
+    with get_db() as conn:
+        rows = conn.execute("SELECT dish_id, sales FROM dish_stats").fetchall()
+    sales_by_id = {row["dish_id"]: row["sales"] for row in rows}
+    return [{**dish, "sales": sales_by_id.get(dish["id"], dish["sales"])} for dish in MENU]
+
+
+def reward_for_streak(streak):
+    if streak <= 7:
+        return streak
+    return ((streak - 8) % 6) + 2
+
+
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -68,6 +96,18 @@ def ensure_column(conn, table, column, definition):
         conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
+def save_avatar(file_storage):
+    if not file_storage or not file_storage.filename:
+        return ""
+    filename = secure_filename(file_storage.filename)
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in {".jpg", ".jpeg", ".png", ".gif", ".webp"}:
+        return ""
+    saved_name = f"avatar_{int(datetime.now().timestamp() * 1000)}{ext}"
+    file_storage.save(os.path.join(UPLOAD_FOLDER, saved_name))
+    return url_for("static", filename=f"uploads/{saved_name}")
+
+
 def init_db():
     with get_db() as conn:
         conn.execute(
@@ -75,12 +115,22 @@ def init_db():
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
+                nickname TEXT,
+                avatar_url TEXT,
                 password_hash TEXT NOT NULL,
                 role TEXT NOT NULL DEFAULT 'customer',
+                points INTEGER NOT NULL DEFAULT 0,
+                checkin_streak INTEGER NOT NULL DEFAULT 0,
+                last_checkin_date TEXT,
                 created_at TEXT NOT NULL
             )
             """
         )
+        ensure_column(conn, "users", "nickname", "TEXT")
+        ensure_column(conn, "users", "avatar_url", "TEXT")
+        ensure_column(conn, "users", "points", "INTEGER NOT NULL DEFAULT 0")
+        ensure_column(conn, "users", "checkin_streak", "INTEGER NOT NULL DEFAULT 0")
+        ensure_column(conn, "users", "last_checkin_date", "TEXT")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS coupons (
@@ -90,6 +140,7 @@ def init_db():
                 amount REAL NOT NULL,
                 min_amount REAL NOT NULL DEFAULT 0,
                 status TEXT NOT NULL DEFAULT 'unused',
+                source TEXT NOT NULL DEFAULT 'merchant',
                 created_at TEXT NOT NULL,
                 used_at TEXT,
                 order_id INTEGER,
@@ -97,6 +148,7 @@ def init_db():
             )
             """
         )
+        ensure_column(conn, "coupons", "source", "TEXT NOT NULL DEFAULT 'merchant'")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS orders (
@@ -136,6 +188,23 @@ def init_db():
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS dish_stats (
+                dish_id INTEGER PRIMARY KEY,
+                sales INTEGER NOT NULL DEFAULT 0
+            )
+            """
+        )
+        for dish in MENU:
+            conn.execute(
+                "INSERT OR IGNORE INTO dish_stats (dish_id, sales) VALUES (?, ?)",
+                (dish["id"], dish["sales"]),
+            )
+            conn.execute(
+                "UPDATE dish_stats SET sales = ? WHERE dish_id = ? AND sales < ?",
+                (dish["sales"], dish["id"], dish["sales"]),
+            )
         admin = conn.execute("SELECT id FROM users WHERE username = ?", ("admin",)).fetchone()
         if admin is None:
             conn.execute(
@@ -155,7 +224,7 @@ def current_user():
         return None
     with get_db() as conn:
         return conn.execute(
-            "SELECT id, username, role FROM users WHERE id = ?",
+            "SELECT id, username, nickname, avatar_url, role, points, checkin_streak, last_checkin_date FROM users WHERE id = ?",
             (user_id,),
         ).fetchone()
 
@@ -163,10 +232,17 @@ def current_user():
 def public_user(user):
     if user is None:
         return None
-    return {"id": user["id"], "username": user["username"], "role": user["role"]}
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "nickname": user["nickname"] if "nickname" in user.keys() and user["nickname"] else user["username"],
+        "avatar_url": user["avatar_url"] if "avatar_url" in user.keys() else "",
+        "role": user["role"],
+        "points": user["points"] if "points" in user.keys() else 0,
+    }
 
 
-def register_customer(username, password, confirm_password):
+def register_customer(username, password, confirm_password, nickname="", avatar_url=""):
     if len(username) < 3:
         return None, "用户名至少 3 个字符"
     if len(password) < 6:
@@ -177,9 +253,11 @@ def register_customer(username, password, confirm_password):
     try:
         with get_db() as conn:
             cursor = conn.execute(
-                "INSERT INTO users (username, password_hash, role, created_at) VALUES (?, ?, ?, ?)",
+                "INSERT INTO users (username, nickname, avatar_url, password_hash, role, created_at) VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     username,
+                    nickname.strip() or username,
+                    avatar_url,
                     generate_password_hash(password),
                     "customer",
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -188,6 +266,8 @@ def register_customer(username, password, confirm_password):
             return {
                 "id": cursor.lastrowid,
                 "username": username,
+                "nickname": nickname.strip() or username,
+                "avatar_url": avatar_url,
                 "role": "customer",
             }, ""
     except sqlite3.IntegrityError:
@@ -197,7 +277,7 @@ def register_customer(username, password, confirm_password):
 def authenticate(username, password):
     with get_db() as conn:
         user = conn.execute(
-            "SELECT id, username, password_hash, role FROM users WHERE username = ?",
+            "SELECT id, username, nickname, avatar_url, password_hash, role FROM users WHERE username = ?",
             (username,),
         ).fetchone()
 
@@ -256,6 +336,7 @@ def serialize_coupon(row):
         "amount": row["amount"],
         "min_amount": row["min_amount"],
         "status": row["status"],
+        "source": row["source"] if "source" in row.keys() else "merchant",
         "created_at": row["created_at"],
         "used_at": row["used_at"],
         "order_id": row["order_id"],
@@ -293,8 +374,9 @@ def admin_required(view):
 
 @app.get("/")
 def index():
-    categories = [category for category in CATEGORY_ORDER if any(d["category"] == category for d in MENU)]
-    return render_template("index.html", menu=MENU, categories=categories, user=current_user())
+    menu = menu_with_sales()
+    categories = [category for category in CATEGORY_ORDER if any(d["category"] == category for d in menu)]
+    return render_template("index.html", menu=menu, categories=categories, user=current_user())
 
 
 @app.get("/admin")
@@ -355,11 +437,18 @@ def auth_me():
 
 @app.post("/api/auth/register")
 def api_register():
-    data = request.get_json(silent=True) or {}
+    if request.form:
+        data = request.form
+        avatar_url = save_avatar(request.files.get("avatar"))
+    else:
+        data = request.get_json(silent=True) or {}
+        avatar_url = ""
     user, error = register_customer(
         data.get("username", "").strip(),
         data.get("password", ""),
         data.get("confirm_password", ""),
+        data.get("nickname", "").strip(),
+        avatar_url,
     )
     if error:
         return jsonify({"message": error}), 400
@@ -374,6 +463,29 @@ def api_login():
     if user is None:
         return jsonify({"message": "用户名或密码错误"}), 400
     remember_user(user)
+    return jsonify({"user": public_user(user)})
+
+
+@app.patch("/api/my/profile")
+@login_required
+def update_profile():
+    user_id = session["user_id"]
+    nickname = request.form.get("nickname", "").strip()
+    avatar_url = save_avatar(request.files.get("avatar"))
+
+    if not nickname and not avatar_url:
+        return jsonify({"message": "请填写昵称或上传头像"}), 400
+
+    with get_db() as conn:
+        if nickname:
+            conn.execute("UPDATE users SET nickname = ? WHERE id = ?", (nickname, user_id))
+        if avatar_url:
+            conn.execute("UPDATE users SET avatar_url = ? WHERE id = ?", (avatar_url, user_id))
+        user = conn.execute(
+            "SELECT id, username, nickname, avatar_url, role, points FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+
     return jsonify({"user": public_user(user)})
 
 
@@ -481,6 +593,11 @@ def create_order():
                     item["image"],
                 ),
             )
+            conn.execute("INSERT OR IGNORE INTO dish_stats (dish_id, sales) VALUES (?, 0)", (item["id"],))
+            conn.execute(
+                "UPDATE dish_stats SET sales = sales + ? WHERE dish_id = ?",
+                (item["quantity"], item["id"]),
+            )
         if coupon_row:
             conn.execute(
                 "UPDATE coupons SET status = 'used', used_at = ?, order_id = ? WHERE id = ?",
@@ -507,12 +624,14 @@ def list_my_orders():
 @login_required
 def list_my_coupons():
     min_total = float(request.args.get("total", 0) or 0)
+    include_all = request.args.get("all") == "1"
+    status_filter = "" if include_all else "AND coupons.status = 'unused'"
     with get_db() as conn:
         rows = conn.execute(
-            """
+            f"""
             SELECT coupons.*, users.username FROM coupons
             JOIN users ON users.id = coupons.user_id
-            WHERE coupons.user_id = ? AND coupons.status = 'unused'
+            WHERE coupons.user_id = ? {status_filter}
             ORDER BY coupons.id DESC
             """,
             (session["user_id"],),
@@ -521,6 +640,125 @@ def list_my_coupons():
     for coupon in coupons:
         coupon["available"] = min_total >= coupon["min_amount"]
     return jsonify(coupons)
+
+
+@app.get("/api/my/wallet")
+@login_required
+def my_wallet():
+    user_id = session["user_id"]
+    today_text = date.today().isoformat()
+    with get_db() as conn:
+        user = conn.execute(
+            "SELECT points, checkin_streak, last_checkin_date FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+        coupons = conn.execute(
+            """
+            SELECT coupons.*, users.username FROM coupons
+            JOIN users ON users.id = coupons.user_id
+            WHERE coupons.user_id = ?
+            ORDER BY coupons.id DESC
+            """,
+            (user_id,),
+        ).fetchall()
+    checked_today = user["last_checkin_date"] == today_text
+    next_streak = user["checkin_streak"] if checked_today else user["checkin_streak"] + 1
+    if user["last_checkin_date"]:
+        last_day = date.fromisoformat(user["last_checkin_date"])
+        if not checked_today and last_day != date.today() - timedelta(days=1):
+            next_streak = 1
+    return jsonify(
+        {
+            "points": user["points"],
+            "nickname": current_user()["nickname"] or current_user()["username"],
+            "avatar_url": current_user()["avatar_url"] or "",
+            "checkin_streak": user["checkin_streak"],
+            "last_checkin_date": user["last_checkin_date"],
+            "checked_today": checked_today,
+            "next_reward": 0 if checked_today else reward_for_streak(next_streak),
+            "coupons": [serialize_coupon(row) for row in coupons],
+        }
+    )
+
+
+@app.post("/api/my/checkin")
+@login_required
+def checkin():
+    user_id = session["user_id"]
+    today = date.today()
+    today_text = today.isoformat()
+    with get_db() as conn:
+        user = conn.execute(
+            "SELECT points, checkin_streak, last_checkin_date FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+        if user["last_checkin_date"] == today_text:
+            return jsonify(
+                {
+                    "message": "今天已经签到过了",
+                    "points": user["points"],
+                    "reward": 0,
+                    "streak": user["checkin_streak"],
+                    "checked_today": True,
+                }
+            )
+
+        streak = 1
+        if user["last_checkin_date"]:
+            last_day = date.fromisoformat(user["last_checkin_date"])
+            if last_day == today - timedelta(days=1):
+                streak = user["checkin_streak"] + 1
+
+        reward = reward_for_streak(streak)
+        points = user["points"] + reward
+        conn.execute(
+            """
+            UPDATE users
+            SET points = ?, checkin_streak = ?, last_checkin_date = ?
+            WHERE id = ?
+            """,
+            (points, streak, today_text, user_id),
+        )
+    return jsonify(
+        {
+            "message": f"签到成功，获得 {reward} 积分",
+            "points": points,
+            "reward": reward,
+            "streak": streak,
+            "checked_today": True,
+        }
+    )
+
+
+@app.post("/api/my/redeem")
+@login_required
+def redeem_points():
+    user_id = session["user_id"]
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        user = conn.execute("SELECT points FROM users WHERE id = ?", (user_id,)).fetchone()
+        if user["points"] < 20:
+            return jsonify({"message": "积分不足，20 积分可兑换 5 元优惠券"}), 400
+        conn.execute("UPDATE users SET points = points - 20 WHERE id = ?", (user_id,))
+        cursor = conn.execute(
+            """
+            INSERT INTO coupons (user_id, title, amount, min_amount, status, source, created_at)
+            VALUES (?, ?, ?, ?, 'unused', 'points', ?)
+            """,
+            (user_id, "20积分兑换券", 5, 0, now),
+        )
+        row = conn.execute(
+            """
+            SELECT coupons.*, users.username FROM coupons
+            JOIN users ON users.id = coupons.user_id
+            WHERE coupons.id = ?
+            """,
+            (cursor.lastrowid,),
+        ).fetchone()
+        points = conn.execute("SELECT points FROM users WHERE id = ?", (user_id,)).fetchone()["points"]
+    coupon = serialize_coupon(row)
+    coupon["available"] = True
+    return jsonify({"message": "兑换成功，已放入卡包", "points": points, "coupon": coupon}), 201
 
 
 @app.get("/api/admin/users")
@@ -556,8 +794,8 @@ def create_coupon():
             return jsonify({"message": "用户不存在"}), 404
         cursor = conn.execute(
             """
-            INSERT INTO coupons (user_id, title, amount, min_amount, status, created_at)
-            VALUES (?, ?, ?, ?, 'unused', ?)
+            INSERT INTO coupons (user_id, title, amount, min_amount, status, source, created_at)
+            VALUES (?, ?, ?, ?, 'unused', 'merchant', ?)
             """,
             (
                 user["id"],
@@ -578,35 +816,105 @@ def create_coupon():
     return jsonify(serialize_coupon(row)), 201
 
 
-@app.post("/api/ai/chat")
-def ai_chat():
+@app.post("/api/ai/recommend")
+def ai_recommend():
     data = request.get_json(silent=True) or {}
     message = data.get("message", "").strip()
+    blind_box = bool(data.get("blind_box"))
+    text = message.lower()
+    budget = None
+    digits = "".join(char if char.isdigit() else " " for char in text).split()
+    if digits:
+        budget = max(int(number) for number in digits)
 
-    if not message:
+    if blind_box:
+        selected_ids = [1, 17, 25]
+    elif "辣" in message:
+        selected_ids = [4, 21, 31]
+    elif "清淡" in message or "不辣" in message:
+        selected_ids = [14, 15, 32]
+    elif "饮" in message or "喝" in message:
+        selected_ids = [25, 26, 33]
+    elif "两" in message or "2" in message:
+        selected_ids = [2, 15, 25]
+    else:
+        selected_ids = [1, 15, 25]
+
+    selected = [menu_item(dish_id) for dish_id in selected_ids]
+    selected = [dish for dish in selected if dish]
+    if budget:
+        running = 0
+        limited = []
+        for dish in selected:
+            if running + dish["price"] <= budget or not limited:
+                limited.append(dish)
+                running += dish["price"]
+        selected = limited
+
+    total = sum(dish["price"] for dish in selected)
+    return jsonify(
+        {
+            "reply": (
+                "给你生成了一份餐品盲盒，适合不知道吃什么的时候直接试试。"
+                if blind_box
+                else f"根据你的需求，推荐这套搭配，预计 ￥{total}。"
+            ),
+            "items": [{"id": dish["id"], "quantity": 1} for dish in selected],
+            "total": total,
+        }
+    )
+
+
+@app.post("/api/ai/chat")
+def ai_chat():
+    if request.form or request.files:
+        message = request.form.get("message", "").strip()
+        image_file = request.files.get("image")
+    else:
+        data = request.get_json(silent=True) or {}
+        message = data.get("message", "").strip()
+        image_file = None
+
+    if not message and not image_file:
         return jsonify({"message": "请输入你的点餐需求"}), 400
 
     api_key = os.environ.get("ZHIPU_API_KEY", "").strip()
     if not api_key:
-        return jsonify({"reply": "智谱 API Key 还没有配置。请先在服务器环境变量里设置 ZHIPU_API_KEY。"})
+        return jsonify({"message": "智谱 API Key 还没有配置，请先设置 ZHIPU_API_KEY。"}), 503
 
     menu_text = "\n".join(
         f"- {dish['name']}：{dish['category']}，￥{dish['price']}，{dish['description']}"
-        for dish in MENU
+        for dish in menu_with_sales()
     )
+    user_content = message or "请识别这张图片，并结合本店菜单给我点餐建议。"
+    model = os.environ.get("ZHIPU_MODEL", "glm-4-flash")
+    if image_file and image_file.filename:
+        image_bytes = image_file.read()
+        if len(image_bytes) > 4 * 1024 * 1024:
+            return jsonify({"message": "图片太大了，请换一张 4MB 以内的图片。"}), 400
+        image_ext = os.path.splitext(image_file.filename)[1].lower().lstrip(".") or "jpeg"
+        if image_ext == "jpg":
+            image_ext = "jpeg"
+        image_data = base64.b64encode(image_bytes).decode("utf-8")
+        user_content = [
+            {"type": "text", "text": user_content},
+            {"type": "image_url", "image_url": {"url": f"data:image/{image_ext};base64,{image_data}"}},
+        ]
+        model = os.environ.get("ZHIPU_VISION_MODEL", "glm-4.6v-flash")
+
     payload = {
-        "model": os.environ.get("ZHIPU_MODEL", "glm-4-flash"),
+        "model": model,
         "messages": [
             {
                 "role": "system",
                 "content": (
-                    "你是拾味小馆的 AI 点餐助手。你只围绕本店菜单推荐菜品，"
+                    "你是雨石屋的 AI 点餐助手。你只围绕本店菜单推荐菜品，"
                     "需要根据用户的人数、预算、口味、忌口进行搭配，并给出总价估算。"
                     "回复要简洁、亲切，适合手机点餐页面展示。\n\n"
                     f"本店菜单：\n{menu_text}"
                 ),
             },
-            {"role": "user", "content": message},
+            {"role": "user", "content": user_content},
         ],
         "temperature": 0.7,
         "stream": False,
@@ -662,6 +970,42 @@ def update_order(order_id):
             return jsonify(fetch_orders("WHERE id = ?", (order_id,))[0])
 
     return jsonify({"message": "订单不存在"}), 404
+
+
+@app.delete("/api/orders/<int:order_id>")
+@admin_required
+def delete_order(order_id):
+    with get_db() as conn:
+        order = conn.execute("SELECT id FROM orders WHERE id = ?", (order_id,)).fetchone()
+        if order is None:
+            return jsonify({"message": "订单不存在"}), 404
+        conn.execute(
+            "UPDATE coupons SET status = 'unused', used_at = NULL, order_id = NULL WHERE order_id = ?",
+            (order_id,),
+        )
+        conn.execute("DELETE FROM order_items WHERE order_id = ?", (order_id,))
+        conn.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+    return jsonify({"message": "订单已删除"})
+
+
+@app.delete("/api/my/orders/<int:order_id>")
+@login_required
+def delete_my_order(order_id):
+    user_id = session["user_id"]
+    with get_db() as conn:
+        order = conn.execute(
+            "SELECT id FROM orders WHERE id = ? AND user_id = ?",
+            (order_id, user_id),
+        ).fetchone()
+        if order is None:
+            return jsonify({"message": "订单不存在"}), 404
+        conn.execute(
+            "UPDATE coupons SET status = 'unused', used_at = NULL, order_id = NULL WHERE order_id = ?",
+            (order_id,),
+        )
+        conn.execute("DELETE FROM order_items WHERE order_id = ?", (order_id,))
+        conn.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+    return jsonify({"message": "订单已删除"})
 
 
 init_db()

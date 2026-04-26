@@ -561,6 +561,7 @@
             <button class="action" data-id="${order.id}" data-status="制作中">接单制作</button>
             <button class="action finish" data-id="${order.id}" data-status="已完成">完成订单</button>
             <button class="action cancel" data-id="${order.id}" data-status="已取消">取消</button>
+            <button class="action cancel" data-delete-id="${order.id}">删除订单</button>
           </div>
         </article>
       `).join("");
@@ -572,6 +573,12 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
       });
+      await loadOrders();
+    }
+
+    async function deleteOrder(id) {
+      if (!confirm(`确定删除 #${id} 号订单吗？删除后不可恢复。`)) return;
+      await fetch(`/api/orders/${id}`, { method: "DELETE" });
       await loadOrders();
     }
 
@@ -613,9 +620,13 @@
     document.addEventListener("click", (event) => {
       const id = event.target.dataset.id;
       const status = event.target.dataset.status;
+      const deleteId = event.target.dataset.deleteId;
       const fillUser = event.target.dataset.fillUser;
       if (id && status) {
         updateStatus(id, status);
+      }
+      if (deleteId) {
+        deleteOrder(deleteId);
       }
       if (fillUser) {
         document.querySelector("#coupon-username").value = fillUser;

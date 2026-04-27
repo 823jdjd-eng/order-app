@@ -1111,11 +1111,16 @@
       box-shadow: var(--shadow);
     }
 
-    .wheel-disc {
+    .wheel-stage {
       position: relative;
       width: min(310px, 78vw);
       aspect-ratio: 1;
       margin: 8px auto 16px;
+    }
+
+    .wheel-disc {
+      position: absolute;
+      inset: 0;
       border: 12px solid rgba(255, 255, 255, .96);
       border-radius: 50%;
       background:
@@ -1137,31 +1142,63 @@
       box-shadow: 0 22px 50px rgba(13, 118, 89, .18), inset 0 0 0 1px rgba(255,255,255,.65);
     }
 
-    .wheel-disc::before {
+    .wheel-pointer {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 8;
+      width: 28px;
+      height: 88px;
+      transform: translate(-50%, -100%);
+      transform-origin: center bottom;
+      filter: drop-shadow(0 8px 14px rgba(13, 118, 89, .28));
+      pointer-events: none;
+    }
+
+    .wheel-pointer::before {
       content: "";
       position: absolute;
-      top: -24px;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 16px solid transparent;
-      border-right: 16px solid transparent;
-      border-top: 30px solid #0d7659;
-      z-index: 2;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 34px solid #0a785e;
+    }
+
+    .wheel-pointer::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -7px;
+      width: 18px;
+      height: 18px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: #0a785e;
+      box-shadow: inset 0 0 0 5px #fff;
     }
 
     .wheel-center {
-      position: relative;
-      z-index: 3;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9;
       width: 104px;
       height: 104px;
       display: grid;
       place-items: center;
+      border: 0;
       border-radius: 50%;
       background: #fff;
       color: #0d7659;
       font-size: 20px;
       font-weight: 950;
       box-shadow: 0 12px 28px rgba(8, 122, 97, 0.16);
+      cursor: pointer;
     }
 
     .wheel-label {
@@ -1179,6 +1216,17 @@
       text-shadow: 0 1px 0 rgba(255,255,255,.75);
       transform-origin: 37px 13px;
       pointer-events: none;
+    }
+
+    .wheel-label img {
+      width: 26px;
+      height: 26px;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 2px;
+      border: 2px solid rgba(255,255,255,.88);
+      box-shadow: 0 4px 10px rgba(18, 35, 35, .16);
     }
 
     .wheel-label:nth-child(1) { transform: rotate(0deg) translateY(-112px) rotate(0deg); }
@@ -1944,18 +1992,19 @@
           </div>
         </div>
         <article class="wheel-card">
-          <div class="wheel-disc" id="wheel-disc">
-            <span class="wheel-label">20元<br>券</span>
-            <span class="wheel-label">100元<br>余额</span>
-            <span class="wheel-label">免费<br>餐券</span>
-            <span class="wheel-label">免费<br>餐券</span>
-            <span class="wheel-label">免费<br>餐券</span>
-            <span class="wheel-label">免费<br>餐券</span>
-            <span class="wheel-label">免费<br>餐券</span>
-            <span class="wheel-label">任意菜<br>五折</span>
-            <span class="wheel-label">可乐<br>一瓶</span>
-            <span class="wheel-label">谢谢<br>参与</span>
-            <div class="wheel-center">开转</div>
+          <div class="wheel-stage">
+            <div class="wheel-disc" id="wheel-disc">
+              <span class="wheel-label">20元<br>券</span>
+              <span class="wheel-label">100元<br>余额</span>
+              {% for dish in wheel_slots %}
+              <span class="wheel-label"><img src="{{ dish.image }}" alt="{{ dish.name }}">{{ dish.name[:4] }}<br>免单</span>
+              {% endfor %}
+              <span class="wheel-label">任意菜<br>五折</span>
+              <span class="wheel-label">{% if wheel_coke %}<img src="{{ wheel_coke.image }}" alt="{{ wheel_coke.name }}">{% endif %}可乐<br>一瓶</span>
+              <span class="wheel-label">谢谢<br>参与</span>
+            </div>
+            <div class="wheel-pointer" aria-hidden="true"></div>
+            <button class="wheel-center" id="wheel-center-spin" type="button">幸运<br>转盘</button>
           </div>
           <button class="primary" id="wheel-spin" type="button" style="width:100%;min-height:50px;">余额支付 9.9 元转一次</button>
         </article>
@@ -2755,7 +2804,8 @@
     async function loadCoupons(total) {
       const cartItems = cartStats().items.map((item) => ({
         id: item.id,
-        quantity: item.quantity
+        quantity: item.quantity,
+        price: item.price
       }));
       const response = await fetch(`/api/my/coupons?total=${encodeURIComponent(total)}&items=${encodeURIComponent(JSON.stringify(cartItems))}`);
       if (response.status === 401) {
@@ -2927,7 +2977,9 @@
       document.querySelector("#confirm-balance").textContent = balance.toFixed(1);
       const payButton = document.querySelector("#pay-submit");
       payButton.disabled = balance < payable;
-      payButton.textContent = balance < payable ? `余额不足 ￥${payable.toFixed(1)}` : `余额支付 ￥${payable.toFixed(1)}`;
+      payButton.innerHTML = balance < payable
+        ? `余额不足 ￥<span id="pay-total">${payable.toFixed(1)}</span>`
+        : `余额支付 ￥<span id="pay-total">${payable.toFixed(1)}</span>`;
 
       confirmItems.innerHTML = items.map((item) => `
         <div class="confirm-item">
@@ -3474,9 +3526,10 @@
       if (lastAiItems.length) addRecommendation(lastAiItems, true);
     });
 
-    wheelSpin.addEventListener("click", async () => {
+    async function spinWheel() {
       if (!await askConfirm("趣味转盘每次将扣除 9.9 元余额，确认开始吗？", "确认转盘", "开始", "取消")) return;
       wheelSpin.disabled = true;
+      document.querySelector("#wheel-center-spin").disabled = true;
       wheelSpin.textContent = "转动中...";
       try {
         const response = await fetch("/api/my/wheel/spin", { method: "POST" });
@@ -3501,9 +3554,13 @@
         await showToast(`转盘停在：${result.prize.title}`, "转盘结果");
       } finally {
         wheelSpin.disabled = false;
+        document.querySelector("#wheel-center-spin").disabled = false;
         wheelSpin.textContent = "余额支付 9.9 元转一次";
       }
-    });
+    }
+
+    wheelSpin.addEventListener("click", spinWheel);
+    document.querySelector("#wheel-center-spin").addEventListener("click", spinWheel);
 
     document.querySelector("#auth-close").addEventListener("click", closeAuth);
     authModal.addEventListener("click", (event) => {

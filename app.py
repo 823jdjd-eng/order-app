@@ -426,10 +426,18 @@ def build_extended_menu():
 
 MENU = build_extended_menu()
 CATEGORY_ORDER = ["现做炖菜", "精品炒菜", "主食", "饮品"]
+WHEEL_MEAL_DISH_IDS = [
+    dish["id"] for dish in MENU
+    if dish["price"] <= 18 and dish["category"] in ("现做炖菜", "精品炒菜")
+][:5]
 
 
 def menu_item(dish_id):
     return next((dish for dish in MENU if dish["id"] == int(dish_id)), None)
+
+
+def wheel_meal_dishes():
+    return [dish for dish in (menu_item(dish_id) for dish_id in WHEEL_MEAL_DISH_IDS) if dish]
 
 
 def menu_with_sales():
@@ -847,7 +855,11 @@ def normalize_cart_items(raw_items):
         dish = menu_by_id.get(dish_id)
         if dish is None or quantity <= 0:
             continue
-        items.append({"id": dish_id, "quantity": quantity, "price": float(dish["price"]), "dish": dish})
+        try:
+            display_price = float(item.get("price", dish["price"]))
+        except (TypeError, ValueError):
+            display_price = float(dish["price"])
+        items.append({"id": dish_id, "quantity": quantity, "price": display_price, "dish": dish})
     return items
 
 
@@ -950,7 +962,14 @@ def admin_required(view):
 def index():
     menu = menu_with_sales()
     categories = [category for category in CATEGORY_ORDER if any(d["category"] == category for d in menu)]
-    return render_template("index.html", menu=menu, categories=categories, user=current_user())
+    return render_template(
+        "index.html",
+        menu=menu,
+        categories=categories,
+        user=current_user(),
+        wheel_slots=wheel_meal_dishes(),
+        wheel_coke=menu_item(301),
+    )
 
 
 @app.get("/admin")
@@ -1123,6 +1142,7 @@ def create_order():
     user_id = session["user_id"]
     discount = 0
     coupon_row = None
+    packing_fee = 2
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with get_db() as conn:
@@ -1140,7 +1160,7 @@ def create_order():
             if discount <= 0:
                 return jsonify({"message": "优惠券不适用于当前商品"}), 400
 
-        payable = max(float(total) - float(discount), 0)
+        payable = max(float(total) + packing_fee - float(discount), 0)
         user_balance = conn.execute(
             "SELECT balance FROM users WHERE id = ?",
             (user_id,),
@@ -1467,11 +1487,7 @@ def spin_wheel():
     user_id = session["user_id"]
     cost = 9.9
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    free_meals = [
-        dish for dish in MENU
-        if dish["price"] <= 18 and dish["category"] in ("现做炖菜", "精品炒菜")
-    ]
-    meal_pool = random.sample(free_meals, min(5, len(free_meals))) if free_meals else []
+    meal_pool = wheel_meal_dishes()
     roll = random.uniform(0, 100)
     if roll < 10:
         prize = {"type": "coupon", "title": "20元无门槛优惠券", "amount": 20, "min_amount": 0, "slot": 0, "target_type": "order", "discount_type": "amount"}

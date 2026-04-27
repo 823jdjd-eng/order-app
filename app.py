@@ -611,6 +611,32 @@ def init_db():
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS wheel_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                prize_type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS complaints (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                body TEXT NOT NULL,
+                reply TEXT,
+                status TEXT NOT NULL DEFAULT '待回复',
+                created_at TEXT NOT NULL,
+                replied_at TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
         for dish in MENU:
             conn.execute(
                 "INSERT OR IGNORE INTO dish_stats (dish_id, sales) VALUES (?, ?)",
@@ -784,6 +810,20 @@ def serialize_message(row):
         "sender": row["sender"],
         "body": row["body"],
         "created_at": row["created_at"],
+    }
+
+
+def serialize_complaint(row):
+    return {
+        "id": row["id"],
+        "user_id": row["user_id"],
+        "username": row["username"] if "username" in row.keys() else "",
+        "nickname": row["nickname"] if "nickname" in row.keys() else "",
+        "body": row["body"],
+        "reply": row["reply"] or "",
+        "status": row["status"],
+        "created_at": row["created_at"],
+        "replied_at": row["replied_at"] or "",
     }
 
 
@@ -1138,6 +1178,16 @@ def my_wallet():
             """,
             (user_id,),
         ).fetchall()
+        wheel_records = conn.execute(
+            """
+            SELECT id, prize_type, title, created_at
+            FROM wheel_records
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 8
+            """,
+            (user_id,),
+        ).fetchall()
         withdrawals = conn.execute(
             """
             SELECT id, wechat, amount, status, created_at
@@ -1177,6 +1227,7 @@ def my_wallet():
             "coupons": [serialize_coupon(row) for row in coupons],
             "withdrawals": [dict(row) for row in withdrawals],
             "transactions": [dict(row) for row in transactions],
+            "wheel_records": [dict(row) for row in wheel_records],
         }
     )
 
@@ -1292,6 +1343,119 @@ def withdraw_balance():
         )
         balance = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()["balance"]
     return jsonify({"message": "提现成功，预计24小时内到账", "balance": round(float(balance or 0), 2)})
+
+
+@app.post("/api/my/wheel/spin")
+@login_required
+def spin_wheel():
+    user_id = session["user_id"]
+    cost = 9.9
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    free_meals = [
+        dish for dish in MENU
+        if dish["price"] <= 18 and dish["category"] in ("现做炖菜", "精品炒菜")
+    ]
+    meal_prizes = [
+        {"type": "meal", "title": f"{dish['name']}免费餐券", "dish": dish, "weight": 10}
+        for dish in random.sample(free_meals, min(5, len(free_meals)))
+    ]
+    prizes = [
+        {"type": "coupon", "title": "20元无门槛优惠券", "amount": 20, "min_amount": 0, "weight": 10},
+        {"type": "balance", "title": "100元余额", "amount": 100, "weight": 5},
+        *meal_prizes,
+        {"type": "coupon", "title": "任意菜品五折餐券", "amount": 18, "min_amount": 18, "weight": 5},
+        {"type": "coupon", "title": "可乐一瓶兑换券", "amount": 4, "min_amount": 4, "weight": 10},
+        {"type": "empty", "title": "空奖", "weight": 20},
+    ]
+    prize = random.choices(prizes, weights=[item["weight"] for item in prizes], k=1)[0]
+    with get_db() as conn:
+        user = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()
+        balance = float(user["balance"] or 0)
+        if balance < cost:
+            return jsonify({"message": "余额不足，转盘每次需要 9.9 元", "balance": round(balance, 2)}), 400
+        conn.execute("UPDATE users SET balance = balance - ? WHERE id = ?", (cost, user_id))
+        conn.execute(
+            "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'wheel', ?, ?)",
+            (user_id, -cost, "趣味转盘", now),
+        )
+        if prize["type"] == "balance":
+            conn.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (prize["amount"], user_id))
+            conn.execute(
+                "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'wheel_prize', ?, ?)",
+                (user_id, prize["amount"], prize["title"], now),
+            )
+        elif prize["type"] == "coupon":
+            conn.execute(
+                """
+                INSERT INTO coupons (user_id, title, amount, min_amount, status, source, created_at)
+                VALUES (?, ?, ?, ?, 'unused', 'wheel', ?)
+                """,
+                (user_id, prize["title"], prize["amount"], prize["min_amount"], now),
+            )
+        elif prize["type"] == "meal":
+            dish = prize["dish"]
+            conn.execute(
+                """
+                INSERT INTO coupons (user_id, title, amount, min_amount, status, source, created_at)
+                VALUES (?, ?, ?, ?, 'unused', 'wheel', ?)
+                """,
+                (user_id, prize["title"], dish["price"], dish["price"], now),
+            )
+        conn.execute(
+            "INSERT INTO wheel_records (user_id, prize_type, title, created_at) VALUES (?, ?, ?, ?)",
+            (user_id, prize["type"], prize["title"], now),
+        )
+        balance = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()["balance"]
+    return jsonify(
+        {
+            "message": "抽奖完成",
+            "prize": {"type": prize["type"], "title": prize["title"]},
+            "balance": round(float(balance or 0), 2),
+        }
+    )
+
+
+@app.get("/api/my/complaints")
+@login_required
+def list_my_complaints():
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT complaints.*, users.username, users.nickname
+            FROM complaints
+            JOIN users ON users.id = complaints.user_id
+            WHERE complaints.user_id = ?
+            ORDER BY complaints.id DESC
+            LIMIT 20
+            """,
+            (session["user_id"],),
+        ).fetchall()
+    return jsonify([serialize_complaint(row) for row in rows])
+
+
+@app.post("/api/my/complaints")
+@login_required
+def create_my_complaint():
+    data = request.get_json(silent=True) or {}
+    body = data.get("body", "").strip()
+    if not body:
+        return jsonify({"message": "请输入投诉内容"}), 400
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        cursor = conn.execute(
+            "INSERT INTO complaints (user_id, body, created_at) VALUES (?, ?, ?)",
+            (session["user_id"], body, now),
+        )
+        row = conn.execute(
+            """
+            SELECT complaints.*, users.username, users.nickname
+            FROM complaints
+            JOIN users ON users.id = complaints.user_id
+            WHERE complaints.id = ?
+            """,
+            (cursor.lastrowid,),
+        ).fetchone()
+    return jsonify(serialize_complaint(row)), 201
 
 
 @app.get("/api/admin/wallet-records")
@@ -1524,8 +1688,8 @@ def admin_recharge():
         amount = 0
     if not username:
         return jsonify({"message": "请输入用户名"}), 400
-    if amount <= 0:
-        return jsonify({"message": "充值金额必须大于 0"}), 400
+    if amount == 0:
+        return jsonify({"message": "充值金额不能为 0，可输入负数扣除余额"}), 400
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with get_db() as conn:
         user = conn.execute(
@@ -1534,21 +1698,59 @@ def admin_recharge():
         ).fetchone()
         if user is None:
             return jsonify({"message": "用户不存在"}), 404
+        new_balance = float(user["balance"] or 0) + amount
+        if new_balance < 0:
+            return jsonify({"message": "扣除后余额不能小于 0"}), 400
         conn.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (amount, user["id"]))
         conn.execute(
-            "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'recharge', ?, ?)",
-            (user["id"], amount, note, now),
+            "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, ?, ?, ?)",
+            (user["id"], amount, "recharge" if amount > 0 else "deduct", note, now),
         )
         balance = conn.execute("SELECT balance FROM users WHERE id = ?", (user["id"],)).fetchone()["balance"]
     return jsonify(
         {
-            "message": "充值成功",
+            "message": "充值成功" if amount > 0 else "余额扣除成功",
             "username": user["username"],
             "nickname": user["nickname"] or user["username"],
             "amount": amount,
             "balance": round(float(balance or 0), 2),
         }
     )
+
+
+@app.get("/api/admin/complaints")
+@admin_required
+def list_admin_complaints():
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT complaints.*, users.username, users.nickname
+            FROM complaints
+            JOIN users ON users.id = complaints.user_id
+            ORDER BY complaints.id DESC
+            LIMIT 100
+            """
+        ).fetchall()
+    return jsonify([serialize_complaint(row) for row in rows])
+
+
+@app.patch("/api/admin/complaints/<int:complaint_id>")
+@admin_required
+def reply_admin_complaint(complaint_id):
+    data = request.get_json(silent=True) or {}
+    reply = data.get("reply", "").strip()
+    if not reply:
+        return jsonify({"message": "请输入回复内容"}), 400
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        complaint = conn.execute("SELECT id FROM complaints WHERE id = ?", (complaint_id,)).fetchone()
+        if complaint is None:
+            return jsonify({"message": "投诉不存在"}), 404
+        conn.execute(
+            "UPDATE complaints SET reply = ?, status = '已回复', replied_at = ? WHERE id = ?",
+            (reply, now, complaint_id),
+        )
+    return jsonify({"message": "已回复投诉", "reply": reply, "replied_at": now})
 
 
 @app.post("/api/admin/password")

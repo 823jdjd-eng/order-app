@@ -1101,6 +1101,99 @@
       font-weight: 900;
     }
 
+    .wheel-card {
+      overflow: hidden;
+      padding: 18px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 50% 46%, #ffffff 0 18%, transparent 19%),
+        conic-gradient(from -18deg, #dff7ee 0 10%, #fff5df 10% 20%, #e7f0ff 20% 30%, #d6f5e9 30% 40%, #fff 40% 50%, #dff7ee 50% 60%, #fff5df 60% 70%, #e7f0ff 70% 80%, #d6f5e9 80% 90%, #fff 90% 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .wheel-disc {
+      position: relative;
+      width: min(310px, 78vw);
+      aspect-ratio: 1;
+      margin: 8px auto 16px;
+      border: 12px solid #fff;
+      border-radius: 50%;
+      background: conic-gradient(#dff7ee 0 36deg, #fff4dc 36deg 72deg, #eaf1ff 72deg 108deg, #f8fffb 108deg 144deg, #cdeee2 144deg 180deg, #fff4dc 180deg 216deg, #dff7ee 216deg 252deg, #fff 252deg 288deg, #eaf1ff 288deg 324deg, #f2f8f5 324deg 360deg);
+      display: grid;
+      place-items: center;
+      transition: transform 2.8s cubic-bezier(.16,.84,.3,1);
+    }
+
+    .wheel-disc::before {
+      content: "";
+      position: absolute;
+      top: -24px;
+      width: 0;
+      height: 0;
+      border-left: 16px solid transparent;
+      border-right: 16px solid transparent;
+      border-top: 30px solid #0d7659;
+      z-index: 2;
+    }
+
+    .wheel-center {
+      position: relative;
+      z-index: 3;
+      width: 104px;
+      height: 104px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      color: #0d7659;
+      font-size: 20px;
+      font-weight: 950;
+      box-shadow: 0 12px 28px rgba(8, 122, 97, 0.16);
+    }
+
+    .wheel-tags {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .wheel-tags span {
+      padding: 9px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #526071;
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .complaint-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .complaint-form textarea {
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    .complaint-card {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #f7faf9;
+      color: #526071;
+      font-weight: 900;
+    }
+
     .ai-hero {
       min-height: 180px;
       display: grid;
@@ -1633,6 +1726,14 @@
             <button class="primary" id="checkin-button" type="button">签到</button>
           </article>
 
+          <article class="checkin-card" data-go="wheel">
+            <div>
+              <strong>趣味转盘</strong>
+              <div class="muted">9.9 元余额转一次，奖品会自动放入余额或优惠券。</div>
+            </div>
+            <button class="primary" type="button">去转盘</button>
+          </article>
+
           {% set stew_recommendations = menu | selectattr("category", "equalto", "现做炖菜") | list %}
           {% set fry_recommendations = menu | selectattr("category", "equalto", "精品炒菜") | list %}
           <div class="section-head">
@@ -1801,6 +1902,34 @@
             <button class="primary" type="submit">发送</button>
           </form>
         </div>
+      </section>
+
+      <section class="page page-pad" data-page="wheel">
+        <div class="cart-head">
+          <div>
+            <button class="back-button" data-go="home" type="button">‹</button>
+            <h1 class="page-title">趣味转盘</h1>
+            <div class="muted">每次消耗 9.9 元余额，中奖后自动到账。</div>
+          </div>
+        </div>
+        <article class="wheel-card">
+          <div class="wheel-disc" id="wheel-disc">
+            <div class="wheel-center">开转</div>
+          </div>
+          <div class="wheel-tags">
+            <span>20元无门槛券</span>
+            <span>100元余额</span>
+            <span>免费餐券</span>
+            <span>任意菜品五折券</span>
+            <span>可乐一瓶</span>
+            <span>谢谢参与</span>
+          </div>
+          <button class="primary" id="wheel-spin" type="button" style="width:100%;min-height:50px;">余额支付 9.9 元转一次</button>
+        </article>
+        <article class="profile-tile">
+          <div class="profile-tile-head"><span>中奖记录</span><span class="muted">只展示结果</span></div>
+          <div class="balance-history" id="wheel-records"></div>
+        </article>
       </section>
 
       <section class="page confirm-page" data-page="confirm">
@@ -2102,6 +2231,9 @@
     const balancePageHistory = document.querySelector("#balance-page-history");
     const withdrawPageForm = document.querySelector("#withdraw-page-form");
     const withdrawPageMessage = document.querySelector("#withdraw-page-message");
+    const wheelDisc = document.querySelector("#wheel-disc");
+    const wheelSpin = document.querySelector("#wheel-spin");
+    const wheelRecords = document.querySelector("#wheel-records");
     const appDialog = document.querySelector("#app-dialog");
     const dialogTitle = document.querySelector("#dialog-title");
     const dialogMessage = document.querySelector("#dialog-message");
@@ -2232,6 +2364,7 @@
       if (tab === "confirm") renderConfirm();
       if (tab === "dish-detail") renderDishDetail();
       if (tab === "balance") renderBalancePage();
+      if (tab === "wheel") renderWheelRecords();
       if (tab === "messages") {
         loadMerchantMessages();
         if (!merchantMessageTimer) {
@@ -2373,6 +2506,19 @@
         : '<div class="muted">暂无余额明细</div>';
     }
 
+    async function renderWheelRecords() {
+      if (!walletState) await loadWallet();
+      const records = walletState?.wheel_records || [];
+      wheelRecords.innerHTML = records.length
+        ? records.map((item) => `
+            <div class="balance-history-row">
+              <span>${escapeHTML(item.title)}<br><small>${escapeHTML(item.created_at || "")}</small></span>
+              <strong>${item.prize_type === "empty" ? "空奖" : "已到账"}</strong>
+            </div>
+          `).join("")
+        : '<div class="muted">暂无中奖记录，转一次试试手气。</div>';
+    }
+
     function renderBalanceModal() {
       const balance = Number(walletState?.balance || 0);
       balanceModalAmount.textContent = balance.toFixed(2);
@@ -2391,11 +2537,6 @@
     }
 
     async function openBalanceModal() {
-      if (!walletState) await loadWallet();
-      if (!walletState) {
-        openAuth("login");
-        return;
-      }
       switchTab("balance");
     }
 
@@ -2826,6 +2967,23 @@
       return await response.json();
     }
 
+    async function loadComplaints() {
+      const list = document.querySelector("#complaint-list");
+      if (!list) return;
+      const response = await fetch("/api/my/complaints");
+      if (response.status === 401) return;
+      const complaints = await response.json();
+      list.innerHTML = complaints.length
+        ? complaints.slice(0, 5).map((item) => `
+            <div class="complaint-card">
+              <span>${escapeHTML(item.body)}</span>
+              <small>${escapeHTML(item.created_at)} · ${escapeHTML(item.status)}</small>
+              ${item.reply ? `<strong>商家回复：${escapeHTML(item.reply)}</strong>` : '<span class="muted">等待商家回复</span>'}
+            </div>
+          `).join("")
+        : '<div class="muted">暂无投诉记录</div>';
+    }
+
     function orderCards(orders) {
       if (!orders.length) {
         return '<div class="cart-empty" style="min-height:120px;">还没有订单<br>下单后这里会显示商家处理状态</div>';
@@ -2924,7 +3082,16 @@
           <div class="profile-tile-head"><span>收藏与浏览</span><span class="muted">常点更快</span></div>
           ${renderDishList([...storedIds("favorites"), ...storedIds("viewHistory")].slice(0, 4), "暂无收藏或浏览记录")}
         </article>
+        <article class="profile-tile">
+          <div class="profile-tile-head"><span>投诉反馈</span><span class="muted">商家会在后台回复</span></div>
+          <form class="complaint-form" id="complaint-form">
+            <textarea id="complaint-text" placeholder="写下你的投诉、建议或需要商家处理的问题"></textarea>
+            <button class="primary" type="submit">提交投诉</button>
+          </form>
+          <div class="balance-history" id="complaint-list"></div>
+        </article>
       `;
+      loadComplaints();
     }
 
     document.addEventListener("click", (event) => {
@@ -3248,6 +3415,31 @@
       if (lastAiItems.length) addRecommendation(lastAiItems, true);
     });
 
+    wheelSpin.addEventListener("click", async () => {
+      if (!await askConfirm("趣味转盘每次将扣除 9.9 元余额，确认开始吗？", "确认转盘", "开始", "取消")) return;
+      wheelSpin.disabled = true;
+      wheelSpin.textContent = "转动中...";
+      wheelDisc.style.transform = `rotate(${1080 + Math.floor(Math.random() * 720)}deg)`;
+      try {
+        const response = await fetch("/api/my/wheel/spin", { method: "POST" });
+        if (response.status === 401) {
+          openAuth("login");
+          return;
+        }
+        const result = await response.json();
+        if (!response.ok) {
+          await showToast(result.message || "转盘失败", "无法抽奖");
+          return;
+        }
+        await loadWallet();
+        renderWheelRecords();
+        await showToast(`恭喜抽中：${result.prize.title}`, "转盘结果");
+      } finally {
+        wheelSpin.disabled = false;
+        wheelSpin.textContent = "余额支付 9.9 元转一次";
+      }
+    });
+
     document.querySelector("#auth-close").addEventListener("click", closeAuth);
     authModal.addEventListener("click", (event) => {
       if (event.target === authModal) closeAuth();
@@ -3332,6 +3524,26 @@
     document.querySelector("#logout-button")?.addEventListener("click", async () => {
       await fetch("/api/auth/logout", { method: "POST" });
       window.location.reload();
+    });
+
+    document.addEventListener("submit", async (event) => {
+      if (event.target.id !== "complaint-form") return;
+      event.preventDefault();
+      const text = document.querySelector("#complaint-text").value.trim();
+      if (!text) return;
+      const response = await fetch("/api/my/complaints", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: text })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        await showToast(result.message || "提交失败", "投诉失败");
+        return;
+      }
+      document.querySelector("#complaint-text").value = "";
+      await showToast("投诉已提交，等待商家回复。", "提交成功");
+      loadComplaints();
     });
 
     updateLocation();

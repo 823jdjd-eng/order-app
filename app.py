@@ -520,6 +520,34 @@ def init_db():
             """
         )
         ensure_column(conn, "coupons", "source", "TEXT NOT NULL DEFAULT 'merchant'")
+        ensure_column(conn, "coupons", "target_type", "TEXT NOT NULL DEFAULT 'order'")
+        ensure_column(conn, "coupons", "target_dish_id", "INTEGER")
+        ensure_column(conn, "coupons", "discount_type", "TEXT NOT NULL DEFAULT 'amount'")
+        ensure_column(conn, "coupons", "discount_rate", "REAL")
+        conn.execute(
+            """
+            UPDATE coupons
+            SET target_type = 'dish', target_dish_id = 301, min_amount = 0, discount_type = 'amount'
+            WHERE title LIKE '%可乐%' AND status = 'unused'
+            """
+        )
+        conn.execute(
+            """
+            UPDATE coupons
+            SET target_type = 'any_dish', target_dish_id = NULL, amount = 0, min_amount = 0,
+                discount_type = 'rate', discount_rate = 0.5
+            WHERE title LIKE '%五折%' AND status = 'unused'
+            """
+        )
+        for dish in MENU:
+            conn.execute(
+                """
+                UPDATE coupons
+                SET target_type = 'dish', target_dish_id = ?, amount = ?, min_amount = 0, discount_type = 'amount'
+                WHERE title = ? AND status = 'unused'
+                """,
+                (dish["id"], dish["price"], "{}免费餐券".format(dish["name"])),
+            )
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS orders (
@@ -797,10 +825,72 @@ def serialize_coupon(row):
         "min_amount": row["min_amount"],
         "status": row["status"],
         "source": row["source"] if "source" in row.keys() else "merchant",
+        "target_type": row["target_type"] if "target_type" in row.keys() else "order",
+        "target_dish_id": row["target_dish_id"] if "target_dish_id" in row.keys() else None,
+        "discount_type": row["discount_type"] if "discount_type" in row.keys() else "amount",
+        "discount_rate": row["discount_rate"] if "discount_rate" in row.keys() else None,
         "created_at": row["created_at"],
         "used_at": row["used_at"],
         "order_id": row["order_id"],
     }
+
+
+def normalize_cart_items(raw_items):
+    items = []
+    menu_by_id = {dish["id"]: dish for dish in MENU}
+    for item in raw_items or []:
+        try:
+            dish_id = int(item.get("id"))
+            quantity = int(item.get("quantity", 0))
+        except (TypeError, ValueError):
+            continue
+        dish = menu_by_id.get(dish_id)
+        if dish is None or quantity <= 0:
+            continue
+        items.append({"id": dish_id, "quantity": quantity, "price": float(dish["price"]), "dish": dish})
+    return items
+
+
+def coupon_discount(row, cart_items):
+    if row is None or row["status"] != "unused":
+        return 0
+    target_type = row["target_type"] if "target_type" in row.keys() and row["target_type"] else "order"
+    discount_type = row["discount_type"] if "discount_type" in row.keys() and row["discount_type"] else "amount"
+    amount = float(row["amount"] or 0)
+    min_amount = float(row["min_amount"] or 0)
+    subtotal = sum(item["price"] * item["quantity"] for item in cart_items)
+    if subtotal <= 0:
+        return 0
+
+    if target_type == "dish":
+        target_id = row["target_dish_id"] if "target_dish_id" in row.keys() else None
+        target_total = sum(item["price"] * item["quantity"] for item in cart_items if item["id"] == target_id)
+        if target_total <= 0 or target_total < min_amount:
+            return 0
+        return round(min(amount, target_total), 2)
+
+    if target_type == "any_dish" or discount_type == "rate":
+        eligible = [item["price"] for item in cart_items if item["quantity"] > 0]
+        if not eligible or subtotal < min_amount:
+            return 0
+        rate = row["discount_rate"] if "discount_rate" in row.keys() and row["discount_rate"] else 0.5
+        return round(max(eligible) * (1 - float(rate)), 2)
+
+    if subtotal < min_amount:
+        return 0
+    return round(min(amount, subtotal), 2)
+
+
+def coupon_label(coupon):
+    target_type = coupon.get("target_type", "order")
+    discount_type = coupon.get("discount_type", "amount")
+    if target_type == "dish" and coupon.get("target_dish_id"):
+        dish = menu_item(coupon["target_dish_id"])
+        target = dish["name"] if dish else "指定商品"
+        return "{}：仅限{}使用".format(coupon["title"], target)
+    if target_type == "any_dish" or discount_type == "rate":
+        return "{}：任意单品五折".format(coupon["title"])
+    return "{}：满￥{}减￥{}".format(coupon["title"], coupon["min_amount"], coupon["amount"])
 
 
 def serialize_message(row):
@@ -1046,9 +1136,9 @@ def create_order():
             ).fetchone()
             if coupon_row is None:
                 return jsonify({"message": "优惠券不可用"}), 400
-            if total < coupon_row["min_amount"]:
-                return jsonify({"message": "未达到优惠券使用门槛"}), 400
-            discount = min(float(coupon_row["amount"]), float(total))
+            discount = coupon_discount(coupon_row, order_items)
+            if discount <= 0:
+                return jsonify({"message": "优惠券不适用于当前商品"}), 400
 
         payable = max(float(total) - float(discount), 0)
         user_balance = conn.execute(
@@ -1141,6 +1231,10 @@ def list_my_orders():
 @login_required
 def list_my_coupons():
     min_total = float(request.args.get("total", 0) or 0)
+    try:
+        cart_items = normalize_cart_items(json.loads(request.args.get("items", "[]") or "[]"))
+    except (TypeError, ValueError):
+        cart_items = []
     include_all = request.args.get("all") == "1"
     status_filter = "" if include_all else "AND coupons.status = 'unused'"
     with get_db() as conn:
@@ -1154,9 +1248,28 @@ def list_my_coupons():
             (session["user_id"],),
         ).fetchall()
     coupons = [serialize_coupon(row) for row in rows]
+    row_by_id = {row["id"]: row for row in rows}
+    fallback_items = [{"id": 0, "quantity": 1, "price": min_total, "dish": {}}] if min_total else []
     for coupon in coupons:
-        coupon["available"] = min_total >= coupon["min_amount"]
+        discount = coupon_discount(row_by_id[coupon["id"]], cart_items or fallback_items)
+        coupon["discount"] = discount
+        coupon["available"] = coupon["status"] == "unused" and discount > 0
+        coupon["label"] = coupon_label(coupon)
     return jsonify(coupons)
+
+
+@app.delete("/api/my/coupons/<int:coupon_id>")
+@login_required
+def delete_my_coupon(coupon_id):
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT id FROM coupons WHERE id = ? AND user_id = ?",
+            (coupon_id, session["user_id"]),
+        ).fetchone()
+        if row is None:
+            return jsonify({"message": "优惠券不存在"}), 404
+        conn.execute("DELETE FROM coupons WHERE id = ? AND user_id = ?", (coupon_id, session["user_id"]))
+    return jsonify({"message": "已删除"})
 
 
 @app.get("/api/my/wallet")
@@ -1214,6 +1327,9 @@ def my_wallet():
         last_day = parse_iso_date(user["last_checkin_date"])
         if not checked_today and last_day != date.today() - timedelta(days=1):
             next_streak = 1
+    serialized_coupons = [serialize_coupon(row) for row in coupons]
+    for coupon in serialized_coupons:
+        coupon["label"] = coupon_label(coupon)
     return jsonify(
         {
             "points": user["points"],
@@ -1224,7 +1340,7 @@ def my_wallet():
             "last_checkin_date": user["last_checkin_date"],
             "checked_today": checked_today,
             "next_reward": 0 if checked_today else reward_for_streak(next_streak),
-            "coupons": [serialize_coupon(row) for row in coupons],
+            "coupons": serialized_coupons,
             "withdrawals": [dict(row) for row in withdrawals],
             "transactions": [dict(row) for row in transactions],
             "wheel_records": [dict(row) for row in wheel_records],
@@ -1355,19 +1471,23 @@ def spin_wheel():
         dish for dish in MENU
         if dish["price"] <= 18 and dish["category"] in ("现做炖菜", "精品炒菜")
     ]
-    meal_prizes = [
-        {"type": "meal", "title": f"{dish['name']}免费餐券", "dish": dish, "weight": 10}
-        for dish in random.sample(free_meals, min(5, len(free_meals)))
-    ]
-    prizes = [
-        {"type": "coupon", "title": "20元无门槛优惠券", "amount": 20, "min_amount": 0, "weight": 10},
-        {"type": "balance", "title": "100元余额", "amount": 100, "weight": 5},
-        *meal_prizes,
-        {"type": "coupon", "title": "任意菜品五折餐券", "amount": 18, "min_amount": 18, "weight": 5},
-        {"type": "coupon", "title": "可乐一瓶兑换券", "amount": 4, "min_amount": 4, "weight": 10},
-        {"type": "empty", "title": "空奖", "weight": 20},
-    ]
-    prize = random.choices(prizes, weights=[item["weight"] for item in prizes], k=1)[0]
+    meal_pool = random.sample(free_meals, min(5, len(free_meals))) if free_meals else []
+    roll = random.uniform(0, 100)
+    if roll < 10:
+        prize = {"type": "coupon", "title": "20元无门槛优惠券", "amount": 20, "min_amount": 0, "slot": 0, "target_type": "order", "discount_type": "amount"}
+    elif roll < 15:
+        prize = {"type": "balance", "title": "100元余额", "amount": 100, "slot": 1}
+    elif roll < 65 and meal_pool:
+        index = min(int((roll - 15) // 10), len(meal_pool) - 1)
+        dish = meal_pool[index]
+        prize = {"type": "meal", "title": "{}免费餐券".format(dish["name"]), "dish": dish, "slot": 2 + index}
+    elif roll < 70:
+        prize = {"type": "coupon", "title": "任意菜品五折餐券", "amount": 0, "min_amount": 0, "slot": 7, "target_type": "any_dish", "discount_type": "rate", "discount_rate": 0.5}
+    elif roll < 80:
+        coke = menu_item(301)
+        prize = {"type": "coupon", "title": "可口可乐兑换券", "amount": float(coke["price"] if coke else 4), "min_amount": 0, "slot": 8, "target_type": "dish", "target_dish_id": 301, "discount_type": "amount"}
+    else:
+        prize = {"type": "empty", "title": "谢谢参与", "slot": 9}
     with get_db() as conn:
         user = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()
         balance = float(user["balance"] or 0)
@@ -1387,19 +1507,31 @@ def spin_wheel():
         elif prize["type"] == "coupon":
             conn.execute(
                 """
-                INSERT INTO coupons (user_id, title, amount, min_amount, status, source, created_at)
-                VALUES (?, ?, ?, ?, 'unused', 'wheel', ?)
+                INSERT INTO coupons
+                (user_id, title, amount, min_amount, status, source, target_type, target_dish_id, discount_type, discount_rate, created_at)
+                VALUES (?, ?, ?, ?, 'unused', 'wheel', ?, ?, ?, ?, ?)
                 """,
-                (user_id, prize["title"], prize["amount"], prize["min_amount"], now),
+                (
+                    user_id,
+                    prize["title"],
+                    prize["amount"],
+                    prize["min_amount"],
+                    prize.get("target_type", "order"),
+                    prize.get("target_dish_id"),
+                    prize.get("discount_type", "amount"),
+                    prize.get("discount_rate"),
+                    now,
+                ),
             )
         elif prize["type"] == "meal":
             dish = prize["dish"]
             conn.execute(
                 """
-                INSERT INTO coupons (user_id, title, amount, min_amount, status, source, created_at)
-                VALUES (?, ?, ?, ?, 'unused', 'wheel', ?)
+                INSERT INTO coupons
+                (user_id, title, amount, min_amount, status, source, target_type, target_dish_id, discount_type, created_at)
+                VALUES (?, ?, ?, ?, 'unused', 'wheel', 'dish', ?, 'amount', ?)
                 """,
-                (user_id, prize["title"], dish["price"], dish["price"], now),
+                (user_id, prize["title"], dish["price"], 0, dish["id"], now),
             )
         conn.execute(
             "INSERT INTO wheel_records (user_id, prize_type, title, created_at) VALUES (?, ?, ?, ?)",
@@ -1409,7 +1541,7 @@ def spin_wheel():
     return jsonify(
         {
             "message": "抽奖完成",
-            "prize": {"type": prize["type"], "title": prize["title"]},
+            "prize": {"type": prize["type"], "title": prize["title"], "slot": prize["slot"]},
             "balance": round(float(balance or 0), 2),
         }
     )

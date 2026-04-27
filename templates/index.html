@@ -1106,8 +1106,8 @@
       padding: 18px;
       border-radius: 24px;
       background:
-        radial-gradient(circle at 50% 46%, #ffffff 0 18%, transparent 19%),
-        conic-gradient(from -18deg, #dff7ee 0 10%, #fff5df 10% 20%, #e7f0ff 20% 30%, #d6f5e9 30% 40%, #fff 40% 50%, #dff7ee 50% 60%, #fff5df 60% 70%, #e7f0ff 70% 80%, #d6f5e9 80% 90%, #fff 90% 100%);
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.95) 0 18%, transparent 19%),
+        linear-gradient(135deg, rgba(255, 243, 196, .96), rgba(214, 247, 239, .96) 48%, rgba(239, 228, 255, .92));
       box-shadow: var(--shadow);
     }
 
@@ -1116,12 +1116,25 @@
       width: min(310px, 78vw);
       aspect-ratio: 1;
       margin: 8px auto 16px;
-      border: 12px solid #fff;
+      border: 12px solid rgba(255, 255, 255, .96);
       border-radius: 50%;
-      background: conic-gradient(#dff7ee 0 36deg, #fff4dc 36deg 72deg, #eaf1ff 72deg 108deg, #f8fffb 108deg 144deg, #cdeee2 144deg 180deg, #fff4dc 180deg 216deg, #dff7ee 216deg 252deg, #fff 252deg 288deg, #eaf1ff 288deg 324deg, #f2f8f5 324deg 360deg);
+      background:
+        radial-gradient(circle at center, transparent 0 31%, rgba(255,255,255,.2) 32% 34%, transparent 35%),
+        conic-gradient(from -18deg,
+          #ffcf5a 0 36deg,
+          #78dfbd 36deg 72deg,
+          #ff8da1 72deg 108deg,
+          #8bb7ff 108deg 144deg,
+          #ffd980 144deg 180deg,
+          #9debd6 180deg 216deg,
+          #f7a7ff 216deg 252deg,
+          #7fd8ff 252deg 288deg,
+          #ff9d68 288deg 324deg,
+          #d9e2eb 324deg 360deg);
       display: grid;
       place-items: center;
-      transition: transform 2.8s cubic-bezier(.16,.84,.3,1);
+      transition: transform 3.4s cubic-bezier(.12,.78,.16,1);
+      box-shadow: 0 22px 50px rgba(13, 118, 89, .18), inset 0 0 0 1px rgba(255,255,255,.65);
     }
 
     .wheel-disc::before {
@@ -1151,21 +1164,39 @@
       box-shadow: 0 12px 28px rgba(8, 122, 97, 0.16);
     }
 
-    .wheel-tags {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin: 14px 0;
+    .wheel-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 74px;
+      margin-left: -37px;
+      margin-top: -13px;
+      color: #102033;
+      font-size: 11px;
+      line-height: 1.12;
+      font-weight: 950;
+      text-align: center;
+      text-shadow: 0 1px 0 rgba(255,255,255,.75);
+      transform-origin: 37px 13px;
+      pointer-events: none;
     }
 
-    .wheel-tags span {
-      padding: 9px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.72);
-      color: #526071;
-      font-size: 12px;
-      font-weight: 900;
-      text-align: center;
+    .wheel-label:nth-child(1) { transform: rotate(0deg) translateY(-112px) rotate(0deg); }
+    .wheel-label:nth-child(2) { transform: rotate(36deg) translateY(-112px) rotate(-36deg); }
+    .wheel-label:nth-child(3) { transform: rotate(72deg) translateY(-112px) rotate(-72deg); }
+    .wheel-label:nth-child(4) { transform: rotate(108deg) translateY(-112px) rotate(-108deg); }
+    .wheel-label:nth-child(5) { transform: rotate(144deg) translateY(-112px) rotate(-144deg); }
+    .wheel-label:nth-child(6) { transform: rotate(180deg) translateY(-112px) rotate(-180deg); }
+    .wheel-label:nth-child(7) { transform: rotate(216deg) translateY(-112px) rotate(-216deg); }
+    .wheel-label:nth-child(8) { transform: rotate(252deg) translateY(-112px) rotate(-252deg); }
+    .wheel-label:nth-child(9) { transform: rotate(288deg) translateY(-112px) rotate(-288deg); }
+    .wheel-label:nth-child(10) { transform: rotate(324deg) translateY(-112px) rotate(-324deg); }
+
+    .coupon-card-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
     }
 
     .complaint-form {
@@ -1914,15 +1945,17 @@
         </div>
         <article class="wheel-card">
           <div class="wheel-disc" id="wheel-disc">
+            <span class="wheel-label">20元<br>券</span>
+            <span class="wheel-label">100元<br>余额</span>
+            <span class="wheel-label">免费<br>餐券</span>
+            <span class="wheel-label">免费<br>餐券</span>
+            <span class="wheel-label">免费<br>餐券</span>
+            <span class="wheel-label">免费<br>餐券</span>
+            <span class="wheel-label">免费<br>餐券</span>
+            <span class="wheel-label">任意菜<br>五折</span>
+            <span class="wheel-label">可乐<br>一瓶</span>
+            <span class="wheel-label">谢谢<br>参与</span>
             <div class="wheel-center">开转</div>
-          </div>
-          <div class="wheel-tags">
-            <span>20元无门槛券</span>
-            <span>100元余额</span>
-            <span>免费餐券</span>
-            <span>任意菜品五折券</span>
-            <span>可乐一瓶</span>
-            <span>谢谢参与</span>
           </div>
           <button class="primary" id="wheel-spin" type="button" style="width:100%;min-height:50px;">余额支付 9.9 元转一次</button>
         </article>
@@ -2191,6 +2224,7 @@
     let lastAiItems = [];
     let detailDishId = null;
     let aiImageFile = null;
+    let wheelRotation = 0;
     let merchantMessageTimer = null;
 
     const pages = document.querySelectorAll(".page");
@@ -2719,7 +2753,11 @@
     }
 
     async function loadCoupons(total) {
-      const response = await fetch(`/api/my/coupons?total=${encodeURIComponent(total)}`);
+      const cartItems = cartStats().items.map((item) => ({
+        id: item.id,
+        quantity: item.quantity
+      }));
+      const response = await fetch(`/api/my/coupons?total=${encodeURIComponent(total)}&items=${encodeURIComponent(JSON.stringify(cartItems))}`);
       if (response.status === 401) {
         availableCoupons = [];
         return;
@@ -2873,7 +2911,8 @@
       const packingFee = 2;
       await loadCoupons(total + packingFee);
       const currentCoupon = availableCoupons.find((coupon) => coupon.id === selectedCouponId && coupon.available);
-      const couponDiscount = currentCoupon ? Math.min(Number(currentCoupon.amount), total + packingFee) : 0;
+      if (selectedCouponId && !currentCoupon) selectedCouponId = null;
+      const couponDiscount = currentCoupon ? Number(currentCoupon.discount || 0) : 0;
       const discount = couponDiscount;
       const payable = Math.max(total + packingFee - discount, 0);
       if (!walletState) await loadWallet();
@@ -2908,7 +2947,7 @@
         couponList.innerHTML = availableCoupons.map((coupon) => `
           <button class="coupon-option ${coupon.available ? "" : "disabled"} ${selectedCouponId === coupon.id ? "active" : ""}"
             data-coupon-id="${coupon.id}" ${coupon.available ? "" : "disabled"}>
-            <span>${coupon.title}：满￥${coupon.min_amount} 减￥${coupon.amount}</span>
+            <span>${coupon.label || coupon.title}${coupon.available ? ` · 可抵￥${Number(coupon.discount || 0).toFixed(1)}` : " · 当前订单不可用"}</span>
             <span>${selectedCouponId === coupon.id ? "已选" : "使用"}</span>
           </button>
         `).join("");
@@ -3068,9 +3107,14 @@
           <div class="profile-tile-head"><span>优惠券</span><span class="muted">${availableCoupons.length} 张可用</span></div>
           ${coupons.length ? coupons.slice(0, 4).map((coupon) => `
             <div class="coupon-card ${coupon.status === "used" ? "used" : ""}">
-              <strong>${coupon.title}</strong>
-              <div class="price">￥${Number(coupon.amount).toFixed(1)}</div>
-              <div class="muted">满 ￥${Number(coupon.min_amount).toFixed(1)} 可用 · ${coupon.source === "points" ? "积分兑换" : "商家发放"} · ${coupon.status === "used" ? "已使用" : "未使用"}</div>
+              <div class="coupon-card-row">
+                <div>
+                  <strong>${coupon.title}</strong>
+                  <div class="muted">${coupon.label || `满 ￥${Number(coupon.min_amount).toFixed(1)} 可用`} · ${coupon.status === "used" ? "已使用" : "未使用"}</div>
+                </div>
+                <button class="pill" data-delete-coupon="${coupon.id}" type="button">删除</button>
+              </div>
+              <div class="price">${coupon.discount_type === "rate" ? "五折" : `￥${Number(coupon.amount).toFixed(1)}`}</div>
             </div>
           `).join("") : '<div class="muted">暂无优惠券，可签到攒积分兑换。</div>'}
         </article>
@@ -3112,6 +3156,7 @@
       const deleteOrderId = event.target.closest("[data-delete-order]")?.dataset.deleteOrder;
       const cancelOrderId = event.target.closest("[data-cancel-order]")?.dataset.cancelOrder;
       const removeFavoriteId = event.target.closest("[data-remove-favorite]")?.dataset.removeFavorite;
+      const deleteCouponId = event.target.closest("[data-delete-coupon]")?.dataset.deleteCoupon;
       const cartOpen = event.target.closest("[data-cart-open]");
       const cartPlus = event.target.closest("[data-cart-plus]")?.dataset.cartPlus;
       const cartMinus = event.target.closest("[data-cart-minus]")?.dataset.cartMinus;
@@ -3152,6 +3197,9 @@
         refreshFavoriteButtons();
         renderProfilePanel();
       }
+      if (deleteCouponId) {
+        deleteMyCoupon(deleteCouponId);
+      }
       if (nextPanel) {
         profilePanel = nextPanel;
         renderProfilePanel();
@@ -3190,6 +3238,17 @@
         openAuth("login");
         return;
       }
+      renderProfilePanel();
+    }
+
+    async function deleteMyCoupon(id) {
+      if (!await askConfirm("确定删除这张优惠券吗？删除后不可恢复。", "删除优惠券")) return;
+      const response = await fetch(`/api/my/coupons/${id}`, { method: "DELETE" });
+      if (response.status === 401) {
+        openAuth("login");
+        return;
+      }
+      await loadWallet();
       renderProfilePanel();
     }
 
@@ -3419,7 +3478,6 @@
       if (!await askConfirm("趣味转盘每次将扣除 9.9 元余额，确认开始吗？", "确认转盘", "开始", "取消")) return;
       wheelSpin.disabled = true;
       wheelSpin.textContent = "转动中...";
-      wheelDisc.style.transform = `rotate(${1080 + Math.floor(Math.random() * 720)}deg)`;
       try {
         const response = await fetch("/api/my/wheel/spin", { method: "POST" });
         if (response.status === 401) {
@@ -3431,9 +3489,16 @@
           await showToast(result.message || "转盘失败", "无法抽奖");
           return;
         }
+        const slot = Number(result.prize?.slot ?? 9);
+        const desired = (360 - slot * 36) % 360;
+        const current = ((wheelRotation % 360) + 360) % 360;
+        const delta = 1440 + ((desired - current + 360) % 360);
+        wheelRotation += delta;
+        wheelDisc.style.transform = `rotate(${wheelRotation}deg)`;
+        await new Promise((resolve) => setTimeout(resolve, 3500));
         await loadWallet();
         renderWheelRecords();
-        await showToast(`恭喜抽中：${result.prize.title}`, "转盘结果");
+        await showToast(`转盘停在：${result.prize.title}`, "转盘结果");
       } finally {
         wheelSpin.disabled = false;
         wheelSpin.textContent = "余额支付 9.9 元转一次";

@@ -2074,6 +2074,23 @@
         </div>
       </section>
 
+      <section class="page page-pad" data-page="coupons">
+        <div class="cart-head">
+          <div>
+            <button class="back-button" data-go="profile" type="button">‹</button>
+            <h1 class="page-title">我的优惠券</h1>
+            <div class="muted">未使用优惠券可在结算页选择，已使用券会自动作废。</div>
+          </div>
+        </div>
+        <article class="profile-tile">
+          <div class="auth-tabs" style="margin-bottom:14px;">
+            <button class="auth-tab active" data-coupon-tab="unused" type="button">未使用</button>
+            <button class="auth-tab" data-coupon-tab="used" type="button">已使用</button>
+          </div>
+          <div id="coupon-page-list"></div>
+        </article>
+      </section>
+
       <section class="page page-pad" data-page="balance">
         <div class="cart-head">
           <div>
@@ -2275,6 +2292,7 @@
     let aiImageFile = null;
     let wheelRotation = 0;
     let merchantMessageTimer = null;
+    let couponPageTab = "unused";
 
     const pages = document.querySelectorAll(".page");
     const navItems = document.querySelectorAll(".nav-item");
@@ -2312,6 +2330,7 @@
     const withdrawForm = document.querySelector("#withdraw-form");
     const balancePageAmount = document.querySelector("#balance-page-amount");
     const balancePageHistory = document.querySelector("#balance-page-history");
+    const couponPageList = document.querySelector("#coupon-page-list");
     const withdrawPageForm = document.querySelector("#withdraw-page-form");
     const withdrawPageMessage = document.querySelector("#withdraw-page-message");
     const wheelDisc = document.querySelector("#wheel-disc");
@@ -2447,6 +2466,7 @@
       if (tab === "confirm") renderConfirm();
       if (tab === "dish-detail") renderDishDetail();
       if (tab === "balance") renderBalancePage();
+      if (tab === "coupons") renderCouponPage();
       if (tab === "wheel") renderWheelRecords();
       if (tab === "messages") {
         loadMerchantMessages();
@@ -2589,6 +2609,32 @@
         : '<div class="muted">暂无余额明细</div>';
     }
 
+    async function renderCouponPage() {
+      document.querySelectorAll("[data-coupon-tab]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.couponTab === couponPageTab);
+      });
+      couponPageList.innerHTML = '<div class="muted">正在加载优惠券...</div>';
+      await loadWallet();
+      if (!walletState) {
+        openAuth("login");
+        switchTab("profile");
+        return;
+      }
+      const coupons = (walletState.coupons || []).filter((coupon) => coupon.status === couponPageTab);
+      couponPageList.innerHTML = coupons.length ? coupons.map((coupon) => `
+        <div class="coupon-card ${coupon.status === "used" ? "used" : ""}">
+          <div class="coupon-card-row">
+            <div>
+              <strong>${coupon.title}</strong>
+              <div class="muted">${coupon.label || `满 ￥${Number(coupon.min_amount).toFixed(1)} 可用`} · ${coupon.status === "used" ? "已使用" : "未使用"}</div>
+            </div>
+            <button class="pill" data-delete-coupon="${coupon.id}" type="button">删除</button>
+          </div>
+          <div class="price">${coupon.discount_type === "rate" ? "五折" : `￥${Number(coupon.amount).toFixed(1)}`}</div>
+        </div>
+      `).join("") : `<div class="cart-empty" style="min-height:160px;">暂无${couponPageTab === "unused" ? "未使用" : "已使用"}优惠券</div>`;
+    }
+
     async function renderWheelRecords() {
       if (!walletState) await loadWallet();
       const records = walletState?.wheel_records || [];
@@ -2609,7 +2655,9 @@
     }
 
     async function renderBalancePage() {
-      if (!walletState) await loadWallet();
+      balancePageAmount.textContent = Number(walletState?.balance || 0).toFixed(2);
+      renderBalanceRows(balancePageHistory);
+      await loadWallet();
       if (!walletState) {
         openAuth("login");
         switchTab("profile");
@@ -3133,7 +3181,7 @@
             <button class="pill" id="profile-checkin" type="button" ${walletState.checked_today ? "disabled" : ""}>${walletState.checked_today ? "今日已签到" : "签到"}</button>
           </div>
           <div class="profile-tile-grid">
-            <button class="profile-metric" id="balance-entry" type="button">
+            <button class="profile-metric" id="balance-entry" data-go="balance" type="button">
               <span class="muted">余额</span>
               <strong class="points-number">￥${Number(walletState.balance || 0).toFixed(1)}</strong>
             </button>
@@ -3143,13 +3191,13 @@
             </div>
           </div>
           <div class="profile-tile-grid" style="margin-top:10px;">
-            <div class="profile-metric">
-              <span class="muted">可用优惠券</span>
+            <button class="profile-metric" data-go="coupons" type="button">
+              <span class="muted">优惠券</span>
               <strong class="points-number">${availableCoupons.length}</strong>
-            </div>
+            </button>
             <div class="profile-metric">
-              <span class="muted">签到状态</span>
-              <strong class="points-number" style="font-size:22px;">${walletState.checked_today ? "已签到" : `+${walletState.next_reward}`}</strong>
+              <span class="muted">积分</span>
+              <strong class="points-number">${walletState.points}</strong>
             </div>
           </div>
           <div class="muted" style="margin-top:10px;">${walletState.checked_today ? "今天已签到" : `今天签到可得 ${walletState.next_reward} 积分`} · 20 积分可兑换 5 元优惠券</div>
@@ -3209,6 +3257,7 @@
       const cancelOrderId = event.target.closest("[data-cancel-order]")?.dataset.cancelOrder;
       const removeFavoriteId = event.target.closest("[data-remove-favorite]")?.dataset.removeFavorite;
       const deleteCouponId = event.target.closest("[data-delete-coupon]")?.dataset.deleteCoupon;
+      const couponTab = event.target.closest("[data-coupon-tab]")?.dataset.couponTab;
       const cartOpen = event.target.closest("[data-cart-open]");
       const cartPlus = event.target.closest("[data-cart-plus]")?.dataset.cartPlus;
       const cartMinus = event.target.closest("[data-cart-minus]")?.dataset.cartMinus;
@@ -3252,6 +3301,10 @@
       if (deleteCouponId) {
         deleteMyCoupon(deleteCouponId);
       }
+      if (couponTab) {
+        couponPageTab = couponTab;
+        renderCouponPage();
+      }
       if (nextPanel) {
         profilePanel = nextPanel;
         renderProfilePanel();
@@ -3266,7 +3319,6 @@
     document.addEventListener("click", (event) => {
       if (event.target.id === "profile-checkin" || event.target.id === "checkin-button") doCheckin();
       if (event.target.id === "redeem-coupon") redeemCoupon();
-      if (event.target.id === "balance-entry") openBalanceModal();
       if (event.target.id === "balance-page-recharge") showToast("请联系商家，商家可在后台为你的账号充值。", "充值说明");
       if (event.target.id === "detail-add" && detailDishId) {
         addDish(detailDishId, selectedDetailOptions());

@@ -246,6 +246,187 @@ FALLBACK_IMAGES = {
 }
 
 
+REAL_FOOD_IMAGES = [
+    "https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1563379091339-03246963d29a?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1604909052743-94e838986d24?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1605478371310-a9f1e96b4ff4?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1625938144755-652e08e359b7?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1582169296194-e4d644c48063?auto=format&fit=crop&w=760&q=82",
+    "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=760&q=82",
+]
+
+
+def build_extended_menu():
+    stews = [
+        ("土豆炖豆角", 20, "土豆绵软，豆角入味，东北家常炖菜"),
+        ("白菜炖豆腐", 10, "白菜清甜，豆腐嫩滑，汤汁鲜暖"),
+        ("小鸡炖土豆", 30, "鸡肉鲜嫩，土豆吸满汤汁，适合配米饭"),
+        ("排骨炖豆角", 36, "排骨酱香浓郁，豆角软烂入味"),
+        ("牛腩炖土豆", 38, "牛腩软糯，土豆绵密，汤汁浓厚"),
+        ("番茄炖牛腩", 39, "番茄酸甜，牛腩醇厚，暖胃开胃"),
+        ("酸菜炖粉条", 18, "酸菜爽口，粉条滑弹，东北老味道"),
+        ("猪肉炖粉条", 28, "五花肉香，粉条吸汁，热乎下饭"),
+        ("豆角炖南瓜", 18, "南瓜清甜，豆角鲜嫩，口感柔和"),
+        ("茄子炖土豆", 18, "茄子软糯，土豆吸汁，家常酱香"),
+        ("鲫鱼炖豆腐", 32, "鱼汤鲜白，豆腐嫩滑，清鲜暖身"),
+        ("冬瓜炖丸子", 24, "冬瓜清爽，肉丸弹嫩，汤头清亮"),
+        ("蘑菇炖鸡", 34, "蘑菇鲜香，鸡肉软嫩，汤汁浓郁"),
+        ("白菜炖粉条", 16, "白菜清甜，粉条滑顺，简单舒服"),
+        ("萝卜炖牛肉", 36, "萝卜吸满肉香，牛肉软烂"),
+        ("海带炖排骨", 32, "排骨鲜香，海带清爽，汤味厚实"),
+        ("芸豆炖土豆", 19, "芸豆软烂，土豆绵密，酱香足"),
+        ("豆腐炖鱼块", 34, "鱼块鲜嫩，豆腐吸汤，咸鲜适口"),
+        ("鸡腿炖蘑菇", 33, "鸡腿肉厚，蘑菇鲜香，汤汁下饭"),
+        ("牛肉炖萝卜", 37, "牛肉浓香，萝卜清甜解腻"),
+        ("土豆炖排骨", 34, "排骨入味，土豆软糯，分量扎实"),
+        ("豆角炖五花肉", 29, "五花肉焦香，豆角软烂"),
+        ("羊肉炖萝卜", 42, "羊肉鲜香，萝卜清甜，冬日热乎"),
+        ("番茄炖豆腐", 18, "番茄酸甜，豆腐嫩滑，清爽下饭"),
+        ("酸菜炖白肉", 31, "酸菜解腻，白肉香嫩，东北风味"),
+        ("茄子炖粉条", 19, "茄子软糯，粉条滑弹，酱香浓"),
+        ("白菜炖丸子", 22, "白菜清甜，丸子鲜弹，汤汁舒服"),
+        ("南瓜炖排骨", 33, "南瓜香甜，排骨咸鲜，层次丰富"),
+        ("鸡块炖豆角", 31, "鸡块鲜嫩，豆角入味，家常大菜"),
+        ("土豆炖牛肉", 37, "土豆绵软，牛肉醇香，汤汁浓厚"),
+        ("腐竹炖排骨", 35, "腐竹吸汁，排骨软香，口感扎实"),
+        ("豆腐炖白菜粉", 17, "豆腐白菜粉条，清鲜热乎"),
+        ("酸菜炖冻豆腐", 20, "冻豆腐吸汤，酸菜爽脆"),
+        ("黄豆炖猪蹄", 40, "猪蹄软糯，黄豆绵香，胶质满满"),
+        ("玉米炖排骨", 34, "玉米清甜，排骨鲜香，汤汁温润"),
+        ("莲藕炖排骨", 36, "莲藕粉糯，排骨醇香"),
+        ("豆角炖宽粉", 18, "宽粉弹滑，豆角酱香，素食也满足"),
+        ("小白菜炖豆腐", 15, "小白菜鲜嫩，豆腐清香"),
+        ("蘑菇炖豆腐", 18, "菌香浓郁，豆腐嫩滑"),
+        ("鸡翅炖土豆", 32, "鸡翅软嫩，土豆吸汁"),
+        ("牛筋炖萝卜", 43, "牛筋软糯，萝卜清甜"),
+        ("番茄土豆炖牛肉", 39, "酸甜浓郁，肉香饱满"),
+        ("豆角炖排骨粉条", 38, "排骨豆角粉条，一锅香浓"),
+        ("白菜炖虾仁豆腐", 28, "虾仁鲜甜，豆腐白菜清爽"),
+        ("酸菜炖鸡块", 30, "酸菜开胃，鸡块鲜嫩"),
+        ("香菇炖土鸡", 42, "香菇浓香，土鸡肉质紧实"),
+        ("萝卜炖羊排", 45, "羊排鲜香，萝卜清甜"),
+        ("豆腐炖肉末", 19, "肉末咸香，豆腐滑嫩"),
+        ("土豆炖茄子", 17, "土豆茄子双软糯，酱香浓"),
+        ("白菜炖海带", 15, "白菜清甜，海带鲜爽，轻盈热乎"),
+    ]
+    stir_fries = [
+        ("炒干豆腐", 15, "干豆腐软韧入味，大火快炒更香"),
+        ("豆腐炒鸡蛋", 13, "豆腐细嫩，鸡蛋香软，口味清爽"),
+        ("韭菜炒鸡蛋", 15, "韭菜鲜香，鸡蛋蓬松，现炒上桌"),
+        ("土豆丝炒鸡蛋", 13, "土豆丝爽口，鸡蛋香软，家常味十足"),
+        ("蒜苔炒肉", 18, "蒜苔脆香，肉片鲜嫩，米饭好搭档"),
+        ("尖椒干豆腐", 16, "尖椒清香，干豆腐软韧，东北经典"),
+        ("木耳炒鸡蛋", 15, "木耳脆爽，鸡蛋香嫩"),
+        ("鱼香肉丝", 24, "酸甜微辣，肉丝滑嫩，开胃下饭"),
+        ("宫保鸡丁", 26, "鸡丁鲜嫩，花生香脆，甜辣均衡"),
+        ("青椒肉丝", 20, "青椒清香，肉丝滑嫩，锅气十足"),
+        ("西红柿炒鸡蛋", 14, "酸甜番茄，滑嫩鸡蛋，家常经典"),
+        ("地三鲜", 18, "茄子土豆青椒，软糯咸香"),
+        ("干煸豆角", 18, "豆角焦香，干香入味"),
+        ("蒜蓉生菜", 13, "生菜清脆，蒜香鲜亮"),
+        ("手撕包菜", 14, "包菜脆甜，干椒炝香"),
+        ("麻婆豆腐", 16, "豆腐嫩滑，麻辣鲜香"),
+        ("孜然羊肉", 34, "羊肉焦香，孜然味足"),
+        ("葱爆牛肉", 32, "牛肉鲜嫩，葱香浓郁"),
+        ("香菇滑鸡", 26, "香菇浓郁，鸡肉滑嫩"),
+        ("辣椒炒肉", 22, "辣椒香辣，肉片鲜嫩，下饭有劲"),
+        ("蒜黄炒鸡蛋", 16, "蒜黄清香，鸡蛋软嫩"),
+        ("芹菜炒肉", 19, "芹菜清脆，肉片咸香"),
+        ("莲藕炒肉片", 21, "莲藕脆甜，肉片鲜香"),
+        ("黄瓜炒鸡蛋", 13, "黄瓜清爽，鸡蛋嫩香"),
+        ("西兰花炒虾仁", 30, "虾仁弹嫩，西兰花清爽"),
+        ("荷兰豆炒腊肠", 26, "荷兰豆清甜，腊肠浓香"),
+        ("香辣鸡翅", 28, "鸡翅焦香，微辣入味"),
+        ("回锅肉", 26, "五花肉焦香，蒜苗提味"),
+        ("京酱肉丝", 25, "肉丝酱香，咸甜适口"),
+        ("锅包肉", 30, "外酥里嫩，酸甜东北味"),
+        ("糖醋里脊", 28, "里脊酥嫩，酸甜开胃"),
+        ("酱爆鸡丁", 24, "鸡丁滑嫩，酱香浓郁"),
+        ("韭菜炒豆芽", 13, "豆芽脆嫩，韭香清爽"),
+        ("大葱炒鸡蛋", 14, "葱香浓，鸡蛋软嫩"),
+        ("素炒三丝", 12, "三丝清爽，轻盈下饭"),
+        ("清炒油麦菜", 13, "油麦菜清脆，蒜香柔和"),
+        ("香辣土豆片", 15, "土豆片焦香，香辣适口"),
+        ("肉末茄子", 20, "茄子软糯，肉末咸香"),
+        ("豆角炒肉", 20, "豆角爽脆，肉片鲜嫩"),
+        ("尖椒炒鸡蛋", 14, "尖椒清香，鸡蛋蓬松"),
+        ("酸辣白菜", 12, "白菜爽脆，酸辣开胃"),
+        ("蒜香排骨", 32, "排骨焦香，蒜香浓郁"),
+        ("蚝油生菜", 13, "生菜清甜，蚝油鲜香"),
+        ("香干炒肉", 19, "香干韧香，肉片鲜嫩"),
+        ("木须肉", 22, "鸡蛋木耳肉片，家常均衡"),
+        ("白菜炒粉条", 15, "白菜清甜，粉条滑弹"),
+        ("香辣虾", 38, "虾肉鲜弹，香辣浓郁"),
+        ("黑椒牛柳", 36, "牛柳嫩滑，黑椒香气足"),
+        ("炒合菜", 16, "多种时蔬快炒，清爽有锅气"),
+        ("葱姜炒鸡块", 28, "鸡块鲜嫩，葱姜香浓"),
+    ]
+    menu = []
+    for index, (name, price, description) in enumerate(stews, start=1):
+        options = [{"id": "fentiao", "name": "加粉条", "price": 5}]
+        if any(key in name for key in ["排骨", "牛", "羊", "猪蹄", "鸡"]):
+            options.append({"id": "tuodou", "name": "加土豆", "price": 4})
+        menu.append({
+            "id": index,
+            "name": name,
+            "category": "现做炖菜",
+            "price": price,
+            "tag": "现炖热乎",
+            "sales": 0,
+            "description": description,
+            "image": REAL_FOOD_IMAGES[(index - 1) % len(REAL_FOOD_IMAGES)],
+            "options": options,
+        })
+    for offset, (name, price, description) in enumerate(stir_fries, start=1):
+        dish_id = 50 + offset
+        options = []
+        if any(key in name for key in ["豆腐", "鸡蛋", "土豆丝", "豆角", "白菜", "生菜", "包菜", "油麦菜", "合菜"]):
+            options.append({"id": "rouding", "name": "加肉丁", "price": 5})
+        menu.append({
+            "id": dish_id,
+            "name": name,
+            "category": "精品炒菜",
+            "price": price,
+            "tag": "现炒锅气",
+            "sales": 0,
+            "description": description,
+            "image": REAL_FOOD_IMAGES[(dish_id - 1) % len(REAL_FOOD_IMAGES)],
+            "options": options,
+        })
+    menu.extend([
+        {"id": 201, "name": "现焖米饭", "category": "主食", "price": 3, "tag": "现焖", "sales": 0, "description": "一人份现焖米饭，颗粒饱满", "image": "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=760&q=82", "options": []},
+        {"id": 202, "name": "烀饼", "category": "主食", "price": 10, "tag": "炖菜限定", "sales": 0, "description": "炖菜点单推荐搭配，吸汤更香", "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=760&q=82", "options": []},
+        {"id": 301, "name": "可口可乐", "category": "饮品", "price": 4, "tag": "冰爽", "sales": 0, "description": "经典汽水，冰镇更爽", "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=760&q=82", "options": []},
+        {"id": 302, "name": "芬达", "category": "饮品", "price": 4, "tag": "橙味", "sales": 0, "description": "橙味汽水，甜爽解腻", "image": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=760&q=82", "options": []},
+        {"id": 303, "name": "雪碧", "category": "饮品", "price": 4, "tag": "清爽", "sales": 0, "description": "柠檬味汽水，清爽提神", "image": "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=760&q=82", "options": []},
+        {"id": 304, "name": "大窑", "category": "饮品", "price": 7, "tag": "大瓶", "sales": 0, "description": "东北餐桌经典汽水，分量更足", "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=760&q=82", "options": []},
+        {"id": 305, "name": "美年达", "category": "饮品", "price": 4, "tag": "果味", "sales": 0, "description": "果味汽水，适合搭配热菜", "image": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=760&q=82", "options": []},
+    ])
+    return menu
+
+
+MENU = build_extended_menu()
+CATEGORY_ORDER = ["现做炖菜", "精品炒菜", "主食", "饮品"]
+
+
 def menu_item(dish_id):
     return next((dish for dish in MENU if dish["id"] == int(dish_id)), None)
 
@@ -319,6 +500,7 @@ def init_db():
         ensure_column(conn, "users", "points", "INTEGER NOT NULL DEFAULT 0")
         ensure_column(conn, "users", "checkin_streak", "INTEGER NOT NULL DEFAULT 0")
         ensure_column(conn, "users", "last_checkin_date", "TEXT")
+        ensure_column(conn, "users", "balance", "REAL NOT NULL DEFAULT 0")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS coupons (
@@ -402,6 +584,32 @@ def init_db():
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS balance_transactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                amount REAL NOT NULL,
+                kind TEXT NOT NULL,
+                note TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS withdrawals (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                wechat TEXT NOT NULL,
+                amount REAL NOT NULL,
+                status TEXT NOT NULL DEFAULT '已提交',
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
         for dish in MENU:
             conn.execute(
                 "INSERT OR IGNORE INTO dish_stats (dish_id, sales) VALUES (?, ?)",
@@ -440,7 +648,7 @@ def current_user():
         return None
     with get_db() as conn:
         return conn.execute(
-            "SELECT id, username, nickname, avatar_url, role, points, checkin_streak, last_checkin_date FROM users WHERE id = ?",
+            "SELECT id, username, nickname, avatar_url, role, points, balance, checkin_streak, last_checkin_date FROM users WHERE id = ?",
             (user_id,),
         ).fetchone()
 
@@ -455,6 +663,7 @@ def public_user(user):
         "avatar_url": user["avatar_url"] if "avatar_url" in user.keys() else "",
         "role": user["role"],
         "points": user["points"] if "points" in user.keys() else 0,
+        "balance": user["balance"] if "balance" in user.keys() else 0,
     }
 
 
@@ -801,6 +1010,19 @@ def create_order():
             discount = min(float(coupon_row["amount"]), float(total))
 
         payable = max(float(total) - float(discount), 0)
+        user_balance = conn.execute(
+            "SELECT balance FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()["balance"]
+        if float(user_balance or 0) < payable:
+            return jsonify(
+                {
+                    "message": "余额不足，请联系商家充值后再支付",
+                    "balance": round(float(user_balance or 0), 2),
+                    "payable": round(payable, 2),
+                }
+            ), 400
+
         cursor = conn.execute(
             """
             INSERT INTO orders
@@ -824,6 +1046,11 @@ def create_order():
             ),
         )
         order_id = cursor.lastrowid
+        conn.execute("UPDATE users SET balance = balance - ? WHERE id = ?", (payable, user_id))
+        conn.execute(
+            "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'pay', ?, ?)",
+            (user_id, -payable, "订单 #{} 支付".format(order_id), now),
+        )
         for item in order_items:
             conn.execute(
                 """
@@ -898,7 +1125,7 @@ def my_wallet():
     today_text = date.today().isoformat()
     with get_db() as conn:
         user = conn.execute(
-            "SELECT points, checkin_streak, last_checkin_date FROM users WHERE id = ?",
+            "SELECT points, balance, checkin_streak, last_checkin_date FROM users WHERE id = ?",
             (user_id,),
         ).fetchone()
         coupons = conn.execute(
@@ -907,6 +1134,26 @@ def my_wallet():
             JOIN users ON users.id = coupons.user_id
             WHERE coupons.user_id = ?
             ORDER BY coupons.id DESC
+            """,
+            (user_id,),
+        ).fetchall()
+        withdrawals = conn.execute(
+            """
+            SELECT id, wechat, amount, status, created_at
+            FROM withdrawals
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 5
+            """,
+            (user_id,),
+        ).fetchall()
+        transactions = conn.execute(
+            """
+            SELECT id, amount, kind, note, created_at
+            FROM balance_transactions
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 8
             """,
             (user_id,),
         ).fetchall()
@@ -919,6 +1166,7 @@ def my_wallet():
     return jsonify(
         {
             "points": user["points"],
+            "balance": round(float(user["balance"] or 0), 2),
             "nickname": current_user()["nickname"] or current_user()["username"],
             "avatar_url": current_user()["avatar_url"] or "",
             "checkin_streak": user["checkin_streak"],
@@ -926,6 +1174,8 @@ def my_wallet():
             "checked_today": checked_today,
             "next_reward": 0 if checked_today else reward_for_streak(next_streak),
             "coupons": [serialize_coupon(row) for row in coupons],
+            "withdrawals": [dict(row) for row in withdrawals],
+            "transactions": [dict(row) for row in transactions],
         }
     )
 
@@ -1010,12 +1260,45 @@ def redeem_points():
     return jsonify({"message": "兑换成功，已放入卡包", "points": points, "coupon": coupon}), 201
 
 
+@app.post("/api/my/withdraw")
+@login_required
+def withdraw_balance():
+    data = request.get_json(silent=True) or {}
+    wechat = data.get("wechat", "").strip()
+    try:
+        amount = round(float(data.get("amount", 0) or 0), 2)
+    except (TypeError, ValueError):
+        amount = 0
+    if not wechat:
+        return jsonify({"message": "请填写微信号"}), 400
+    if amount <= 0:
+        return jsonify({"message": "提现金额必须大于 0"}), 400
+    user_id = session["user_id"]
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        user = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()
+        balance = float(user["balance"] or 0)
+        if balance < amount:
+            return jsonify({"message": "余额不足，无法提现"}), 400
+        conn.execute("UPDATE users SET balance = balance - ? WHERE id = ?", (amount, user_id))
+        conn.execute(
+            "INSERT INTO withdrawals (user_id, wechat, amount, status, created_at) VALUES (?, ?, ?, '已提交', ?)",
+            (user_id, wechat, amount, now),
+        )
+        conn.execute(
+            "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'withdraw', ?, ?)",
+            (user_id, -amount, "微信提现申请", now),
+        )
+        balance = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()["balance"]
+    return jsonify({"message": "提现申请已提交", "balance": round(float(balance or 0), 2)})
+
+
 @app.get("/api/admin/users")
 @admin_required
 def list_users():
     with get_db() as conn:
         rows = conn.execute(
-            "SELECT id, username, nickname, role, created_at FROM users ORDER BY id DESC"
+            "SELECT id, username, nickname, role, balance, created_at FROM users ORDER BY id DESC"
         ).fetchall()
     return jsonify([dict(row) for row in rows])
 
@@ -1034,6 +1317,8 @@ def delete_user(user_id):
             return jsonify({"message": "不能删除商家账号"}), 400
         conn.execute("DELETE FROM coupons WHERE user_id = ?", (user_id,))
         conn.execute("DELETE FROM messages WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM balance_transactions WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM withdrawals WHERE user_id = ?", (user_id,))
         conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
     return jsonify({"message": "用户登录信息已删除", "username": user["username"]})
 
@@ -1193,6 +1478,45 @@ def create_coupon():
     return jsonify(serialize_coupon(row)), 201
 
 
+@app.post("/api/admin/recharge")
+@admin_required
+def admin_recharge():
+    data = request.get_json(silent=True) or {}
+    username = data.get("username", "").strip()
+    note = data.get("note", "").strip() or "商家充值"
+    try:
+        amount = round(float(data.get("amount", 0) or 0), 2)
+    except (TypeError, ValueError):
+        amount = 0
+    if not username:
+        return jsonify({"message": "请输入用户名"}), 400
+    if amount <= 0:
+        return jsonify({"message": "充值金额必须大于 0"}), 400
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        user = conn.execute(
+            "SELECT id, username, nickname, balance FROM users WHERE username = ?",
+            (username,),
+        ).fetchone()
+        if user is None:
+            return jsonify({"message": "用户不存在"}), 404
+        conn.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (amount, user["id"]))
+        conn.execute(
+            "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'recharge', ?, ?)",
+            (user["id"], amount, note, now),
+        )
+        balance = conn.execute("SELECT balance FROM users WHERE id = ?", (user["id"],)).fetchone()["balance"]
+    return jsonify(
+        {
+            "message": "充值成功",
+            "username": user["username"],
+            "nickname": user["nickname"] or user["username"],
+            "amount": amount,
+            "balance": round(float(balance or 0), 2),
+        }
+    )
+
+
 @app.post("/api/admin/password")
 @admin_required
 def update_admin_password():
@@ -1229,17 +1553,17 @@ def ai_recommend():
         budget = max(int(number) for number in digits)
 
     if blind_box:
-        selected_ids = [101, 109, 111]
+        selected_ids = [1, 201, 301]
     elif "辣" in message:
-        selected_ids = [108, 109, 113]
+        selected_ids = [58, 201, 303]
     elif "清淡" in message or "不辣" in message:
-        selected_ids = [102, 109, 113]
+        selected_ids = [2, 201, 303]
     elif "饮" in message or "喝" in message:
-        selected_ids = [111, 112, 114]
+        selected_ids = [301, 302, 304]
     elif "两" in message or "2" in message:
-        selected_ids = [103, 106, 109, 111]
+        selected_ids = [3, 56, 201, 301]
     else:
-        selected_ids = [101, 109, 111]
+        selected_ids = [1, 201, 301]
 
     selected = [menu_item(dish_id) for dish_id in selected_ids]
     selected = [dish for dish in selected if dish]
@@ -1405,7 +1729,7 @@ def cancel_my_order(order_id):
     user_id = session["user_id"]
     with get_db() as conn:
         order = conn.execute(
-            "SELECT id, status FROM orders WHERE id = ? AND user_id = ?",
+            "SELECT id, status, payable FROM orders WHERE id = ? AND user_id = ?",
             (order_id, user_id),
         ).fetchone()
         if order is None:
@@ -1413,6 +1737,14 @@ def cancel_my_order(order_id):
         if order["status"] in {"已完成", "已取消"}:
             return jsonify({"message": "当前订单不能取消"}), 400
         conn.execute("UPDATE orders SET status = '已取消' WHERE id = ?", (order_id,))
+        refund = float(order["payable"] or 0)
+        if refund > 0:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            conn.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (refund, user_id))
+            conn.execute(
+                "INSERT INTO balance_transactions (user_id, amount, kind, note, created_at) VALUES (?, ?, 'refund', ?, ?)",
+                (user_id, refund, "订单 #{} 取消退款".format(order_id), now),
+            )
         conn.execute(
             "UPDATE coupons SET status = 'unused', used_at = NULL, order_id = NULL WHERE order_id = ?",
             (order_id,),

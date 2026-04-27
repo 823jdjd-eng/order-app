@@ -479,7 +479,7 @@
     }
 
     .detail-price {
-      color: var(--red);
+      color: #0d7659;
       font-size: 42px;
       line-height: 1;
       font-weight: 950;
@@ -497,7 +497,7 @@
     }
 
     .detail-discount {
-      color: var(--red);
+      color: #59616b;
       font-size: 18px;
       font-weight: 950;
       line-height: 1.8;
@@ -527,7 +527,7 @@
     .detail-add {
       min-height: 52px;
       border-radius: 12px;
-      background: #ff6a00;
+      background: var(--mint-strong);
       color: #fff;
       padding: 0 20px;
       font-size: 18px;
@@ -572,7 +572,7 @@
     }
 
     .option-card span:last-child {
-      color: var(--red);
+      color: #0d7659;
     }
 
     .detail-section h2 {
@@ -899,7 +899,7 @@
     }
 
     .orange-link {
-      color: #ff6b00;
+      color: #0d7659;
       background: transparent;
       padding: 0;
       font-weight: 950;
@@ -996,10 +996,10 @@
       gap: 10px;
       align-items: center;
       padding: 10px;
-      border: 1px solid #ffd7cf;
+      border: 1px solid #caeadf;
       border-radius: 12px;
-      background: #fff8f6;
-      color: #d83b27;
+      background: #f3fbf8;
+      color: #0d7659;
       font-weight: 950;
     }
 
@@ -1008,8 +1008,8 @@
     }
 
     .coupon-option.active {
-      border-color: var(--red);
-      background: #fff0ed;
+      border-color: var(--mint-strong);
+      background: var(--mint);
     }
 
     .pay-sticky {
@@ -1037,10 +1037,68 @@
       width: 100%;
       min-height: 52px;
       border-radius: 12px;
-      background: #ff6b00;
+      background: var(--mint-strong);
       color: #fff;
       font-size: 20px;
       font-weight: 950;
+    }
+
+    .pay-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .balance-pay-row {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      margin-top: 8px;
+      border-radius: 14px;
+      background: #f3fbf8;
+      color: #0d7659;
+      font-weight: 950;
+    }
+
+    .balance-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .balance-action-card {
+      min-height: 76px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      border-radius: 16px;
+      background: #f7faf9;
+      padding: 12px;
+      text-align: left;
+      color: var(--ink);
+      font-weight: 950;
+    }
+
+    .balance-action-card strong {
+      color: #0d7659;
+      font-size: 26px;
+    }
+
+    .balance-history {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .balance-history-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      background: #f7faf9;
+      color: #59616b;
+      font-weight: 900;
     }
 
     .ai-hero {
@@ -1216,6 +1274,8 @@
       border-radius: 14px;
       background: #f7faf9;
       padding: 12px;
+      text-align: left;
+      color: var(--ink);
     }
 
     .hidden-input {
@@ -1509,6 +1569,13 @@
       margin-bottom: 8px;
     }
 
+    .coupon-message {
+      min-height: 22px;
+      margin-top: 10px;
+      color: #0d7659;
+      font-weight: 900;
+    }
+
     .auth-submit {
       width: 100%;
       min-height: 46px;
@@ -1762,6 +1829,10 @@
             <span>合计</span>
             <span><span class="muted">已优惠 ￥<span id="discount-total">0.0</span></span> <strong class="price">￥<span id="confirm-payable">0.0</span></strong></span>
           </div>
+          <div class="balance-pay-row">
+            <span>余额支付</span>
+            <small>当前余额 ￥<span id="confirm-balance">0.0</span>，余额不足时无法提交订单</small>
+          </div>
         </section>
         <div style="height:118px;"></div>
         <div class="pay-sticky">
@@ -1769,7 +1840,7 @@
             <span>共<span id="confirm-count">0</span>件</span>
             <span>已优惠 ￥<span id="pay-discount">0.0</span></span>
           </div>
-          <button class="pay-button" id="pay-submit">立即支付 ￥<span id="pay-total">0.0</span></button>
+          <button class="pay-button" id="pay-submit">余额支付 ￥<span id="pay-total">0.0</span></button>
         </div>
       </section>
 
@@ -1866,6 +1937,41 @@
     </section>
   </div>
 
+  <div class="auth-backdrop" id="balance-modal" aria-hidden="true">
+    <section class="auth-card" role="dialog" aria-modal="true" aria-labelledby="balance-title">
+      <div class="auth-head">
+        <div>
+          <h2 id="balance-title">我的余额</h2>
+          <p>余额可直接用于点餐支付，提现会提交给商家处理。</p>
+        </div>
+        <button class="close" id="balance-close" title="关闭">×</button>
+      </div>
+      <div class="points-card">
+        <span class="muted">当前余额</span>
+        <strong class="points-number">￥<span id="balance-modal-amount">0.00</span></strong>
+      </div>
+      <div class="balance-actions">
+        <button class="balance-action-card" id="balance-recharge" type="button">
+          <span>充值</span>
+          <small class="muted">联系商家充值</small>
+        </button>
+        <button class="balance-action-card" id="balance-withdraw-toggle" type="button">
+          <span>提现</span>
+          <small class="muted">填写微信号和金额</small>
+        </button>
+      </div>
+      <form class="auth-form" id="withdraw-form" hidden>
+        <label for="withdraw-wechat">微信号</label>
+        <input id="withdraw-wechat" name="wechat" placeholder="用于商家转账给你">
+        <label for="withdraw-amount">提现金额</label>
+        <input id="withdraw-amount" name="amount" type="number" min="0.1" step="0.1" placeholder="输入金额">
+        <button class="auth-submit" type="submit">提交提现</button>
+      </form>
+      <div class="coupon-message" id="balance-message"></div>
+      <div class="balance-history" id="balance-history"></div>
+    </section>
+  </div>
+
   <div class="app-dialog" id="app-dialog" aria-hidden="true">
     <section class="dialog-card" role="dialog" aria-modal="true">
       <h3 id="dialog-title">提示</h3>
@@ -1920,6 +2026,11 @@
     const aiImageInput = document.querySelector("#ai-image");
     const aiPreview = document.querySelector("#ai-preview");
     const aiPreviewImage = document.querySelector("#ai-preview-image");
+    const balanceModal = document.querySelector("#balance-modal");
+    const balanceModalAmount = document.querySelector("#balance-modal-amount");
+    const balanceHistory = document.querySelector("#balance-history");
+    const balanceMessage = document.querySelector("#balance-message");
+    const withdrawForm = document.querySelector("#withdraw-form");
     const appDialog = document.querySelector("#app-dialog");
     const dialogTitle = document.querySelector("#dialog-title");
     const dialogMessage = document.querySelector("#dialog-message");
@@ -2133,6 +2244,51 @@
     function closeAuth() {
       authModal.classList.remove("open");
       authModal.setAttribute("aria-hidden", "true");
+    }
+
+    function renderBalanceModal() {
+      const balance = Number(walletState?.balance || 0);
+      balanceModalAmount.textContent = balance.toFixed(2);
+      const transactions = walletState?.transactions || [];
+      const withdrawals = walletState?.withdrawals || [];
+      const rows = [
+        ...transactions.map((item) => ({
+          left: item.note || item.kind,
+          right: `${Number(item.amount).toFixed(1)}`,
+          time: item.created_at
+        })),
+        ...withdrawals.map((item) => ({
+          left: `提现到 ${item.wechat} · ${item.status}`,
+          right: `-${Number(item.amount).toFixed(1)}`,
+          time: item.created_at
+        }))
+      ].slice(0, 8);
+      balanceHistory.innerHTML = rows.length
+        ? rows.map((item) => `
+            <div class="balance-history-row">
+              <span>${item.left}<br><small>${item.time}</small></span>
+              <strong>${Number(item.right).toFixed(1)}</strong>
+            </div>
+          `).join("")
+        : '<div class="muted">暂无余额明细</div>';
+    }
+
+    async function openBalanceModal() {
+      if (!walletState) await loadWallet();
+      if (!walletState) {
+        openAuth("login");
+        return;
+      }
+      balanceMessage.textContent = "";
+      withdrawForm.hidden = true;
+      renderBalanceModal();
+      balanceModal.classList.add("open");
+      balanceModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeBalanceModal() {
+      balanceModal.classList.remove("open");
+      balanceModal.setAttribute("aria-hidden", "true");
     }
 
     function normalizedOptions(dish, optionIds = []) {
@@ -2466,6 +2622,8 @@
       const couponDiscount = currentCoupon ? Math.min(Number(currentCoupon.amount), total + packingFee) : 0;
       const discount = couponDiscount;
       const payable = Math.max(total + packingFee - discount, 0);
+      if (!walletState) await loadWallet();
+      const balance = Number(walletState?.balance || 0);
 
       document.querySelector("#confirm-count").textContent = count;
       document.querySelector("#coupon-discount").textContent = couponDiscount.toFixed(1);
@@ -2473,6 +2631,10 @@
       document.querySelector("#pay-discount").textContent = discount.toFixed(1);
       document.querySelector("#confirm-payable").textContent = payable.toFixed(1);
       document.querySelector("#pay-total").textContent = payable.toFixed(1);
+      document.querySelector("#confirm-balance").textContent = balance.toFixed(1);
+      const payButton = document.querySelector("#pay-submit");
+      payButton.disabled = balance < payable;
+      payButton.textContent = balance < payable ? `余额不足 ￥${payable.toFixed(1)}` : `余额支付 ￥${payable.toFixed(1)}`;
 
       confirmItems.innerHTML = items.map((item) => `
         <div class="confirm-item">
@@ -2603,14 +2765,24 @@
             <button class="pill" id="profile-checkin" type="button" ${walletState.checked_today ? "disabled" : ""}>${walletState.checked_today ? "今日已签到" : "签到"}</button>
           </div>
           <div class="profile-tile-grid">
+            <button class="profile-metric" id="balance-entry" type="button">
+              <span class="muted">余额</span>
+              <strong class="points-number">￥${Number(walletState.balance || 0).toFixed(1)}</strong>
+            </button>
             <div class="profile-metric">
               <span class="muted">积分</span>
               <strong class="points-number">${walletState.points}</strong>
             </div>
+          </div>
+          <div class="profile-tile-grid" style="margin-top:10px;">
             <div class="profile-metric">
               <span class="muted">可用优惠券</span>
               <strong class="points-number">${availableCoupons.length}</strong>
             </div>
+            <button class="profile-metric" id="profile-recharge-shortcut" type="button">
+              <span class="muted">充值</span>
+              <strong class="points-number">联系商家</strong>
+            </button>
           </div>
           <div class="muted" style="margin-top:10px;">${walletState.checked_today ? "今天已签到" : `今天签到可得 ${walletState.next_reward} 积分`} · 20 积分可兑换 5 元优惠券</div>
           <button class="primary" id="redeem-coupon" type="button" style="margin-top:12px;width:100%;">兑换 5 元优惠券</button>
@@ -2708,6 +2880,8 @@
     document.addEventListener("click", (event) => {
       if (event.target.id === "profile-checkin" || event.target.id === "checkin-button") doCheckin();
       if (event.target.id === "redeem-coupon") redeemCoupon();
+      if (event.target.id === "balance-entry") openBalanceModal();
+      if (event.target.id === "profile-recharge-shortcut") showToast("请联系商家，商家可在后台为你的账号充值。", "充值说明");
       if (event.target.id === "detail-add" && detailDishId) {
         addDish(detailDishId, selectedDetailOptions());
         renderDishDetail();
@@ -2863,7 +3037,13 @@
         return;
       }
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        const result = await response.json();
+        await showToast(result.message || "支付失败，请稍后再试。", "支付失败");
+        await loadWallet();
+        renderConfirm();
+        return;
+      }
       const order = await response.json();
       bumpDishSales(items);
       cart.clear();
@@ -2948,6 +3128,39 @@
     document.querySelector("#auth-close").addEventListener("click", closeAuth);
     authModal.addEventListener("click", (event) => {
       if (event.target === authModal) closeAuth();
+    });
+
+    document.querySelector("#balance-close").addEventListener("click", closeBalanceModal);
+    balanceModal.addEventListener("click", (event) => {
+      if (event.target === balanceModal) closeBalanceModal();
+    });
+    document.querySelector("#balance-recharge").addEventListener("click", () => {
+      balanceMessage.textContent = "请联系商家，商家可在后台为你的账号充值。";
+    });
+    document.querySelector("#balance-withdraw-toggle").addEventListener("click", () => {
+      withdrawForm.hidden = !withdrawForm.hidden;
+      balanceMessage.textContent = "";
+    });
+    withdrawForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(withdrawForm);
+      const response = await fetch("/api/my/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wechat: formData.get("wechat").trim(),
+          amount: Number(formData.get("amount") || 0)
+        })
+      });
+      const result = await response.json();
+      balanceMessage.textContent = result.message || (response.ok ? "已提交" : "提交失败");
+      if (response.ok) {
+        withdrawForm.reset();
+        withdrawForm.hidden = true;
+        await loadWallet();
+        renderBalanceModal();
+        renderProfilePanel();
+      }
     });
 
     authForm.addEventListener("submit", async (event) => {

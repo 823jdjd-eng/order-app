@@ -621,6 +621,25 @@
         <div class="coupon-message" id="coupon-message"></div>
       </div>
       <div class="admin-panel">
+        <h2>用户余额充值</h2>
+        <form class="coupon-form" id="recharge-form">
+          <div class="field">
+            <label for="recharge-username">用户名</label>
+            <input id="recharge-username" name="username" placeholder="输入顾客用户名" required>
+          </div>
+          <div class="field">
+            <label for="recharge-amount">充值金额</label>
+            <input id="recharge-amount" name="amount" type="number" min="0.1" step="0.1" value="20" required>
+          </div>
+          <div class="field">
+            <label for="recharge-note">备注</label>
+            <input id="recharge-note" name="note" value="商家充值">
+          </div>
+          <button class="action finish" type="submit">确认充值</button>
+        </form>
+        <div class="coupon-message" id="recharge-message"></div>
+      </div>
+      <div class="admin-panel">
         <h2>用户列表</h2>
         <div class="user-list" id="user-list">正在加载用户...</div>
       </div>
@@ -705,6 +724,8 @@
     const revenue = document.querySelector("#revenue");
     const couponForm = document.querySelector("#coupon-form");
     const couponMessage = document.querySelector("#coupon-message");
+    const rechargeForm = document.querySelector("#recharge-form");
+    const rechargeMessage = document.querySelector("#recharge-message");
     const userList = document.querySelector("#user-list");
     const passwordForm = document.querySelector("#password-form");
     const passwordMessage = document.querySelector("#password-message");
@@ -829,10 +850,11 @@
         <div class="user-row">
           <span>
             <strong>${user.nickname || user.username}</strong>
-            <small>登录名：${user.username}</small>
+            <small>登录名：${user.username} · 余额 ￥${Number(user.balance || 0).toFixed(1)}</small>
           </span>
           <div class="user-actions">
             <button class="admin-link" data-fill-user="${user.username}">填入</button>
+            <button class="admin-link" data-fill-recharge="${user.username}">充值</button>
             <button class="danger-link" data-delete-user="${user.id}" data-delete-user-name="${user.nickname || user.username}">删除</button>
           </div>
         </div>
@@ -947,6 +969,25 @@
         : (result.message || "发券失败");
     });
 
+    rechargeForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(rechargeForm);
+      const response = await fetch("/api/admin/recharge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.get("username").trim(),
+          amount: Number(formData.get("amount") || 0),
+          note: formData.get("note").trim()
+        })
+      });
+      const result = await response.json();
+      rechargeMessage.textContent = response.ok
+        ? `已给 ${result.nickname} 充值 ￥${Number(result.amount).toFixed(1)}，当前余额 ￥${Number(result.balance).toFixed(1)}`
+        : (result.message || "充值失败");
+      if (response.ok) loadUsers();
+    });
+
     passwordForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(passwordForm);
@@ -969,6 +1010,7 @@
       const status = event.target.dataset.status;
       const deleteId = event.target.dataset.deleteId;
       const fillUser = event.target.dataset.fillUser;
+      const fillRecharge = event.target.dataset.fillRecharge;
       const deleteUserId = event.target.dataset.deleteUser;
       const deleteUserName = event.target.dataset.deleteUserName;
       const threadUser = event.target.closest("[data-thread-user]")?.dataset.threadUser;
@@ -984,6 +1026,10 @@
       }
       if (fillUser) {
         document.querySelector("#coupon-username").value = fillUser;
+      }
+      if (fillRecharge) {
+        document.querySelector("#recharge-username").value = fillRecharge;
+        document.querySelector("#recharge-amount").focus();
       }
       if (deleteUserId) {
         deleteUser(deleteUserId, deleteUserName);

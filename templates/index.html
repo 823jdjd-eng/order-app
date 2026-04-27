@@ -3204,21 +3204,6 @@
           <button class="primary" id="redeem-coupon" type="button" style="margin-top:12px;width:100%;">兑换 5 元优惠券</button>
         </article>
         <article class="profile-tile">
-          <div class="profile-tile-head"><span>优惠券</span><span class="muted">${availableCoupons.length} 张可用</span></div>
-          ${coupons.length ? coupons.slice(0, 4).map((coupon) => `
-            <div class="coupon-card ${coupon.status === "used" ? "used" : ""}">
-              <div class="coupon-card-row">
-                <div>
-                  <strong>${coupon.title}</strong>
-                  <div class="muted">${coupon.label || `满 ￥${Number(coupon.min_amount).toFixed(1)} 可用`} · ${coupon.status === "used" ? "已使用" : "未使用"}</div>
-                </div>
-                <button class="pill" data-delete-coupon="${coupon.id}" type="button">删除</button>
-              </div>
-              <div class="price">${coupon.discount_type === "rate" ? "五折" : `￥${Number(coupon.amount).toFixed(1)}`}</div>
-            </div>
-          `).join("") : '<div class="muted">暂无优惠券，可签到攒积分兑换。</div>'}
-        </article>
-        <article class="profile-tile">
           <div class="profile-tile-head"><span>最近订单</span><span class="muted">商家状态同步</span></div>
           ${orderCards(orders)}
         </article>

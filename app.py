@@ -2,6 +2,7 @@ import base64
 from datetime import date, datetime, timedelta
 import json
 import os
+import random
 import sqlite3
 import urllib.error
 import urllib.request
@@ -1290,7 +1291,40 @@ def withdraw_balance():
             (user_id, -amount, "微信提现申请", now),
         )
         balance = conn.execute("SELECT balance FROM users WHERE id = ?", (user_id,)).fetchone()["balance"]
-    return jsonify({"message": "提现申请已提交", "balance": round(float(balance or 0), 2)})
+    return jsonify({"message": "提现成功，预计24小时内到账", "balance": round(float(balance or 0), 2)})
+
+
+@app.get("/api/admin/wallet-records")
+@admin_required
+def admin_wallet_records():
+    with get_db() as conn:
+        withdrawals = conn.execute(
+            """
+            SELECT withdrawals.id, withdrawals.wechat, withdrawals.amount, withdrawals.status, withdrawals.created_at,
+                   users.username, users.nickname
+            FROM withdrawals
+            JOIN users ON users.id = withdrawals.user_id
+            ORDER BY withdrawals.id DESC
+            LIMIT 80
+            """
+        ).fetchall()
+        transactions = conn.execute(
+            """
+            SELECT balance_transactions.id, balance_transactions.amount, balance_transactions.kind,
+                   balance_transactions.note, balance_transactions.created_at,
+                   users.username, users.nickname
+            FROM balance_transactions
+            JOIN users ON users.id = balance_transactions.user_id
+            ORDER BY balance_transactions.id DESC
+            LIMIT 120
+            """
+        ).fetchall()
+    return jsonify(
+        {
+            "withdrawals": [dict(row) for row in withdrawals],
+            "transactions": [dict(row) for row in transactions],
+        }
+    )
 
 
 @app.get("/api/admin/users")
@@ -1553,7 +1587,16 @@ def ai_recommend():
         budget = max(int(number) for number in digits)
 
     if blind_box:
-        selected_ids = [1, 201, 301]
+        stews = [dish for dish in MENU if dish["category"] == "现做炖菜"]
+        stir_fries = [dish for dish in MENU if dish["category"] == "精品炒菜"]
+        mains = [dish for dish in MENU if dish["category"] == "主食"]
+        drinks = [dish for dish in MENU if dish["category"] == "饮品"]
+        selected = [
+            random.choice(stews),
+            random.choice(stir_fries),
+            random.choice(mains),
+            random.choice(drinks),
+        ]
     elif "辣" in message:
         selected_ids = [58, 201, 303]
     elif "清淡" in message or "不辣" in message:
@@ -1565,8 +1608,9 @@ def ai_recommend():
     else:
         selected_ids = [1, 201, 301]
 
-    selected = [menu_item(dish_id) for dish_id in selected_ids]
-    selected = [dish for dish in selected if dish]
+    if not blind_box:
+        selected = [menu_item(dish_id) for dish_id in selected_ids]
+        selected = [dish for dish in selected if dish]
     if budget:
         running = 0
         limited = []
@@ -1633,9 +1677,9 @@ def ai_chat():
             {
                 "role": "system",
                 "content": (
-                    "你是雨石屋的 AI 点餐助手。你只围绕本店菜单推荐菜品，"
-                    "需要根据用户的人数、预算、口味、忌口进行搭配，并给出总价估算。"
-                    "回复要简洁、亲切，适合手机点餐页面展示。\n\n"
+                    "你是雨石屋的 AI 点餐助手。用户正常寒暄时就自然聊天，不要主动生成菜单。"
+                    "只有用户明确表达想点餐、推荐、盲盒、预算、人数、口味或忌口时，"
+                    "才围绕本店菜单搭配菜品并给出总价估算。回复要简洁、亲切，适合手机点餐页面展示。\n\n"
                     f"本店菜单：\n{menu_text}"
                 ),
             },

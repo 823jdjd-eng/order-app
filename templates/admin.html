@@ -12,20 +12,21 @@
     :root {
       --ink: #17202e;
       --muted: #7b8491;
-      --line: #e8e2d9;
-      --paper: #fffdf8;
-      --soft: #f4efe7;
-      --brand: #e84c2a;
-      --green: #16806a;
-      --shadow: 0 16px 40px rgba(34, 26, 18, 0.09);
+      --line: #dfe9e5;
+      --paper: #ffffff;
+      --soft: #eef8f4;
+      --brand: #2fbf95;
+      --green: #087a61;
+      --mint: #dff7ee;
+      --shadow: 0 18px 46px rgba(20, 54, 43, 0.09);
     }
 
     body {
       margin: 0;
       color: var(--ink);
       background:
-        radial-gradient(circle at 12% 0%, rgba(232, 76, 42, 0.14), transparent 28%),
-        linear-gradient(135deg, #fbf8f2 0%, #eef5ef 100%);
+        radial-gradient(circle at 12% 0%, rgba(47, 191, 149, 0.18), transparent 30%),
+        linear-gradient(135deg, #f7fbf9 0%, #ecf6f2 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
     }
 
@@ -47,9 +48,9 @@
       align-items: center;
       margin-bottom: 18px;
       padding: 22px;
-      border: 1px solid rgba(232, 76, 42, 0.15);
-      border-radius: 18px;
-      background: rgba(255, 253, 248, 0.82);
+      border: 1px solid rgba(47, 191, 149, 0.16);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.86);
       box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
     }
@@ -86,7 +87,7 @@
     }
 
     .admin-link {
-      color: var(--brand);
+      color: var(--green);
       font-size: 13px;
       font-weight: 900;
       text-decoration: none;
@@ -178,7 +179,7 @@
       border: 1px solid var(--line);
       border-radius: 999px;
       padding: 0 18px;
-      background: rgba(255, 253, 248, 0.82);
+      background: rgba(255, 255, 255, 0.86);
       color: var(--ink);
       font-weight: 950;
       box-shadow: 0 10px 22px rgba(34, 26, 18, 0.05);
@@ -186,7 +187,7 @@
 
     .admin-tab.active {
       border-color: transparent;
-      background: var(--ink);
+      background: var(--green);
       color: #fff;
     }
 
@@ -226,6 +227,40 @@
 
     .admin-view-users {
       grid-template-columns: 1fr;
+    }
+
+    .wallet-board {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .record-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fcfa;
+    }
+
+    .record-row strong {
+      color: var(--green);
+      font-size: 18px;
+    }
+
+    .record-row small {
+      display: block;
+      color: var(--muted);
+      margin-top: 5px;
     }
 
     .admin-panel {
@@ -519,6 +554,7 @@
       .stats,
       .coupon-admin,
       .coupon-form,
+      .wallet-board,
       .chat-layout {
         grid-template-columns: 1fr;
       }
@@ -578,7 +614,9 @@
     <nav class="admin-tabs">
       <button class="admin-tab active" data-admin-tab="orders" type="button">订单工作台</button>
       <button class="admin-tab" data-admin-tab="messages" type="button">顾客消息</button>
-      <button class="admin-tab" data-admin-tab="users" type="button">客户与设置</button>
+      <button class="admin-tab" data-admin-tab="wallet" type="button">余额记录</button>
+      <button class="admin-tab" data-admin-tab="users" type="button">用户管理</button>
+      <button class="admin-tab" data-admin-tab="settings" type="button">店铺设置</button>
     </nav>
 
     <section class="stats active" data-admin-view="orders">
@@ -596,7 +634,40 @@
       </div>
     </section>
 
+    <section class="wallet-board" data-admin-view="wallet">
+      <div class="admin-panel">
+        <h2>用户余额充值</h2>
+        <form class="coupon-form" id="recharge-form">
+          <div class="field">
+            <label for="recharge-username">用户名</label>
+            <input id="recharge-username" name="username" placeholder="输入顾客用户名" required>
+          </div>
+          <div class="field">
+            <label for="recharge-amount">充值金额</label>
+            <input id="recharge-amount" name="amount" type="number" min="0.1" step="0.1" value="20" required>
+          </div>
+          <div class="field">
+            <label for="recharge-note">备注</label>
+            <input id="recharge-note" name="note" value="商家充值">
+          </div>
+          <button class="action finish" type="submit">确认充值</button>
+        </form>
+        <div class="coupon-message" id="recharge-message"></div>
+      </div>
+      <div class="admin-panel">
+        <h2>充值与提现记录</h2>
+        <div class="record-list" id="wallet-records">正在加载余额记录...</div>
+      </div>
+    </section>
+
     <section class="coupon-admin admin-view-users" data-admin-view="users">
+      <div class="admin-panel">
+        <h2>用户列表</h2>
+        <div class="user-list" id="user-list">正在加载用户...</div>
+      </div>
+    </section>
+
+    <section class="coupon-admin admin-view-users" data-admin-view="settings">
       <div class="admin-panel">
         <h2>给用户发优惠券</h2>
         <form class="coupon-form" id="coupon-form">
@@ -619,29 +690,6 @@
           <button class="action finish" type="submit">发券</button>
         </form>
         <div class="coupon-message" id="coupon-message"></div>
-      </div>
-      <div class="admin-panel">
-        <h2>用户余额充值</h2>
-        <form class="coupon-form" id="recharge-form">
-          <div class="field">
-            <label for="recharge-username">用户名</label>
-            <input id="recharge-username" name="username" placeholder="输入顾客用户名" required>
-          </div>
-          <div class="field">
-            <label for="recharge-amount">充值金额</label>
-            <input id="recharge-amount" name="amount" type="number" min="0.1" step="0.1" value="20" required>
-          </div>
-          <div class="field">
-            <label for="recharge-note">备注</label>
-            <input id="recharge-note" name="note" value="商家充值">
-          </div>
-          <button class="action finish" type="submit">确认充值</button>
-        </form>
-        <div class="coupon-message" id="recharge-message"></div>
-      </div>
-      <div class="admin-panel">
-        <h2>用户列表</h2>
-        <div class="user-list" id="user-list">正在加载用户...</div>
       </div>
       <div class="admin-panel">
         <h2>修改后台密码</h2>
@@ -726,6 +774,7 @@
     const couponMessage = document.querySelector("#coupon-message");
     const rechargeForm = document.querySelector("#recharge-form");
     const rechargeMessage = document.querySelector("#recharge-message");
+    const walletRecords = document.querySelector("#wallet-records");
     const userList = document.querySelector("#user-list");
     const passwordForm = document.querySelector("#password-form");
     const passwordMessage = document.querySelector("#password-message");
@@ -755,6 +804,7 @@
         view.classList.toggle("active", view.dataset.adminView === tab);
       });
       if (tab === "messages") loadThreads();
+      if (tab === "wallet") loadWalletRecords();
       if (tab === "users") loadUsers();
       if (tab === "orders") loadOrders();
     }
@@ -877,6 +927,34 @@
       await loadThreads();
     }
 
+    async function loadWalletRecords() {
+      const response = await fetch("/api/admin/wallet-records");
+      const data = await response.json();
+      const withdrawals = (data.withdrawals || []).map((item) => ({
+        title: `${item.nickname || item.username} 提现`,
+        meta: `登录名：${item.username} · 微信：${item.wechat} · ${item.status} · ${item.created_at}`,
+        amount: -Number(item.amount || 0),
+        time: item.created_at
+      }));
+      const transactions = (data.transactions || []).map((item) => ({
+        title: `${item.nickname || item.username} · ${item.note || item.kind}`,
+        meta: `登录名：${item.username} · ${item.created_at}`,
+        amount: Number(item.amount || 0),
+        time: item.created_at
+      }));
+      const records = [...withdrawals, ...transactions]
+        .sort((a, b) => String(b.time || "").localeCompare(String(a.time || "")))
+        .slice(0, 80);
+      walletRecords.innerHTML = records.length
+        ? records.map((item) => `
+            <div class="record-row">
+              <span>${escapeHTML(item.title)}<small>${escapeHTML(item.meta)}</small></span>
+              <strong>${item.amount >= 0 ? "+" : ""}￥${item.amount.toFixed(1)}</strong>
+            </div>
+          `).join("")
+        : '<div class="empty">暂无充值或提现记录</div>';
+    }
+
     function renderThreadList() {
       const threads = messageThreads;
       if (!threads.length) {
@@ -985,7 +1063,10 @@
       rechargeMessage.textContent = response.ok
         ? `已给 ${result.nickname} 充值 ￥${Number(result.amount).toFixed(1)}，当前余额 ￥${Number(result.balance).toFixed(1)}`
         : (result.message || "充值失败");
-      if (response.ok) loadUsers();
+      if (response.ok) {
+        loadUsers();
+        loadWalletRecords();
+      }
     });
 
     passwordForm.addEventListener("submit", async (event) => {
@@ -1053,6 +1134,7 @@
     loadOrders();
     loadUsers();
     loadThreads();
+    loadWalletRecords();
     setInterval(loadOrders, 2000);
     setInterval(loadThreads, 2500);
     {% endif %}

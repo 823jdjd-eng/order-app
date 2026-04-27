@@ -1633,12 +1633,31 @@
             <button class="primary" id="checkin-button" type="button">签到</button>
           </article>
 
+          {% set stew_recommendations = menu | selectattr("category", "equalto", "现做炖菜") | list %}
+          {% set fry_recommendations = menu | selectattr("category", "equalto", "精品炒菜") | list %}
           <div class="section-head">
-            <h2>招牌推荐</h2>
-            <button class="pill" data-go="order">去点餐</button>
+            <h2>招牌炖菜</h2>
+            <button class="pill" data-home-category="现做炖菜">看全部</button>
           </div>
           <div class="food-grid">
-            {% for dish in menu[:6] %}
+            {% for dish in stew_recommendations[:20] %}
+              <article class="food-card" data-view="{{ dish.id }}">
+                <img src="{{ dish.image }}" alt="{{ dish.name }}">
+                <div class="food-info">
+                  <h3>{{ dish.name }}</h3>
+                  <div class="muted">{{ dish.description }}</div>
+                  <div class="price">￥{{ dish.price }}</div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+
+          <div class="section-head">
+            <h2>精品炒菜</h2>
+            <button class="pill" data-home-category="精品炒菜">看全部</button>
+          </div>
+          <div class="food-grid">
+            {% for dish in fry_recommendations[:20] %}
               <article class="food-card" data-view="{{ dish.id }}">
                 <img src="{{ dish.image }}" alt="{{ dish.name }}">
                 <div class="food-info">
@@ -1844,6 +1863,54 @@
         </div>
       </section>
 
+      <section class="page page-pad" data-page="balance">
+        <div class="cart-head">
+          <div>
+            <button class="back-button" data-go="profile" type="button">‹</button>
+            <h1 class="page-title">我的余额</h1>
+            <div class="muted">余额可用于点餐支付，提现申请会同步到商家后台。</div>
+          </div>
+        </div>
+        <article class="profile-tile balance-wallet-card">
+          <span class="muted">当前余额</span>
+          <strong class="points-number">￥<span id="balance-page-amount">0.00</span></strong>
+          <div class="balance-actions">
+            <button class="balance-action-card" id="balance-page-recharge" type="button">
+              <span>充值</span>
+              <small class="muted">联系商家处理</small>
+            </button>
+            <button class="balance-action-card" data-go="withdraw" type="button">
+              <span>提现</span>
+              <small class="muted">填写金额和微信号</small>
+            </button>
+          </div>
+        </article>
+        <article class="profile-tile">
+          <div class="profile-tile-head"><span>余额明细</span><span class="muted">充值 / 支付 / 提现</span></div>
+          <div class="balance-history" id="balance-page-history"></div>
+        </article>
+      </section>
+
+      <section class="page page-pad" data-page="withdraw">
+        <div class="cart-head">
+          <div>
+            <button class="back-button" data-go="balance" type="button">‹</button>
+            <h1 class="page-title">余额提现</h1>
+            <div class="muted">提交后商家后台会收到申请，预计 24 小时内到账。</div>
+          </div>
+        </div>
+        <article class="profile-tile">
+          <form class="auth-form" id="withdraw-page-form">
+            <label for="withdraw-page-wechat">微信号</label>
+            <input id="withdraw-page-wechat" name="wechat" placeholder="用于商家转账给你" required>
+            <label for="withdraw-page-amount">提现金额</label>
+            <input id="withdraw-page-amount" name="amount" type="number" min="0.1" step="0.1" placeholder="输入金额" required>
+            <button class="auth-submit" type="submit">确认提现</button>
+          </form>
+          <div class="coupon-message" id="withdraw-page-message"></div>
+        </article>
+      </section>
+
       <section class="page" data-page="profile">
         <header class="profile-head">
           <div class="profile-row">
@@ -2031,6 +2098,10 @@
     const balanceHistory = document.querySelector("#balance-history");
     const balanceMessage = document.querySelector("#balance-message");
     const withdrawForm = document.querySelector("#withdraw-form");
+    const balancePageAmount = document.querySelector("#balance-page-amount");
+    const balancePageHistory = document.querySelector("#balance-page-history");
+    const withdrawPageForm = document.querySelector("#withdraw-page-form");
+    const withdrawPageMessage = document.querySelector("#withdraw-page-message");
     const appDialog = document.querySelector("#app-dialog");
     const dialogTitle = document.querySelector("#dialog-title");
     const dialogMessage = document.querySelector("#dialog-message");
@@ -2160,6 +2231,7 @@
       if (tab === "profile") renderProfilePanel();
       if (tab === "confirm") renderConfirm();
       if (tab === "dish-detail") renderDishDetail();
+      if (tab === "balance") renderBalancePage();
       if (tab === "messages") {
         loadMerchantMessages();
         if (!merchantMessageTimer) {
@@ -2200,10 +2272,37 @@
         }
       };
 
+      const resolveByIp = async () => {
+        const savedAddress = localStorage.getItem("lastLocation");
+        try {
+          const response = await fetch("https://ipapi.co/json/");
+          if (response.ok) {
+            const data = await response.json();
+            const text = [data.city, data.region].filter(Boolean).join(" · ");
+            if (text) {
+              setLocation(text, true);
+              return;
+            }
+          }
+        } catch {}
+        try {
+          const response = await fetch("http://ip-api.com/json/?lang=zh-CN");
+          if (response.ok) {
+            const data = await response.json();
+            const text = [data.city, data.regionName].filter(Boolean).join(" · ");
+            if (text) {
+              setLocation(text, true);
+              return;
+            }
+          }
+        } catch {}
+        setLocation(savedAddress || "定位失败，点这里重试");
+      };
+
       setLocation("正在定位...");
 
       if (!navigator.geolocation) {
-        setLocation("点击允许后显示地址");
+        await resolveByIp();
         return;
       }
 
@@ -2217,9 +2316,8 @@
         } catch {
           setLocation(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`, true);
         }
-      }, () => {
-        const savedAddress = localStorage.getItem("lastLocation");
-        setLocation(savedAddress || "点击允许后显示地址");
+      }, async () => {
+        await resolveByIp();
       }, { enableHighAccuracy: false, timeout: 8000 });
     }
 
@@ -2246,31 +2344,50 @@
       authModal.setAttribute("aria-hidden", "true");
     }
 
-    function renderBalanceModal() {
-      const balance = Number(walletState?.balance || 0);
-      balanceModalAmount.textContent = balance.toFixed(2);
+    function balanceRows() {
       const transactions = walletState?.transactions || [];
       const withdrawals = walletState?.withdrawals || [];
-      const rows = [
+      return [
         ...transactions.map((item) => ({
           left: item.note || item.kind,
-          right: `${Number(item.amount).toFixed(1)}`,
+          right: Number(item.amount || 0),
           time: item.created_at
         })),
         ...withdrawals.map((item) => ({
           left: `提现到 ${item.wechat} · ${item.status}`,
-          right: `-${Number(item.amount).toFixed(1)}`,
+          right: -Number(item.amount || 0),
           time: item.created_at
         }))
-      ].slice(0, 8);
-      balanceHistory.innerHTML = rows.length
+      ].sort((a, b) => String(b.time || "").localeCompare(String(a.time || ""))).slice(0, 12);
+    }
+
+    function renderBalanceRows(target) {
+      const rows = balanceRows();
+      target.innerHTML = rows.length
         ? rows.map((item) => `
             <div class="balance-history-row">
-              <span>${item.left}<br><small>${item.time}</small></span>
-              <strong>${Number(item.right).toFixed(1)}</strong>
+              <span>${escapeHTML(item.left)}<br><small>${escapeHTML(item.time || "")}</small></span>
+              <strong>${item.right >= 0 ? "+" : ""}${Number(item.right).toFixed(1)}</strong>
             </div>
           `).join("")
         : '<div class="muted">暂无余额明细</div>';
+    }
+
+    function renderBalanceModal() {
+      const balance = Number(walletState?.balance || 0);
+      balanceModalAmount.textContent = balance.toFixed(2);
+      renderBalanceRows(balanceHistory);
+    }
+
+    async function renderBalancePage() {
+      if (!walletState) await loadWallet();
+      if (!walletState) {
+        openAuth("login");
+        switchTab("profile");
+        return;
+      }
+      balancePageAmount.textContent = Number(walletState.balance || 0).toFixed(2);
+      renderBalanceRows(balancePageHistory);
     }
 
     async function openBalanceModal() {
@@ -2279,11 +2396,7 @@
         openAuth("login");
         return;
       }
-      balanceMessage.textContent = "";
-      withdrawForm.hidden = true;
-      renderBalanceModal();
-      balanceModal.classList.add("open");
-      balanceModal.setAttribute("aria-hidden", "false");
+      switchTab("balance");
     }
 
     function closeBalanceModal() {
@@ -2699,6 +2812,12 @@
       );
     }
 
+    function shouldRecommendFood(text = "", hasImage = false) {
+      if (hasImage) return true;
+      const keywords = ["吃", "点", "菜", "推荐", "预算", "口味", "忌口", "辣", "清淡", "饮", "喝", "盲盒", "随机", "结算", "下单", "饿", "人"];
+      return keywords.some((keyword) => text.includes(keyword));
+    }
+
     async function renderOrders() {
       const response = await fetch("/api/my/orders");
       if (response.status === 401) {
@@ -2779,10 +2898,10 @@
               <span class="muted">可用优惠券</span>
               <strong class="points-number">${availableCoupons.length}</strong>
             </div>
-            <button class="profile-metric" id="profile-recharge-shortcut" type="button">
-              <span class="muted">充值</span>
-              <strong class="points-number">联系商家</strong>
-            </button>
+            <div class="profile-metric">
+              <span class="muted">签到状态</span>
+              <strong class="points-number" style="font-size:22px;">${walletState.checked_today ? "已签到" : `+${walletState.next_reward}`}</strong>
+            </div>
           </div>
           <div class="muted" style="margin-top:10px;">${walletState.checked_today ? "今天已签到" : `今天签到可得 ${walletState.next_reward} 积分`} · 20 积分可兑换 5 元优惠券</div>
           <button class="primary" id="redeem-coupon" type="button" style="margin-top:12px;width:100%;">兑换 5 元优惠券</button>
@@ -2881,7 +3000,7 @@
       if (event.target.id === "profile-checkin" || event.target.id === "checkin-button") doCheckin();
       if (event.target.id === "redeem-coupon") redeemCoupon();
       if (event.target.id === "balance-entry") openBalanceModal();
-      if (event.target.id === "profile-recharge-shortcut") showToast("请联系商家，商家可在后台为你的账号充值。", "充值说明");
+      if (event.target.id === "balance-page-recharge") showToast("请联系商家，商家可在后台为你的账号充值。", "充值说明");
       if (event.target.id === "detail-add" && detailDishId) {
         addDish(detailDishId, selectedDetailOptions());
         renderDishDetail();
@@ -3072,6 +3191,7 @@
       const chat = document.querySelector("#chat");
       const value = input.value.trim();
       if (!value && !aiImageFile) return;
+      const hadAiImage = Boolean(aiImageFile);
       chat.insertAdjacentHTML("beforeend", `<div class="bubble me">${value || "帮我识别这张图片"}</div>`);
       input.value = "";
       submit.disabled = true;
@@ -3093,13 +3213,16 @@
           ? result.reply
           : (result.message || "AI 服务暂时不可用");
         thinking.classList.toggle("error", !response.ok);
-        if (response.ok) {
+        if (response.ok && shouldRecommendFood(value, hadAiImage)) {
           const planResponse = await fetch("/api/ai/recommend", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: value })
           });
           renderAiPlan(await planResponse.json());
+        } else if (response.ok) {
+          lastAiItems = [];
+          aiCheckout.disabled = true;
         }
         aiImageFile = null;
         aiImageInput.value = "";
@@ -3160,6 +3283,27 @@
         await loadWallet();
         renderBalanceModal();
         renderProfilePanel();
+      }
+    });
+
+    withdrawPageForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(withdrawPageForm);
+      const response = await fetch("/api/my/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wechat: formData.get("wechat").trim(),
+          amount: Number(formData.get("amount") || 0)
+        })
+      });
+      const result = await response.json();
+      withdrawPageMessage.textContent = result.message || (response.ok ? "提现成功，预计24小时内到账" : "提交失败");
+      if (response.ok) {
+        withdrawPageForm.reset();
+        await loadWallet();
+        await showToast("提现成功，预计24小时内到账", "提现成功");
+        switchTab("balance");
       }
     });
 

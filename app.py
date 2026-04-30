@@ -2000,6 +2000,10 @@ def ai_chat():
     api_key = os.environ.get("ZHIPU_API_KEY", "").strip()
     if not api_key:
         return jsonify({"message": "智谱 API Key 还没有配置，请先设置 ZHIPU_API_KEY。"}), 503
+    try:
+        api_key.encode("ascii")
+    except UnicodeEncodeError:
+        return jsonify({"message": "智谱 API Key 配置不正确，请在服务器环境变量 ZHIPU_API_KEY 中填写真实英文/数字 Key，不要使用中文占位符。"}), 503
 
     menu_text = "\n".join(
         f"- {dish['name']}：{dish['category']}，￥{dish['price']}，{dish['description']}"

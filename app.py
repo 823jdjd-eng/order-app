@@ -425,52 +425,76 @@ def build_extended_menu():
 
 
 def build_luxury_menu():
-    image_bank = {
-        "steak": "https://images.unsplash.com/photo-1666633151676-428fe839c3b1?auto=format&fit=crop&w=900&q=82",
-        "pasta": "https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?auto=format&fit=crop&w=900&q=82",
-        "salmon": "https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=900&q=82",
-        "wine": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=900&q=82",
-        "champagne": "https://images.unsplash.com/photo-1547595628-c61a29f496f0?auto=format&fit=crop&w=900&q=82",
-        "dessert": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=82",
-        "cake": "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=82",
-        "oyster": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=900&q=82",
-        "lobster": "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=900&q=82",
-        "salad": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=82",
-        "coffee": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=82",
-        "cocktail": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=82",
-    }
+    def romantic_image(topic, seed):
+        return "/static/uploads/dishes/dish-{:02d}.png".format(seed)
+
     dishes = [
-        (1, "惠灵顿牛排双人份", "主厨西餐", 188, "招牌", "酥皮包裹菲力牛排，蘑菇酱馅浓郁，适合仪式感晚餐", "/static/uploads/chef-romantic-wellington.png"),
-        (2, "黑松露奶油意面", "主厨西餐", 78, "人气", "帕玛森奶香、黑松露香气和手工意面交织", "/static/uploads/chef-romantic-pasta.png"),
-        (3, "香煎三文鱼配柠檬黄油", "主厨西餐", 96, "轻奢", "外皮微脆，鱼肉细嫩，配柠檬黄油汁", "/static/uploads/chef-romantic-salmon.png"),
-        (4, "法式鹅肝焦糖苹果", "主厨西餐", 128, "限定", "鹅肝绵密丰润，焦糖苹果带来清甜层次", "/static/uploads/chef-romantic-foie.png"),
-        (5, "波士顿龙虾意面", "主厨西餐", 168, "海鲜", "龙虾肉弹嫩，番茄白葡萄酒酱汁鲜甜", image_bank["lobster"]),
-        (6, "红酒慢炖牛脸颊", "主厨西餐", 138, "慢炖", "牛脸颊软糯入味，红酒酱汁醇厚", image_bank["wine"]),
-        (7, "香草羊排配迷迭香汁", "主厨西餐", 158, "精选", "羊排焦香多汁，迷迭香和黑胡椒收尾", image_bank["steak"]),
-        (8, "奶油蘑菇烩鸡", "主厨西餐", 88, "温柔", "鸡腿肉鲜嫩，奶油蘑菇汁柔和浓郁", image_bank["salad"]),
-        (9, "玫瑰番茄布拉塔沙拉", "前菜沙拉", 58, "清爽", "布拉塔奶香丰盈，番茄酸甜，玫瑰盐提味", image_bank["salad"]),
-        (10, "生蚝三枚配香槟醋汁", "前菜沙拉", 99, "浪漫", "冰镇生蚝清甜，香槟醋汁轻盈开胃", image_bank["oyster"]),
-        (11, "凯撒沙拉配帕玛森脆片", "前菜沙拉", 48, "经典", "罗马生菜爽脆，帕玛森咸香，酱汁细腻", image_bank["salad"]),
-        (12, "烟熏三文鱼牛油果塔", "前菜沙拉", 72, "精致", "烟熏鱼香与牛油果绵密口感平衡", image_bank["salmon"]),
-        (13, "松露薯条配蒜香蛋黄酱", "前菜沙拉", 42, "小食", "现炸薯条、松露油和蒜香蛋黄酱", image_bank["steak"]),
-        (14, "芝士火腿拼盘", "前菜沙拉", 118, "分享", "进口芝士、风干火腿、坚果与果干", image_bank["wine"]),
-        (15, "海盐焦糖提拉米苏", "甜品", 46, "甜蜜", "咖啡酒香、马斯卡彭奶油和海盐焦糖", image_bank["dessert"]),
-        (16, "覆盆子熔岩巧克力", "甜品", 52, "心动", "热巧克力流心配覆盆子酸甜果香", image_bank["cake"]),
-        (17, "玫瑰荔枝慕斯", "甜品", 49, "七夕", "玫瑰花香、荔枝果香与轻盈慕斯", image_bank["dessert"]),
-        (18, "香草焦糖布蕾", "甜品", 39, "法式", "焦糖脆壳下是细腻香草蛋奶", image_bank["dessert"]),
-        (19, "草莓拿破仑", "甜品", 56, "限定", "酥皮、草莓和卡仕达奶油层层叠起", image_bank["cake"]),
-        (20, "双人甜品礼盒", "甜品", 98, "双人", "四款迷你甜点组合，适合饭后分享", image_bank["dessert"]),
-        (201, "松露奶油烩饭", "浪漫主食", 68, "醇香", "意式烩饭米、松露奶油和帕玛森芝士", image_bank["pasta"]),
-        (202, "番茄罗勒海鲜意面", "浪漫主食", 86, "鲜甜", "虾仁、贝柱、番茄罗勒酱和白葡萄酒香", image_bank["pasta"]),
-        (203, "牛肝菌蘑菇烩饭", "浪漫主食", 72, "菌香", "牛肝菌、蘑菇和奶油慢慢收汁", image_bank["salad"]),
-        (204, "香煎鸡胸藜麦碗", "浪漫主食", 62, "轻食", "鸡胸、藜麦、牛油果和清爽油醋汁", image_bank["salad"]),
-        (205, "龙虾汤配蒜香面包", "浪漫主食", 88, "浓汤", "龙虾壳熬汤底，入口浓郁鲜香", image_bank["lobster"]),
-        (301, "玫瑰可乐特调", "酒水饮品", 28, "特调", "可口可乐、玫瑰糖浆和柠檬片，保留可乐券适用", image_bank["cocktail"]),
-        (302, "赤霞珠红酒杯", "酒水饮品", 68, "红酒", "黑莓果香、单宁柔顺，适合搭配牛排", image_bank["wine"]),
-        (303, "粉桃香槟气泡", "酒水饮品", 58, "微醺", "粉桃香气和细腻气泡，适合约会开场", image_bank["champagne"]),
-        (304, "无酒精玫瑰气泡水", "酒水饮品", 32, "无酒精", "玫瑰、荔枝和苏打气泡，清甜不腻", image_bank["cocktail"]),
-        (305, "手冲耶加雪菲", "酒水饮品", 36, "咖啡", "花果香明显，适合饭后慢慢聊", image_bank["coffee"]),
-        (306, "烛光热红酒", "酒水饮品", 48, "热饮", "红酒、橙皮、肉桂与丁香慢煮", image_bank["wine"]),
+        (1, "惠灵顿牛排双人份", "主厨西餐", 188, "招牌", "酥皮包裹菲力牛排，蘑菇酱馅浓郁，适合仪式感晚餐", romantic_image("beef wellington", 1)),
+        (2, "黑松露奶油意面", "主厨西餐", 78, "人气", "帕玛森奶香、黑松露香气和手工意面交织", romantic_image("truffle cream pasta", 2)),
+        (3, "香煎三文鱼配柠檬黄油", "主厨西餐", 96, "轻奢", "外皮微脆，鱼肉细嫩，配柠檬黄油汁", romantic_image("salmon lemon butter", 3)),
+        (4, "法式鹅肝焦糖苹果", "主厨西餐", 128, "限定", "鹅肝绵密丰润，焦糖苹果带来清甜层次", romantic_image("foie gras apple", 4)),
+        (5, "波士顿龙虾意面", "主厨西餐", 168, "海鲜", "龙虾肉弹嫩，番茄白葡萄酒酱汁鲜甜", romantic_image("lobster pasta", 5)),
+        (6, "红酒慢炖牛脸颊", "主厨西餐", 138, "慢炖", "牛脸颊软糯入味，红酒酱汁醇厚", romantic_image("red wine beef", 6)),
+        (7, "香草羊排配迷迭香汁", "主厨西餐", 158, "精选", "羊排焦香多汁，迷迭香和黑胡椒收尾", romantic_image("lamb chop rosemary", 7)),
+        (8, "奶油蘑菇烩鸡", "主厨西餐", 88, "温柔", "鸡腿肉鲜嫩，奶油蘑菇汁柔和浓郁", romantic_image("cream mushroom chicken", 8)),
+        (9, "玫瑰番茄布拉塔沙拉", "前菜沙拉", 58, "清爽", "布拉塔奶香丰盈，番茄酸甜，玫瑰盐提味", romantic_image("burrata tomato salad", 9)),
+        (10, "生蚝三枚配香槟醋汁", "前菜沙拉", 99, "浪漫", "冰镇生蚝清甜，香槟醋汁轻盈开胃", romantic_image("oysters champagne", 10)),
+        (11, "凯撒沙拉配帕玛森脆片", "前菜沙拉", 48, "经典", "罗马生菜爽脆，帕玛森咸香，酱汁细腻", romantic_image("caesar salad parmesan", 11)),
+        (12, "烟熏三文鱼牛油果塔", "前菜沙拉", 72, "精致", "烟熏鱼香与牛油果绵密口感平衡", romantic_image("smoked salmon avocado", 12)),
+        (13, "松露薯条配蒜香蛋黄酱", "前菜沙拉", 42, "小食", "现炸薯条、松露油和蒜香蛋黄酱", romantic_image("truffle fries", 13)),
+        (14, "芝士火腿拼盘", "前菜沙拉", 118, "分享", "进口芝士、风干火腿、坚果与果干", romantic_image("cheese ham board", 14)),
+        (15, "香煎扇贝柚子沙拉", "前菜沙拉", 76, "轻盈", "扇贝焦香，柚子油醋汁带来清爽果香", romantic_image("scallop salad", 15)),
+        (16, "蜜桃火腿芝麻菜", "前菜沙拉", 66, "果香", "蜜桃清甜、火腿咸香，芝麻菜微苦平衡", romantic_image("peach prosciutto arugula", 16)),
+        (17, "松露奶油烩饭", "浪漫主食", 68, "醇香", "意式烩饭米、松露奶油和帕玛森芝士", romantic_image("truffle risotto", 17)),
+        (18, "番茄罗勒海鲜意面", "浪漫主食", 86, "鲜甜", "虾仁、贝柱、番茄罗勒酱和白葡萄酒香", romantic_image("seafood pasta tomato basil", 18)),
+        (19, "牛肝菌蘑菇烩饭", "浪漫主食", 72, "菌香", "牛肝菌、蘑菇和奶油慢慢收汁", romantic_image("porcini mushroom risotto", 19)),
+        (20, "香煎鸡胸藜麦碗", "浪漫主食", 62, "轻食", "鸡胸、藜麦、牛油果和清爽油醋汁", romantic_image("chicken quinoa bowl", 20)),
+        (21, "龙虾汤配蒜香面包", "浪漫主食", 88, "浓汤", "龙虾壳熬汤底，入口浓郁鲜香", romantic_image("lobster bisque bread", 21)),
+        (22, "南瓜鼠尾草手工饺", "浪漫主食", 69, "手作", "南瓜甜香、黄油鼠尾草和薄皮手工饺", romantic_image("pumpkin ravioli sage", 22)),
+        (23, "海胆奶油天使面", "浪漫主食", 118, "海味", "海胆鲜甜与奶油轻裹细面，余味温柔", romantic_image("sea urchin angel hair pasta", 23)),
+        (24, "黑椒牛柳焗饭", "浪漫主食", 79, "暖胃", "牛柳嫩滑，黑椒酱浓郁，芝士焗至微焦", romantic_image("beef baked rice", 24)),
+        (25, "玫瑰盐烤春鸡", "臻选主菜", 118, "香烤", "春鸡外皮焦香，玫瑰盐和香草提亮肉汁", romantic_image("roast chicken herbs", 25)),
+        (26, "安格斯肋眼配黑椒汁", "臻选主菜", 198, "厚切", "肋眼油花丰盈，黑椒汁醇厚收尾", romantic_image("ribeye steak sauce", 26)),
+        (27, "蜂蜜芥末慢烤肋排", "臻选主菜", 128, "浓香", "猪肋排软嫩脱骨，蜂蜜芥末甜咸交错", romantic_image("pork ribs honey", 27)),
+        (28, "香草黄油烤鳕鱼", "臻选主菜", 116, "细嫩", "鳕鱼肉洁白细嫩，香草黄油温润包裹", romantic_image("cod herb butter", 28)),
+        (29, "蒜香黄油大虾", "臻选主菜", 98, "海鲜", "大虾弹嫩，蒜香黄油和柠檬汁清亮开胃", romantic_image("garlic butter shrimp", 29)),
+        (30, "玫瑰烟熏鸭胸", "臻选主菜", 108, "微甜", "鸭胸油脂丰盈，烟熏香和莓果汁平衡", romantic_image("smoked duck breast", 30)),
+        (31, "迷迭香羊小排", "臻选主菜", 168, "精选", "羊小排焦香多汁，迷迭香气息干净悠长", romantic_image("rosemary lamb rack", 31)),
+        (32, "焦化洋葱牛肉排", "臻选主菜", 76, "治愈", "手打牛肉排配焦化洋葱，肉汁饱满", romantic_image("hamburger steak onion", 32)),
+        (33, "法式洋葱汤", "暖心汤品", 48, "经典", "洋葱慢炒出甜味，芝士面包烤至金黄", romantic_image("french onion soup", 33)),
+        (34, "奶油南瓜浓汤", "暖心汤品", 39, "温柔", "南瓜细腻绵密，奶油和坚果香气轻盈", romantic_image("pumpkin cream soup", 34)),
+        (35, "松茸鸡汤盅", "暖心汤品", 68, "滋养", "松茸清香、鸡汤澄澈，适合慢慢暖胃", romantic_image("matsutake chicken soup", 35)),
+        (36, "番茄牛尾汤", "暖心汤品", 72, "浓郁", "牛尾慢炖软糯，番茄酸甜让汤底更明亮", romantic_image("oxtail tomato soup", 36)),
+        (37, "海鲜巧达浓汤", "暖心汤品", 58, "鲜甜", "蛤蜊、虾仁和奶油汤底，入口饱满", romantic_image("seafood chowder", 37)),
+        (38, "菌菇清汤配脆片", "暖心汤品", 42, "清雅", "多种菌菇熬出清甜，配帕玛森脆片", romantic_image("mushroom clear soup", 38)),
+        (39, "龙虾番茄清汤", "暖心汤品", 88, "轻奢", "龙虾壳熬制汤底，番茄让鲜味更通透", romantic_image("lobster tomato soup", 39)),
+        (40, "白葡萄酒蛤蜊汤", "暖心汤品", 56, "微醺", "蛤蜊鲜甜，白葡萄酒香气轻盈", romantic_image("clam white wine soup", 40)),
+        (41, "海盐焦糖提拉米苏", "甜品", 46, "甜蜜", "咖啡酒香、马斯卡彭奶油和海盐焦糖", romantic_image("tiramisu caramel", 41)),
+        (42, "覆盆子熔岩巧克力", "甜品", 52, "心动", "热巧克力流心配覆盆子酸甜果香", romantic_image("raspberry lava cake", 42)),
+        (43, "玫瑰荔枝慕斯", "甜品", 49, "七夕", "玫瑰花香、荔枝果香与轻盈慕斯", romantic_image("rose lychee mousse", 43)),
+        (44, "香草焦糖布蕾", "甜品", 39, "法式", "焦糖脆壳下是细腻香草蛋奶", romantic_image("creme brulee vanilla", 44)),
+        (45, "草莓拿破仑", "甜品", 56, "限定", "酥皮、草莓和卡仕达奶油层层叠起", romantic_image("strawberry mille feuille", 45)),
+        (46, "双人甜品礼盒", "甜品", 98, "双人", "四款迷你甜点组合，适合饭后分享", romantic_image("dessert box for two", 46)),
+        (47, "抹茶白巧芝士蛋糕", "甜品", 45, "清新", "抹茶微苦、白巧柔甜，芝士口感绵密", romantic_image("matcha cheesecake", 47)),
+        (48, "樱桃黑森林杯", "甜品", 42, "复古", "樱桃酒香、可可蛋糕和奶油层次分明", romantic_image("black forest dessert cup", 48)),
+        (49, "松露薯泥", "精致小食", 36, "绵密", "土豆泥细腻，松露香气和黄油香缓慢展开", romantic_image("truffle mashed potato", 49)),
+        (50, "蒜香烤口蘑", "精致小食", 32, "多汁", "口蘑烤出汁水，蒜香黄油入口浓郁", romantic_image("garlic mushroom appetizer", 50)),
+        (51, "帕玛森炸鸡块", "精致小食", 46, "酥脆", "鸡块外酥里嫩，帕玛森咸香更有层次", romantic_image("parmesan fried chicken", 51)),
+        (52, "迷你牛肉塔可", "精致小食", 42, "分享", "牛肉酱香浓郁，酸奶油和莎莎酱清爽", romantic_image("mini beef taco", 52)),
+        (53, "香煎芝士年糕", "精致小食", 34, "拉丝", "年糕外壳微脆，芝士柔软拉丝", romantic_image("cheese rice cake", 53)),
+        (54, "黄油玉米杯", "精致小食", 28, "香甜", "甜玉米、黄油和海盐，简单但很讨喜", romantic_image("butter corn cup", 54)),
+        (55, "罗勒番茄烤面包", "精致小食", 38, "清爽", "烤面包酥脆，番茄罗勒鲜亮开胃", romantic_image("tomato basil bruschetta", 55)),
+        (56, "蜂蜜坚果烤芝士", "精致小食", 58, "微甜", "烤芝士温热流心，蜂蜜和坚果增加香气", romantic_image("baked cheese honey nuts", 56)),
+        (57, "玫瑰可乐特调", "酒水饮品", 28, "特调", "可口可乐、玫瑰糖浆和柠檬片，保留可乐券适用", romantic_image("rose cola mocktail", 57)),
+        (58, "赤霞珠红酒杯", "酒水饮品", 68, "红酒", "黑莓果香、单宁柔顺，适合搭配牛排", romantic_image("cabernet wine glass", 58)),
+        (59, "粉桃香槟气泡", "酒水饮品", 58, "微醺", "粉桃香气和细腻气泡，适合约会开场", romantic_image("peach champagne", 59)),
+        (60, "无酒精玫瑰气泡水", "酒水饮品", 32, "无酒精", "玫瑰、荔枝和苏打气泡，清甜不腻", romantic_image("rose sparkling water", 60)),
+        (61, "手冲耶加雪菲", "酒水饮品", 36, "咖啡", "花果香明显，适合饭后慢慢聊", romantic_image("pour over coffee", 61)),
+        (62, "烛光热红酒", "酒水饮品", 48, "热饮", "红酒、橙皮、肉桂与丁香慢煮", romantic_image("mulled wine candlelight", 62)),
+        (63, "荔枝白茶冷萃", "酒水饮品", 29, "茶饮", "白茶清香叠加荔枝果甜，清透解腻", romantic_image("lychee white tea", 63)),
+        (64, "莓果莫吉托", "酒水饮品", 42, "清爽", "莓果酸甜、薄荷清凉，气泡感轻快", romantic_image("berry mojito", 64)),
+        (65, "海盐焦糖拿铁", "酒水饮品", 34, "咖啡", "焦糖甜香和海盐收尾，奶泡细腻", romantic_image("sea salt caramel latte", 65)),
+        (66, "桂花乌龙奶盖", "酒水饮品", 31, "奶盖", "乌龙茶香、桂花清甜和轻盈奶盖", romantic_image("osmanthus oolong milk foam", 66)),
     ]
     return [
         {
@@ -485,15 +509,14 @@ def build_luxury_menu():
             "options": [],
         }
         for dish_id, name, category, price, tag, description, image in dishes
-        if category != "前菜沙拉"
     ]
 
 
 MENU = build_luxury_menu()
-CATEGORY_ORDER = ["主厨西餐", "浪漫主食", "甜品", "酒水饮品"]
+CATEGORY_ORDER = ["主厨西餐", "前菜沙拉", "浪漫主食", "臻选主菜", "暖心汤品", "甜品", "精致小食", "酒水饮品"]
 WHEEL_MEAL_DISH_IDS = [
     dish["id"] for dish in MENU
-    if dish["price"] <= 88 and dish["category"] in ("主厨西餐", "浪漫主食", "甜品")
+    if dish["price"] <= 88 and dish["category"] in ("主厨西餐", "浪漫主食", "臻选主菜", "甜品", "精致小食")
 ][:5]
 
 
@@ -1033,7 +1056,7 @@ def index():
         categories=categories,
         user=current_user(),
         wheel_slots=wheel_meal_dishes(),
-        wheel_coke=menu_item(301),
+        wheel_coke=menu_item(57),
     )
 
 
@@ -1565,8 +1588,8 @@ def spin_wheel():
     elif roll < 70:
         prize = {"type": "coupon", "title": "任意菜品五折餐券", "amount": 0, "min_amount": 0, "slot": 7, "target_type": "any_dish", "discount_type": "rate", "discount_rate": 0.5}
     elif roll < 80:
-        coke = menu_item(301)
-        prize = {"type": "coupon", "title": "可口可乐兑换券", "amount": float(coke["price"] if coke else 4), "min_amount": 0, "slot": 8, "target_type": "dish", "target_dish_id": 301, "discount_type": "amount"}
+        coke = menu_item(57)
+        prize = {"type": "coupon", "title": "玫瑰可乐特调兑换券", "amount": float(coke["price"] if coke else 28), "min_amount": 0, "slot": 8, "target_type": "dish", "target_dish_id": 57, "discount_type": "amount"}
     else:
         prize = {"type": "empty", "title": "谢谢参与", "slot": 9}
     with get_db() as conn:
@@ -2005,23 +2028,25 @@ def ai_recommend():
         mains = [dish for dish in MENU if dish["category"] == "主厨西餐"]
         desserts = [dish for dish in MENU if dish["category"] == "甜品"]
         staples = [dish for dish in MENU if dish["category"] == "浪漫主食"]
+        starters = [dish for dish in MENU if dish["category"] in ("前菜沙拉", "精致小食")]
         drinks = [dish for dish in MENU if dish["category"] == "酒水饮品"]
         selected = [
             random.choice(mains),
             random.choice(staples),
+            random.choice(starters),
             random.choice(desserts),
             random.choice(drinks),
         ]
     elif "辣" in message:
-        selected_ids = [2, 13, 304]
+        selected_ids = [29, 51, 64]
     elif "清淡" in message or "不辣" in message:
-        selected_ids = [3, 204, 304]
+        selected_ids = [3, 16, 63]
     elif "饮" in message or "喝" in message:
-        selected_ids = [302, 303, 304]
+        selected_ids = [58, 59, 60]
     elif "两" in message or "2" in message:
-        selected_ids = [1, 15, 303]
+        selected_ids = [1, 43, 59]
     else:
-        selected_ids = [2, 17, 301]
+        selected_ids = [2, 41, 57]
 
     if not blind_box:
         selected = [menu_item(dish_id) for dish_id in selected_ids]

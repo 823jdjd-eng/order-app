@@ -579,6 +579,102 @@
         flex-wrap: wrap;
       }
     }
+    /* Romantic admin theme overrides */
+    :root {
+      --ink: #332536;
+      --muted: #8c7785;
+      --line: rgba(214, 129, 159, 0.2);
+      --paper: rgba(255, 255, 255, 0.92);
+      --soft: #fff0f5;
+      --brand: #ff6f9f;
+      --green: #d94374;
+      --mint: #ffe2ec;
+      --shadow: 0 18px 46px rgba(141, 72, 104, 0.13);
+    }
+
+    body {
+      background:
+        linear-gradient(135deg, #fff7fa 0%, #f8eef8 46%, #fffaf7 100%);
+      font-family: "Optima", "Songti SC", "STSong", "PingFang SC", "Microsoft YaHei", serif;
+    }
+
+    .topbar,
+    .login-card,
+    .admin-panel,
+    .stat {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar,
+    .login-card,
+    .admin-panel {
+      border-radius: 24px;
+    }
+
+    h1,
+    .admin-panel h2 {
+      color: #3b1f2f;
+    }
+
+    .status-light,
+    .admin-link,
+    .coupon-message,
+    .record-row strong {
+      color: var(--green);
+    }
+
+    .admin-tab {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.84);
+      color: var(--ink);
+    }
+
+    .admin-tab.active,
+    .login-submit,
+    .primary,
+    .coupon-form button,
+    .chat-form button {
+      background: linear-gradient(135deg, #ff7eaa, #df4779);
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(223, 71, 121, 0.2);
+    }
+
+    .field input,
+    .login-card input,
+    .complaint-reply-input,
+    .chat-form input {
+      border-color: var(--line);
+      border-radius: 12px;
+      background: #fffafd;
+    }
+
+    .user-row,
+    .thread-item,
+    .record-row,
+    .order-card,
+    .complaint-card {
+      border: 1px solid var(--line);
+      background: #fff6fa;
+      border-radius: 16px;
+    }
+
+    .thread-item.active {
+      border-color: rgba(223, 71, 121, 0.35);
+      background: #ffe6ef;
+    }
+
+    .admin-chat-box {
+      border-color: var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .admin-message.merchant {
+      background: #ffe0ea;
+      color: #3b1f2f;
+    }
   </style>
 </head>
 <body>

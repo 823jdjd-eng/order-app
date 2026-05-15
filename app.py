@@ -424,11 +424,76 @@ def build_extended_menu():
     return menu
 
 
-MENU = build_extended_menu()
-CATEGORY_ORDER = ["现做炖菜", "精品炒菜", "主食", "饮品"]
+def build_luxury_menu():
+    image_bank = {
+        "steak": "https://images.unsplash.com/photo-1666633151676-428fe839c3b1?auto=format&fit=crop&w=900&q=82",
+        "pasta": "https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?auto=format&fit=crop&w=900&q=82",
+        "salmon": "https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=900&q=82",
+        "wine": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=900&q=82",
+        "champagne": "https://images.unsplash.com/photo-1547595628-c61a29f496f0?auto=format&fit=crop&w=900&q=82",
+        "dessert": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=82",
+        "cake": "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=82",
+        "oyster": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=900&q=82",
+        "lobster": "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=900&q=82",
+        "salad": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=82",
+        "coffee": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=82",
+        "cocktail": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=82",
+    }
+    dishes = [
+        (1, "惠灵顿牛排双人份", "主厨西餐", 188, "招牌", "酥皮包裹菲力牛排，蘑菇酱馅浓郁，适合仪式感晚餐", "/static/uploads/chef-romantic-wellington.png"),
+        (2, "黑松露奶油意面", "主厨西餐", 78, "人气", "帕玛森奶香、黑松露香气和手工意面交织", "/static/uploads/chef-romantic-pasta.png"),
+        (3, "香煎三文鱼配柠檬黄油", "主厨西餐", 96, "轻奢", "外皮微脆，鱼肉细嫩，配柠檬黄油汁", "/static/uploads/chef-romantic-salmon.png"),
+        (4, "法式鹅肝焦糖苹果", "主厨西餐", 128, "限定", "鹅肝绵密丰润，焦糖苹果带来清甜层次", "/static/uploads/chef-romantic-foie.png"),
+        (5, "波士顿龙虾意面", "主厨西餐", 168, "海鲜", "龙虾肉弹嫩，番茄白葡萄酒酱汁鲜甜", image_bank["lobster"]),
+        (6, "红酒慢炖牛脸颊", "主厨西餐", 138, "慢炖", "牛脸颊软糯入味，红酒酱汁醇厚", image_bank["wine"]),
+        (7, "香草羊排配迷迭香汁", "主厨西餐", 158, "精选", "羊排焦香多汁，迷迭香和黑胡椒收尾", image_bank["steak"]),
+        (8, "奶油蘑菇烩鸡", "主厨西餐", 88, "温柔", "鸡腿肉鲜嫩，奶油蘑菇汁柔和浓郁", image_bank["salad"]),
+        (9, "玫瑰番茄布拉塔沙拉", "前菜沙拉", 58, "清爽", "布拉塔奶香丰盈，番茄酸甜，玫瑰盐提味", image_bank["salad"]),
+        (10, "生蚝三枚配香槟醋汁", "前菜沙拉", 99, "浪漫", "冰镇生蚝清甜，香槟醋汁轻盈开胃", image_bank["oyster"]),
+        (11, "凯撒沙拉配帕玛森脆片", "前菜沙拉", 48, "经典", "罗马生菜爽脆，帕玛森咸香，酱汁细腻", image_bank["salad"]),
+        (12, "烟熏三文鱼牛油果塔", "前菜沙拉", 72, "精致", "烟熏鱼香与牛油果绵密口感平衡", image_bank["salmon"]),
+        (13, "松露薯条配蒜香蛋黄酱", "前菜沙拉", 42, "小食", "现炸薯条、松露油和蒜香蛋黄酱", image_bank["steak"]),
+        (14, "芝士火腿拼盘", "前菜沙拉", 118, "分享", "进口芝士、风干火腿、坚果与果干", image_bank["wine"]),
+        (15, "海盐焦糖提拉米苏", "甜品", 46, "甜蜜", "咖啡酒香、马斯卡彭奶油和海盐焦糖", image_bank["dessert"]),
+        (16, "覆盆子熔岩巧克力", "甜品", 52, "心动", "热巧克力流心配覆盆子酸甜果香", image_bank["cake"]),
+        (17, "玫瑰荔枝慕斯", "甜品", 49, "七夕", "玫瑰花香、荔枝果香与轻盈慕斯", image_bank["dessert"]),
+        (18, "香草焦糖布蕾", "甜品", 39, "法式", "焦糖脆壳下是细腻香草蛋奶", image_bank["dessert"]),
+        (19, "草莓拿破仑", "甜品", 56, "限定", "酥皮、草莓和卡仕达奶油层层叠起", image_bank["cake"]),
+        (20, "双人甜品礼盒", "甜品", 98, "双人", "四款迷你甜点组合，适合饭后分享", image_bank["dessert"]),
+        (201, "松露奶油烩饭", "浪漫主食", 68, "醇香", "意式烩饭米、松露奶油和帕玛森芝士", image_bank["pasta"]),
+        (202, "番茄罗勒海鲜意面", "浪漫主食", 86, "鲜甜", "虾仁、贝柱、番茄罗勒酱和白葡萄酒香", image_bank["pasta"]),
+        (203, "牛肝菌蘑菇烩饭", "浪漫主食", 72, "菌香", "牛肝菌、蘑菇和奶油慢慢收汁", image_bank["salad"]),
+        (204, "香煎鸡胸藜麦碗", "浪漫主食", 62, "轻食", "鸡胸、藜麦、牛油果和清爽油醋汁", image_bank["salad"]),
+        (205, "龙虾汤配蒜香面包", "浪漫主食", 88, "浓汤", "龙虾壳熬汤底，入口浓郁鲜香", image_bank["lobster"]),
+        (301, "玫瑰可乐特调", "酒水饮品", 28, "特调", "可口可乐、玫瑰糖浆和柠檬片，保留可乐券适用", image_bank["cocktail"]),
+        (302, "赤霞珠红酒杯", "酒水饮品", 68, "红酒", "黑莓果香、单宁柔顺，适合搭配牛排", image_bank["wine"]),
+        (303, "粉桃香槟气泡", "酒水饮品", 58, "微醺", "粉桃香气和细腻气泡，适合约会开场", image_bank["champagne"]),
+        (304, "无酒精玫瑰气泡水", "酒水饮品", 32, "无酒精", "玫瑰、荔枝和苏打气泡，清甜不腻", image_bank["cocktail"]),
+        (305, "手冲耶加雪菲", "酒水饮品", 36, "咖啡", "花果香明显，适合饭后慢慢聊", image_bank["coffee"]),
+        (306, "烛光热红酒", "酒水饮品", 48, "热饮", "红酒、橙皮、肉桂与丁香慢煮", image_bank["wine"]),
+    ]
+    return [
+        {
+            "id": dish_id,
+            "name": name,
+            "category": category,
+            "price": price,
+            "tag": tag,
+            "sales": 0,
+            "description": description,
+            "image": image,
+            "options": [],
+        }
+        for dish_id, name, category, price, tag, description, image in dishes
+        if category != "前菜沙拉"
+    ]
+
+
+MENU = build_luxury_menu()
+CATEGORY_ORDER = ["主厨西餐", "浪漫主食", "甜品", "酒水饮品"]
 WHEEL_MEAL_DISH_IDS = [
     dish["id"] for dish in MENU
-    if dish["price"] <= 18 and dish["category"] in ("现做炖菜", "精品炒菜")
+    if dish["price"] <= 88 and dish["category"] in ("主厨西餐", "浪漫主食", "甜品")
 ][:5]
 
 
@@ -1937,26 +2002,26 @@ def ai_recommend():
         budget = max(int(number) for number in digits)
 
     if blind_box:
-        stews = [dish for dish in MENU if dish["category"] == "现做炖菜"]
-        stir_fries = [dish for dish in MENU if dish["category"] == "精品炒菜"]
-        mains = [dish for dish in MENU if dish["category"] == "主食"]
-        drinks = [dish for dish in MENU if dish["category"] == "饮品"]
+        mains = [dish for dish in MENU if dish["category"] == "主厨西餐"]
+        desserts = [dish for dish in MENU if dish["category"] == "甜品"]
+        staples = [dish for dish in MENU if dish["category"] == "浪漫主食"]
+        drinks = [dish for dish in MENU if dish["category"] == "酒水饮品"]
         selected = [
-            random.choice(stews),
-            random.choice(stir_fries),
             random.choice(mains),
+            random.choice(staples),
+            random.choice(desserts),
             random.choice(drinks),
         ]
     elif "辣" in message:
-        selected_ids = [58, 201, 303]
+        selected_ids = [2, 13, 304]
     elif "清淡" in message or "不辣" in message:
-        selected_ids = [2, 201, 303]
+        selected_ids = [3, 204, 304]
     elif "饮" in message or "喝" in message:
-        selected_ids = [301, 302, 304]
+        selected_ids = [302, 303, 304]
     elif "两" in message or "2" in message:
-        selected_ids = [3, 56, 201, 301]
+        selected_ids = [1, 15, 303]
     else:
-        selected_ids = [1, 201, 301]
+        selected_ids = [2, 17, 301]
 
     if not blind_box:
         selected = [menu_item(dish_id) for dish_id in selected_ids]

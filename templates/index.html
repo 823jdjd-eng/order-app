@@ -6050,6 +6050,1305 @@
         font-size: 15px !important;
       }
     }
+
+    /* Final wheel repair: absolute layers, centered button, no green pointer. */
+    .wheel-card {
+      overflow: hidden !important;
+    }
+
+    .wheel-stage {
+      position: relative !important;
+      display: block !important;
+      width: min(356px, 86vw) !important;
+      height: min(356px, 86vw) !important;
+      margin: 14px auto 22px !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      transform: none !important;
+    }
+
+    .wheel-stage::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: -10px !important;
+      z-index: 0 !important;
+      border-radius: 50% !important;
+      background:
+        radial-gradient(circle at center, transparent 60%, rgba(255,255,255,.96) 61% 100%),
+        repeating-conic-gradient(from 0deg, rgba(255,255,255,.96) 0 8deg, #ffd1e2 8deg 16deg) !important;
+      box-shadow:
+        0 20px 48px rgba(216, 62, 115, .2),
+        inset 0 0 0 3px rgba(255,255,255,.86) !important;
+      pointer-events: none !important;
+    }
+
+    .wheel-disc {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      border-radius: 50% !important;
+      transform-origin: 50% 50% !important;
+    }
+
+    .wheel-center {
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      z-index: 25 !important;
+      width: 112px !important;
+      height: 112px !important;
+      margin: 0 !important;
+      transform: translate(-50%, -50%) !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 0 !important;
+      border-radius: 50% !important;
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.38), transparent 30%),
+        linear-gradient(135deg, #ff78a7 0%, #df3f78 100%) !important;
+      color: #fff !important;
+      font-size: 22px !important;
+      font-weight: 950 !important;
+      line-height: 1.18 !important;
+      text-align: center !important;
+      box-shadow:
+        0 22px 44px rgba(216, 62, 115, .32),
+        0 0 0 14px rgba(255,255,255,.78),
+        0 0 0 23px rgba(255, 218, 231, .68) !important;
+      pointer-events: auto !important;
+    }
+
+    .wheel-pointer {
+      position: absolute !important;
+      left: 50% !important;
+      top: -12px !important;
+      z-index: 40 !important;
+      width: 58px !important;
+      height: 124px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: translateX(-50%) !important;
+      border: 0 !important;
+      background: transparent !important;
+      filter: drop-shadow(0 12px 18px rgba(216, 62, 115, .3)) !important;
+      pointer-events: none !important;
+    }
+
+    .wheel-pointer::before {
+      content: "♡" !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 0 !important;
+      z-index: 2 !important;
+      width: 54px !important;
+      height: 54px !important;
+      transform: translateX(-50%) !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 4px solid rgba(255, 255, 255, .92) !important;
+      border-radius: 50% !important;
+      background:
+        radial-gradient(circle at 34% 28%, rgba(255,255,255,.8), transparent 23%),
+        linear-gradient(145deg, #ffd779 0%, #ff87ad 52%, #d83e73 100%) !important;
+      color: #fff !important;
+      font-size: 30px !important;
+      line-height: 1 !important;
+      rotate: 0deg !important;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.46),
+        0 0 0 7px rgba(255, 234, 242, .86) !important;
+    }
+
+    .wheel-pointer::after {
+      content: "" !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 44px !important;
+      z-index: 1 !important;
+      width: 24px !important;
+      height: 78px !important;
+      transform: translateX(-50%) !important;
+      border: 0 !important;
+      border-radius: 999px 999px 5px 5px !important;
+      background:
+        linear-gradient(90deg, transparent 0 38%, rgba(255,255,255,.72) 42% 50%, transparent 54% 100%),
+        linear-gradient(180deg, #ff79a7 0%, #d83e73 72%, #b72c5f 100%) !important;
+      clip-path: polygon(50% 100%, 0 0, 100% 0) !important;
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.62),
+        0 12px 18px rgba(216,62,115,.24) !important;
+    }
+    /* Absolute last wheel override: keeps the spin button centered and replaces the old green needle. */
+    .wheel-card {
+      overflow: hidden !important;
+    }
+
+    .wheel-stage {
+      position: relative !important;
+      display: block !important;
+      width: min(360px, 86vw) !important;
+      height: min(360px, 86vw) !important;
+      margin: 18px auto 22px !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      transform: none !important;
+      isolation: isolate !important;
+    }
+
+    .wheel-stage > * {
+      grid-area: auto !important;
+    }
+
+    .wheel-disc {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      border-radius: 50% !important;
+      transform-origin: 50% 50% !important;
+    }
+
+    .wheel-center {
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      z-index: 25 !important;
+      width: 106px !important;
+      height: 106px !important;
+      margin: 0 !important;
+      transform: translate(-50%, -50%) !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 0 !important;
+      border-radius: 50% !important;
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.38), transparent 30%),
+        linear-gradient(135deg, #ff78a7 0%, #df3f78 100%) !important;
+      color: #fff !important;
+      font-size: 22px !important;
+      font-weight: 950 !important;
+      line-height: 1.18 !important;
+      text-align: center !important;
+      box-shadow:
+        0 22px 44px rgba(216, 62, 115, .32),
+        0 0 0 12px rgba(255,255,255,.78),
+        0 0 0 21px rgba(255, 218, 231, .68) !important;
+      pointer-events: auto !important;
+    }
+
+    .wheel-pointer {
+      position: absolute !important;
+      left: 50% !important;
+      top: -8px !important;
+      z-index: 40 !important;
+      width: 54px !important;
+      height: 118px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: translateX(-50%) !important;
+      border: 0 !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-bottom: 0 !important;
+      background: transparent !important;
+      filter: drop-shadow(0 12px 18px rgba(216, 62, 115, .3)) !important;
+      pointer-events: none !important;
+    }
+
+    .wheel-pointer::before {
+      content: "\2661" !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 0 !important;
+      z-index: 2 !important;
+      width: 48px !important;
+      height: 48px !important;
+      transform: translateX(-50%) !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 3px solid rgba(255, 255, 255, .94) !important;
+      border-radius: 50% !important;
+      background:
+        radial-gradient(circle at 34% 28%, rgba(255,255,255,.8), transparent 23%),
+        linear-gradient(145deg, #ffd779 0%, #ff87ad 52%, #d83e73 100%) !important;
+      color: #fff !important;
+      font-size: 30px !important;
+      line-height: 1 !important;
+      rotate: 0deg !important;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.46),
+        0 0 0 7px rgba(255, 234, 242, .86) !important;
+    }
+
+    .wheel-pointer::after {
+      content: "" !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 40px !important;
+      z-index: 1 !important;
+      width: 18px !important;
+      height: 74px !important;
+      transform: translateX(-50%) !important;
+      border: 0 !important;
+      border-radius: 999px 999px 5px 5px !important;
+      background:
+        linear-gradient(90deg, transparent 0 38%, rgba(255,255,255,.72) 42% 50%, transparent 54% 100%),
+        linear-gradient(180deg, #ff79a7 0%, #d83e73 72%, #b72c5f 100%) !important;
+      clip-path: polygon(50% 100%, 0 0, 100% 0) !important;
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.62),
+        0 12px 18px rgba(216,62,115,.24) !important;
+    }
+    /* Final order-page mobile dining layout. */
+    [data-page="order"]:not(.active) {
+      display: none !important;
+    }
+
+    [data-page="order"].page-pad {
+      padding: 12px 10px 0 !important;
+      height: 100svh !important;
+      min-height: 100svh !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding-bottom: 92px !important;
+    }
+
+    [data-page="order"] .location-row {
+      flex: 0 0 auto !important;
+      margin-bottom: 6px !important;
+    }
+
+    [data-page="order"] .page-title {
+      flex: 0 0 auto !important;
+      margin: 2px 0 8px !important;
+      font-size: clamp(28px, 8vw, 38px) !important;
+      line-height: 1.05 !important;
+    }
+
+    [data-page="order"] .search {
+      flex: 0 0 auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 12px !important;
+    }
+
+    [data-page="order"] .order-layout {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      display: grid !important;
+      grid-template-columns: 106px minmax(0, 1fr) !important;
+      gap: 12px !important;
+      margin-top: 0 !important;
+      overflow: hidden !important;
+      align-items: stretch !important;
+    }
+
+    [data-page="order"] .order-category-grid {
+      position: sticky !important;
+      top: 0 !important;
+      align-self: start !important;
+      height: 100% !important;
+      max-height: 100% !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      padding: 0 2px 16px 0 !important;
+      scrollbar-width: none !important;
+    }
+
+    [data-page="order"] .order-category-grid::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    [data-page="order"] .order-category-card {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      min-height: 74px !important;
+      border-radius: 22px !important;
+      padding: 0 10px !important;
+      border: 1px solid rgba(224, 68, 123, .15) !important;
+      background: rgba(255, 255, 255, .86) !important;
+      color: #4f2337 !important;
+      box-shadow: 0 14px 28px rgba(71, 51, 61, .07) !important;
+      font-size: 17px !important;
+      line-height: 1.18 !important;
+      white-space: normal !important;
+    }
+
+    [data-page="order"] .order-category-card.active {
+      color: #e0447b !important;
+      border-color: rgba(224, 68, 123, .38) !important;
+      background:
+        linear-gradient(180deg, rgba(255, 238, 246, .96), rgba(255, 255, 255, .94)) !important;
+      box-shadow:
+        inset 4px 0 0 #ee5b93,
+        0 18px 34px rgba(224, 68, 123, .16) !important;
+    }
+
+    [data-page="order"] .dish-list {
+      min-height: 0 !important;
+      height: 100% !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 14px !important;
+      padding: 0 3px 26px 0 !important;
+      scroll-behavior: smooth !important;
+    }
+
+    [data-page="order"] .dish-list::after {
+      content: "" !important;
+      display: block !important;
+      height: 70px !important;
+      flex: 0 0 auto !important;
+    }
+
+    [data-page="order"] .dish {
+      flex: 0 0 auto !important;
+      min-width: 0 !important;
+      border-radius: 26px !important;
+      grid-template-columns: 104px minmax(0, 1fr) !important;
+      gap: 12px !important;
+      padding: 14px !important;
+      background: rgba(255,255,255,.94) !important;
+      box-shadow: 0 18px 36px rgba(64, 45, 54, .08) !important;
+    }
+
+    [data-page="order"] .dish img {
+      width: 104px !important;
+      height: 104px !important;
+      border-radius: 18px !important;
+    }
+
+    [data-page="order"] .dish h3 {
+      font-size: 19px !important;
+      line-height: 1.18 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 1 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+
+    [data-page="order"] .dish p {
+      font-size: 13px !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+
+    [data-page="order"] .cart-pill {
+      position: relative !important;
+      min-width: 88px !important;
+      height: 42px !important;
+      padding: 0 22px !important;
+      border: 1px solid rgba(224, 68, 123, .16) !important;
+      box-shadow: 0 14px 28px rgba(224, 68, 123, .11) !important;
+    }
+
+    [data-page="order"] .cart-pill .badge {
+      position: absolute !important;
+      top: -7px !important;
+      right: 9px !important;
+      min-width: 22px !important;
+      height: 22px !important;
+      padding: 0 6px !important;
+      border-radius: 999px !important;
+      display: inline-grid !important;
+      place-items: center !important;
+      background: linear-gradient(135deg, #ff739f, #e0447b) !important;
+      color: #fff !important;
+      border: 2px solid rgba(255,255,255,.95) !important;
+      box-shadow: 0 8px 16px rgba(224, 68, 123, .28) !important;
+      font-size: 12px !important;
+      font-weight: 950 !important;
+      line-height: 1 !important;
+    }
+
+    @media (max-width: 430px) {
+      [data-page="order"].page-pad {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+      }
+
+      [data-page="order"] .order-layout {
+        grid-template-columns: 92px minmax(0, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      [data-page="order"] .order-category-card {
+        min-height: 64px !important;
+        border-radius: 18px !important;
+        font-size: 15px !important;
+        padding: 0 8px !important;
+      }
+
+      [data-page="order"] .dish {
+        grid-template-columns: 82px minmax(0, 1fr) !important;
+        gap: 10px !important;
+        padding: 11px !important;
+        border-radius: 22px !important;
+      }
+
+      [data-page="order"] .dish img {
+        width: 82px !important;
+        height: 82px !important;
+      }
+
+      [data-page="order"] .dish h3 {
+        font-size: 16px !important;
+      }
+
+      [data-page="order"] .dish p {
+        font-size: 12px !important;
+        -webkit-line-clamp: 2 !important;
+      }
+
+      [data-page="order"] .dish-bottom {
+        gap: 4px !important;
+      }
+
+      [data-page="order"] .price {
+        font-size: 18px !important;
+      }
+
+      [data-page="order"] .round {
+        width: 32px !important;
+        height: 32px !important;
+      }
+    }
+    /* Final premium wheel: fixed prize plate, rotating heart pointer. */
+    .wheel-stage {
+      --wheel-size: min(382px, 89vw);
+      --wheel-label-radius: calc(var(--wheel-size) * .335);
+      width: var(--wheel-size) !important;
+      height: var(--wheel-size) !important;
+      margin: 18px auto 24px !important;
+    }
+
+    .wheel-disc {
+      transition: none !important;
+      transform: rotate(0deg) !important;
+      background:
+        radial-gradient(circle at center,
+          rgba(255,255,255,.96) 0 24%,
+          rgba(255,229,240,.74) 24.5% 30%,
+          transparent 30.5% 100%),
+        repeating-conic-gradient(from -18deg,
+          rgba(255,255,255,.72) 0 2deg,
+          transparent 2deg 36deg),
+        conic-gradient(from -18deg,
+          #fff1aa 0 36deg,
+          #ff72ab 36deg 72deg,
+          #d6b7ff 72deg 108deg,
+          #ffd676 108deg 144deg,
+          #ff7db5 144deg 180deg,
+          #f9edf5 180deg 216deg,
+          #ffbe72 216deg 252deg,
+          #ff93c0 252deg 288deg,
+          #f9eff6 288deg 324deg,
+          #ffabc9 324deg 360deg) !important;
+      box-shadow:
+        0 24px 54px rgba(216, 62, 115, .18),
+        inset 0 0 0 12px rgba(255,255,255,.84),
+        inset 0 0 0 22px rgba(255,246,250,.72) !important;
+    }
+
+    .wheel-label {
+      left: 50% !important;
+      top: 50% !important;
+      width: 82px !important;
+      margin: -23px 0 0 -41px !important;
+      color: #542039 !important;
+      font-size: 12px !important;
+      line-height: 1.12 !important;
+      font-weight: 950 !important;
+      text-align: center !important;
+      text-shadow: 0 1px 0 rgba(255,255,255,.86) !important;
+      transform-origin: 41px 23px !important;
+      z-index: 4 !important;
+    }
+
+    .wheel-label img {
+      width: 34px !important;
+      height: 34px !important;
+      margin: 0 auto 3px !important;
+      border: 3px solid rgba(255,255,255,.95) !important;
+      box-shadow: 0 7px 16px rgba(91, 36, 58, .20) !important;
+    }
+
+    .wheel-label:nth-child(1) { transform: rotate(0deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(0deg) !important; }
+    .wheel-label:nth-child(2) { transform: rotate(36deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-36deg) !important; }
+    .wheel-label:nth-child(3) { transform: rotate(72deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-72deg) !important; }
+    .wheel-label:nth-child(4) { transform: rotate(108deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-108deg) !important; }
+    .wheel-label:nth-child(5) { transform: rotate(144deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-144deg) !important; }
+    .wheel-label:nth-child(6) { transform: rotate(180deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-180deg) !important; }
+    .wheel-label:nth-child(7) { transform: rotate(216deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-216deg) !important; }
+    .wheel-label:nth-child(8) { transform: rotate(252deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-252deg) !important; }
+    .wheel-label:nth-child(9) { transform: rotate(288deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-288deg) !important; }
+    .wheel-label:nth-child(10) { transform: rotate(324deg) translateY(calc(-1 * var(--wheel-label-radius))) rotate(-324deg) !important; }
+
+    .wheel-pointer {
+      position: absolute !important;
+      inset: 0 !important;
+      left: 0 !important;
+      top: 0 !important;
+      z-index: 28 !important;
+      width: 100% !important;
+      height: 100% !important;
+      transform: rotate(var(--wheel-pointer-rotation, 0deg)) !important;
+      transform-origin: 50% 50% !important;
+      transition: transform 4s cubic-bezier(.12,.82,.14,1) !important;
+      border: 0 !important;
+      background: transparent !important;
+      filter: drop-shadow(0 12px 18px rgba(184, 36, 86, .30)) !important;
+      pointer-events: none !important;
+    }
+
+    .wheel-pointer::after {
+      content: "" !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 48px !important;
+      width: 18px !important;
+      height: 132px !important;
+      transform: translateX(-50%) !important;
+      border: 0 !important;
+      border-radius: 999px 999px 7px 7px !important;
+      background:
+        linear-gradient(90deg, transparent 0 34%, rgba(255,255,255,.78) 44% 54%, transparent 64%),
+        linear-gradient(180deg, #fff0aa 0%, #ff78a7 34%, #d83e73 100%) !important;
+      clip-path: polygon(50% 0, 100% 100%, 0 100%) !important;
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.66),
+        0 12px 18px rgba(216,62,115,.24) !important;
+    }
+
+    .wheel-pointer::before {
+      content: "\2661" !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      z-index: 2 !important;
+      width: 58px !important;
+      height: 58px !important;
+      transform: translate(-50%, -50%) !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 4px solid rgba(255,255,255,.94) !important;
+      border-radius: 50% !important;
+      background:
+        radial-gradient(circle at 32% 24%, rgba(255,255,255,.84), transparent 24%),
+        linear-gradient(145deg, #ffd77c 0%, #ff83ad 52%, #d83e73 100%) !important;
+      color: #fff !important;
+      font-size: 36px !important;
+      line-height: 1 !important;
+      box-shadow:
+        0 0 0 7px rgba(255,236,244,.82),
+        0 16px 28px rgba(216,62,115,.26),
+        inset 0 -8px 16px rgba(172,42,91,.20) !important;
+    }
+
+    .wheel-center {
+      z-index: 24 !important;
+      width: 118px !important;
+      height: 118px !important;
+      color: #fff !important;
+      background:
+        radial-gradient(circle at 34% 22%, rgba(255,255,255,.34), transparent 30%),
+        linear-gradient(135deg, #ff8ab5 0%, #e0447b 64%, #c23268 100%) !important;
+      box-shadow:
+        0 20px 44px rgba(216, 62, 115, .30),
+        0 0 0 13px rgba(255,255,255,.76),
+        0 0 0 24px rgba(255,225,236,.58) !important;
+    }
+
+    /* Final message page layout: full-height mobile chat with an inner scroller. */
+    [data-page="messages"].active {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 12px 14px 92px !important;
+      background:
+        linear-gradient(180deg, rgba(232,250,243,.92), rgba(255,240,247,.72) 210px),
+        var(--v5-bg) !important;
+    }
+
+    [data-page="messages"] .cart-head {
+      flex: 0 0 auto !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      align-items: start !important;
+      gap: 12px !important;
+      margin: 0 0 12px !important;
+      padding: 4px 2px 0 !important;
+    }
+
+    [data-page="messages"] .page-title {
+      margin: 0 0 4px !important;
+      font-size: clamp(28px, 7.6vw, 38px) !important;
+      line-height: 1.08 !important;
+    }
+
+    [data-page="messages"] .muted {
+      line-height: 1.38 !important;
+    }
+
+    [data-page="messages"] .location-copy {
+      max-width: 154px !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+
+    [data-page="messages"] .message-panel {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      height: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      margin: 0 !important;
+      padding: 12px !important;
+      border-radius: 28px !important;
+      background: rgba(255,255,255,.62) !important;
+      box-shadow: 0 22px 52px rgba(71, 51, 61, .11) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    [data-page="messages"] .message-list {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      height: auto !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      padding: 14px !important;
+      border: 1px solid rgba(224, 68, 123, .10) !important;
+      border-radius: 24px !important;
+      background: rgba(255,255,255,.76) !important;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.66) !important;
+    }
+
+    [data-page="messages"] .message-bubble {
+      max-width: 82% !important;
+      border-radius: 20px !important;
+      padding: 12px 14px !important;
+      background: rgba(255,255,255,.9) !important;
+      color: #2c1830 !important;
+      box-shadow: 0 10px 22px rgba(71, 51, 61, .08) !important;
+    }
+
+    [data-page="messages"] .message-bubble.customer {
+      background: linear-gradient(135deg, #ffd7e5, #ff9abe) !important;
+      color: #4f1731 !important;
+    }
+
+    [data-page="messages"] .message-form {
+      flex: 0 0 auto !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 8px !important;
+      padding: 8px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.9) !important;
+      box-shadow: 0 14px 32px rgba(71, 51, 61, .12) !important;
+    }
+
+    [data-page="messages"] .message-form input {
+      min-height: 46px !important;
+      font-size: 16px !important;
+    }
+
+    [data-page="messages"] .message-form .primary {
+      min-width: 82px !important;
+      min-height: 46px !important;
+      border-radius: 999px !important;
+    }
+
+    /* Final AI mobile chat layout: ChatGPT-like scrolling conversation. */
+    .ai-page.active {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 10px 12px 92px !important;
+      background:
+        linear-gradient(180deg, rgba(255,234,244,.92), rgba(247,250,248,.96) 170px),
+        var(--v5-bg) !important;
+    }
+
+    .ai-page .ai-glass-chat {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      border-radius: 28px !important;
+      overflow: hidden !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.18)),
+        url("{{ url_for('static', filename='uploads/yushiwu-romantic-hero.png') }}") center/cover !important;
+      box-shadow: 0 24px 56px rgba(71, 51, 61, .14) !important;
+      position: relative !important;
+    }
+
+    .ai-page .ai-glass-chat::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255,160,194,.26), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,255,255,.18) 42%, rgba(255,245,250,.56)) !important;
+      backdrop-filter: blur(2px) !important;
+      pointer-events: none !important;
+    }
+
+    .ai-page .chat {
+      position: relative !important;
+      z-index: 1 !important;
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      margin: 0 !important;
+      padding: 22px 16px 16px !important;
+      scroll-behavior: smooth !important;
+    }
+
+    .ai-page .chat::before {
+      content: "雨石屋 AI";
+      align-self: center;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.62);
+      color: #d83e73;
+      font-weight: 950;
+      font-size: 13px;
+      box-shadow: 0 10px 24px rgba(216,62,115,.10);
+      backdrop-filter: blur(12px);
+    }
+
+    .ai-page .bubble {
+      max-width: min(86%, 430px) !important;
+      width: fit-content !important;
+      padding: 12px 14px !important;
+      border-radius: 22px !important;
+      background: rgba(255,255,255,.78) !important;
+      color: #2c1830 !important;
+      line-height: 1.62 !important;
+      font-weight: 850 !important;
+      box-shadow: 0 14px 28px rgba(71, 51, 61, .10) !important;
+      backdrop-filter: blur(16px) !important;
+    }
+
+    .ai-page .bubble.me {
+      align-self: flex-end !important;
+      justify-self: auto !important;
+      background: linear-gradient(135deg, #ffd4e3, #ff8eb5) !important;
+      color: #4f1731 !important;
+    }
+
+    .ai-page .bubble.error {
+      background: rgba(255, 242, 239, .9) !important;
+      color: #b23b2f !important;
+    }
+
+    .ai-page .ai-input,
+    .ai-page .ai-preview,
+    .ai-page .ai-actions {
+      position: relative !important;
+      z-index: 2 !important;
+      margin-left: 14px !important;
+      margin-right: 14px !important;
+    }
+
+    .ai-page .ai-input {
+      flex: 0 0 auto !important;
+      grid-template-columns: 46px minmax(0, 1fr) auto !important;
+      gap: 8px !important;
+      margin-top: 0 !important;
+      margin-bottom: 10px !important;
+      padding: 8px !important;
+      border-radius: 22px !important;
+      background: rgba(255,255,255,.82) !important;
+      box-shadow: 0 16px 34px rgba(71, 51, 61, .12) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    .ai-page .ai-input input {
+      min-width: 0 !important;
+      font-size: 16px !important;
+    }
+
+    .ai-page .ai-upload {
+      width: 46px !important;
+      height: 46px !important;
+      border-radius: 16px !important;
+      color: #d83e73 !important;
+      background: rgba(255,255,255,.94) !important;
+    }
+
+    .ai-page #ai-submit {
+      min-width: 78px !important;
+      height: 46px !important;
+      border-radius: 999px !important;
+      padding: 0 18px !important;
+    }
+
+    .ai-page .ai-preview {
+      flex: 0 0 auto !important;
+      margin-bottom: 10px !important;
+      background: rgba(255,255,255,.82) !important;
+      backdrop-filter: blur(16px) !important;
+    }
+
+    .ai-page .ai-actions {
+      flex: 0 0 auto !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px !important;
+      margin-top: 0 !important;
+      margin-bottom: 14px !important;
+      padding: 10px !important;
+      border-radius: 22px !important;
+      background: rgba(255,255,255,.76) !important;
+      box-shadow: 0 16px 34px rgba(71, 51, 61, .10) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    .ai-page .ai-actions button {
+      min-width: 0 !important;
+      height: 44px !important;
+      padding: 0 10px !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+
+    @media (max-width: 430px) {
+      .ai-page.active {
+        padding: 8px 8px 88px !important;
+      }
+
+      .ai-page .chat {
+        padding: 18px 12px 12px !important;
+      }
+
+      .ai-page .ai-input,
+      .ai-page .ai-preview,
+      .ai-page .ai-actions {
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+      }
+    }
+
+    /* Final AI bottom-composer pass: pale romantic background, controls fixed at the bottom. */
+    .ai-page.active {
+      padding: 10px 12px 92px !important;
+    }
+
+    .ai-page .ai-glass-chat {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.14)),
+        url("{{ url_for('static', filename='uploads/ai-chat-romantic-visible.png') }}") center center/cover no-repeat !important;
+    }
+
+    .ai-page .ai-glass-chat::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      border-radius: 0 !important;
+      filter: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      z-index: 0 !important;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,194,216,.32), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10) 58%, rgba(255,247,251,.28)) !important;
+      backdrop-filter: blur(1px) !important;
+      pointer-events: none !important;
+    }
+
+    .ai-page .ai-glass-chat::after {
+      content: "" !important;
+      position: absolute !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: auto !important;
+      height: 48% !important;
+      border-radius: 0 !important;
+      filter: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      z-index: 1 !important;
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.12) 30%, rgba(255,245,250,.34)) !important;
+      pointer-events: none !important;
+    }
+
+    .ai-page .chat {
+      flex: 1 1 auto !important;
+      padding: 22px 16px 18px !important;
+      z-index: 2 !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+        url("{{ url_for('static', filename='uploads/ai-chat-romantic-visible.png') }}") center center/cover no-repeat !important;
+      background-blend-mode: screen !important;
+      border-bottom-left-radius: 26px !important;
+      border-bottom-right-radius: 26px !important;
+    }
+
+    .ai-page .ai-input {
+      margin-top: auto !important;
+      margin-bottom: 8px !important;
+      z-index: 3 !important;
+    }
+
+    .ai-page .ai-actions {
+      margin-bottom: 14px !important;
+      padding: 10px !important;
+      z-index: 3 !important;
+    }
+
+    /* Final merchant message romantic background. */
+    [data-page="messages"].active {
+      background:
+        linear-gradient(180deg, rgba(255,242,248,.66), rgba(255,246,250,.78)),
+        url("{{ url_for('static', filename='uploads/message-romantic-cool-bg.png') }}") center/cover no-repeat !important;
+    }
+
+    [data-page="messages"] .message-panel {
+      background: rgba(255,255,255,.46) !important;
+      backdrop-filter: blur(18px) saturate(1.12) !important;
+      border: 1px solid rgba(255,255,255,.54) !important;
+    }
+
+    [data-page="messages"] .message-list {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,244,250,.52)),
+        url("{{ url_for('static', filename='uploads/message-romantic-cool-bg.png') }}") center/cover no-repeat !important;
+      background-blend-mode: screen !important;
+    }
+
+    /* Final AI/message visual sync: AI gets the message-style frame, and their backgrounds are swapped. */
+    .ai-page .ai-glass-chat {
+      padding: 18px 18px 14px !important;
+      gap: 12px !important;
+      border: 1px solid rgba(255,255,255,.58) !important;
+      border-radius: 30px !important;
+      background:
+        linear-gradient(180deg, rgba(255,246,251,.52), rgba(255,238,247,.40)),
+        url("{{ url_for('static', filename='uploads/message-romantic-cool-bg.png') }}") center/cover no-repeat !important;
+      box-shadow: 0 26px 58px rgba(71, 28, 48, .18) !important;
+      backdrop-filter: blur(18px) saturate(1.08) !important;
+    }
+
+    .ai-page .ai-glass-chat::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      border-radius: 30px !important;
+      filter: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      z-index: 0 !important;
+      background:
+        radial-gradient(circle at 20% 14%, rgba(255,190,214,.28), transparent 28%),
+        linear-gradient(180deg, rgba(255,244,250,.44), rgba(255,236,246,.34)) !important;
+      pointer-events: none !important;
+    }
+
+    .ai-page .ai-glass-chat::after {
+      display: none !important;
+    }
+
+    .ai-page .chat {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 18px 14px !important;
+      border: 1px solid rgba(255,255,255,.70) !important;
+      border-radius: 27px !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.54), rgba(255,240,247,.42)),
+        url("{{ url_for('static', filename='uploads/message-romantic-cool-bg.png') }}") center/cover no-repeat !important;
+      background-blend-mode: screen !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.42),
+        0 16px 36px rgba(71, 28, 48, .10) !important;
+      z-index: 2 !important;
+    }
+
+    .ai-page .ai-input,
+    .ai-page .ai-actions {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      z-index: 3 !important;
+    }
+
+    .ai-page .ai-input {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      background: rgba(255,255,255,.86) !important;
+      box-shadow: 0 15px 30px rgba(71, 28, 48, .12) !important;
+    }
+
+    .ai-page .ai-actions {
+      margin-bottom: 0 !important;
+      background: rgba(255,255,255,.78) !important;
+      box-shadow: 0 15px 30px rgba(71, 28, 48, .10) !important;
+    }
+
+    [data-page="messages"].active {
+      background:
+        linear-gradient(180deg, rgba(255,242,248,.72), rgba(255,248,251,.84)),
+        url("{{ url_for('static', filename='uploads/ai-chat-romantic-visible.png') }}") center/cover no-repeat !important;
+    }
+
+    [data-page="messages"] .message-panel {
+      background: rgba(255,255,255,.60) !important;
+    }
+
+    [data-page="messages"] .message-list {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,244,250,.56)),
+        url("{{ url_for('static', filename='uploads/ai-chat-romantic-visible.png') }}") center/cover no-repeat !important;
+      background-blend-mode: screen !important;
+    }
+
+    /* Absolute final AI/message swap: message-style AI frame with exchanged backgrounds. */
+    .ai-page.active {
+      padding: 10px 12px 92px !important;
+      background:
+        linear-gradient(180deg, rgba(255,236,246,.62), rgba(244,250,248,.88) 72%),
+        var(--v5-bg) !important;
+    }
+
+    .ai-page .ai-glass-chat {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 18px !important;
+      gap: 12px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+      position: relative !important;
+      border-radius: 30px !important;
+      border: 1px solid rgba(255,255,255,.66) !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,236,246,.36)),
+        url("{{ url_for('static', filename='uploads/message-romantic-cool-bg.png') }}") center/cover no-repeat !important;
+      box-shadow:
+        0 24px 56px rgba(71, 28, 48, .16),
+        inset 0 0 0 1px rgba(255,255,255,.48) !important;
+      backdrop-filter: blur(16px) saturate(1.08) !important;
+    }
+
+    .ai-page .ai-glass-chat::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      border-radius: 30px !important;
+      filter: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      z-index: 0 !important;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,121,167,.18), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,235,244,.34)) !important;
+      pointer-events: none !important;
+      backdrop-filter: blur(1px) !important;
+    }
+
+    .ai-page .ai-glass-chat::after {
+      content: "" !important;
+      display: block !important;
+      position: absolute !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: auto !important;
+      height: 30% !important;
+      border-radius: 0 !important;
+      filter: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      z-index: 1 !important;
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,242,248,.42)) !important;
+      pointer-events: none !important;
+    }
+
+    .ai-page .chat {
+      position: relative !important;
+      z-index: 2 !important;
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 18px 16px !important;
+      overflow-y: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      border-radius: 26px !important;
+      border: 1px solid rgba(255,255,255,.70) !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.50), rgba(255,244,250,.40)),
+        url("{{ url_for('static', filename='uploads/message-romantic-cool-bg.png') }}") center/cover no-repeat !important;
+      background-blend-mode: screen !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.44),
+        0 18px 36px rgba(71, 28, 48, .10) !important;
+      scroll-behavior: smooth !important;
+    }
+
+    .ai-page .chat::before {
+      content: "雨石屋 AI" !important;
+      align-self: center !important;
+      flex: 0 0 auto !important;
+      margin-bottom: 4px !important;
+      padding: 7px 16px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.78) !important;
+      color: #d83e73 !important;
+      font-size: 13px !important;
+      font-weight: 950 !important;
+      box-shadow: 0 10px 24px rgba(216,62,115,.12) !important;
+      backdrop-filter: blur(12px) !important;
+    }
+
+    .ai-page .bubble {
+      background: rgba(255,255,255,.86) !important;
+      box-shadow: 0 12px 26px rgba(71, 28, 48, .10) !important;
+    }
+
+    .ai-page .bubble.me {
+      background: linear-gradient(135deg, #ff9ac2, #e54a87) !important;
+      color: #fff !important;
+    }
+
+    .ai-page .ai-input,
+    .ai-page .ai-preview,
+    .ai-page .ai-actions {
+      position: relative !important;
+      z-index: 3 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    .ai-page .ai-input {
+      flex: 0 0 auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      padding: 8px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.88) !important;
+      box-shadow: 0 16px 32px rgba(71, 28, 48, .14) !important;
+      backdrop-filter: blur(18px) !important;
+      grid-template-columns: 46px minmax(0, 1fr) auto !important;
+    }
+
+    .ai-page .ai-actions {
+      flex: 0 0 auto !important;
+      margin-bottom: 0 !important;
+      padding: 10px !important;
+      border-radius: 24px !important;
+      background: rgba(255,255,255,.80) !important;
+      box-shadow: 0 14px 30px rgba(71, 28, 48, .12) !important;
+      backdrop-filter: blur(18px) !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px !important;
+    }
+
+    [data-page="messages"].active {
+      background:
+        linear-gradient(180deg, rgba(255,246,251,.64), rgba(255,250,246,.82)),
+        url("{{ url_for('static', filename='uploads/ai-chat-romantic-visible.png') }}") center/cover no-repeat !important;
+    }
+
+    [data-page="messages"] .message-panel {
+      background: rgba(255,255,255,.54) !important;
+      border: 1px solid rgba(255,255,255,.64) !important;
+      box-shadow: 0 24px 54px rgba(71, 28, 48, .14) !important;
+      backdrop-filter: blur(18px) saturate(1.12) !important;
+    }
+
+    [data-page="messages"] .message-list {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.64), rgba(255,244,250,.52)),
+        url("{{ url_for('static', filename='uploads/ai-chat-romantic-visible.png') }}") center/cover no-repeat !important;
+      background-blend-mode: screen !important;
+      border: 1px solid rgba(255,255,255,.66) !important;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.40) !important;
+    }
+
+    /* Pin AI composer to the lower edge of the visible mobile panel. */
+    .ai-page.active {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      overflow: hidden !important;
+      flex-direction: column !important;
+    }
+
+    .ai-page .ai-glass-chat {
+      height: calc(100svh - 116px) !important;
+      min-height: calc(100svh - 116px) !important;
+      max-height: calc(100svh - 116px) !important;
+      justify-content: stretch !important;
+    }
+
+    .ai-page .chat {
+      flex: 1 1 auto !important;
+    }
+
+    .ai-page .ai-input {
+      margin-top: auto !important;
+    }
+
+    /* Last page-visibility guard: layout rules above must never reveal inactive pages. */
+    .page:not(.active),
+    [data-page="order"].page-pad:not(.active) {
+      display: none !important;
+    }
+
+    .page.active {
+      display: block !important;
+    }
+
+    [data-page="order"].page-pad.active {
+      display: flex !important;
+    }
+
+    .ai-page.active,
+    [data-page="messages"].active {
+      display: flex !important;
+    }
   </style>
 </head>
 <body>
@@ -6070,7 +7369,7 @@
         <div class="content">
           <article class="hero-card" data-go="order">
             <h1>雨石屋</h1>
-            <p>给两个人认真做饭。热气、甜意、家常菜，都刚刚好。</p>
+            <p>为两个人留一席烛光，把浪漫、微醺与主厨料理，都盛进今晚。</p>
           </article>
 
           <div class="home-categories">
@@ -6629,6 +7928,7 @@
     const withdrawPageForm = document.querySelector("#withdraw-page-form");
     const withdrawPageMessage = document.querySelector("#withdraw-page-message");
     const wheelDisc = document.querySelector("#wheel-disc");
+    const wheelPointer = document.querySelector(".wheel-pointer");
     const wheelSpin = document.querySelector("#wheel-spin");
     const wheelRecords = document.querySelector("#wheel-records");
     const appDialog = document.querySelector("#app-dialog");
@@ -6766,6 +8066,7 @@
       if (tab === "coupons") renderCouponPage();
       if (tab === "wheel") renderWheelRecords();
       if (tab === "complaints") loadComplaints();
+      if (tab === "order") requestAnimationFrame(syncCategoryFromScroll);
       if (tab === "messages") {
         loadMerchantMessages();
         if (!merchantMessageTimer) {
@@ -6795,6 +8096,56 @@
       document.querySelectorAll("[data-category-filter]").forEach((button) => {
         button.classList.toggle("active", button.dataset.categoryFilter === category);
       });
+    }
+
+    function scrollAiChatToBottom() {
+      const chat = document.querySelector("#chat");
+      if (!chat) return;
+      requestAnimationFrame(() => {
+        chat.scrollTop = chat.scrollHeight;
+      });
+    }
+
+    function orderScroller() {
+      return document.querySelector('[data-page="order"] .dish-list');
+    }
+
+    function firstDishInCategory(category) {
+      return Array.from(document.querySelectorAll("[data-dish]"))
+        .find((dish) => dish.dataset.category === category && !dish.hidden);
+    }
+
+    function scrollCategoryIntoView(category) {
+      const scroller = orderScroller();
+      const target = firstDishInCategory(category);
+      if (!scroller || !target) return;
+      scroller.scrollTo({
+        top: target.offsetTop - scroller.offsetTop - 4,
+        behavior: "smooth"
+      });
+    }
+
+    function keepActiveCategoryButtonVisible(category) {
+      const button = Array.from(document.querySelectorAll("[data-category-filter]"))
+        .find((item) => item.dataset.categoryFilter === category);
+      if (button) {
+        button.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+    }
+
+    function syncCategoryFromScroll() {
+      const scroller = orderScroller();
+      if (!scroller) return;
+      const visibleDishes = Array.from(document.querySelectorAll("[data-dish]")).filter((dish) => !dish.hidden);
+      if (!visibleDishes.length) return;
+      const probe = scroller.scrollTop + scroller.clientHeight * 0.24;
+      const current = visibleDishes.reduce((active, dish) => (
+        dish.offsetTop - scroller.offsetTop <= probe ? dish : active
+      ), visibleDishes[0]);
+      if (current?.dataset.category && current.dataset.category !== activeCategory) {
+        setActiveCategory(current.dataset.category);
+        keepActiveCategoryButtonVisible(current.dataset.category);
+      }
     }
 
     async function updateLocation() {
@@ -7373,11 +8724,15 @@
     function filterDishes() {
       const keyword = document.querySelector("#order-search").value.trim().toLowerCase();
       document.querySelectorAll("[data-dish]").forEach((dish) => {
-        const categoryMatch = activeCategory === "全部" || dish.dataset.category === activeCategory;
         const dishInfo = `${dish.dataset.name} ${dish.dataset.category}`.toLowerCase();
         const keywordMatch = !keyword || dishInfo.includes(keyword);
-        dish.hidden = !(categoryMatch && keywordMatch);
+        dish.hidden = !keywordMatch;
       });
+      const firstVisible = Array.from(document.querySelectorAll("[data-dish]")).find((dish) => !dish.hidden);
+      if (firstVisible && !firstDishInCategory(activeCategory)) {
+        setActiveCategory(firstVisible.dataset.category);
+      }
+      requestAnimationFrame(syncCategoryFromScroll);
     }
 
     function openOrderWithSearch(keyword = "", category = "") {
@@ -7385,6 +8740,12 @@
       document.querySelector("#order-search").value = keyword;
       switchTab("order");
       filterDishes();
+      requestAnimationFrame(() => {
+        const scroller = orderScroller();
+        if (scroller) scroller.scrollTop = 0;
+        if (category) scrollCategoryIntoView(category);
+        keepActiveCategoryButtonVisible(activeCategory);
+      });
     }
 
     function addRecommendation(items, goConfirm = false) {
@@ -7406,6 +8767,7 @@
         "beforeend",
         `<div class="bubble">已为你配好：${names.join("、")}<br>预计 ￥${Number(result.total || 0).toFixed(1)}，可以一键加入购物车并结算。</div>`
       );
+      scrollAiChatToBottom();
     }
 
     function shouldRecommendFood(text = "", hasImage = false) {
@@ -7666,6 +9028,8 @@
       if (category) {
         setActiveCategory(category);
         filterDishes();
+        scrollCategoryIntoView(category);
+        keepActiveCategoryButtonVisible(category);
       }
     });
 
@@ -7782,6 +9146,9 @@
 
     document.querySelector("#order-search").addEventListener("input", filterDishes);
     document.querySelector("#order-search-button").addEventListener("click", filterDishes);
+    orderScroller()?.addEventListener("scroll", () => {
+      window.requestAnimationFrame(syncCategoryFromScroll);
+    }, { passive: true });
     document.querySelector("#home-search-button").addEventListener("click", () => {
       openOrderWithSearch(document.querySelector("#home-search").value.trim());
     });
@@ -7871,11 +9238,13 @@
       if (!value && !aiImageFile) return;
       const hadAiImage = Boolean(aiImageFile);
       chat.insertAdjacentHTML("beforeend", `<div class="bubble me">${value || "帮我识别这张图片"}</div>`);
+      scrollAiChatToBottom();
       input.value = "";
       submit.disabled = true;
       submit.textContent = "思考中";
       const thinkingId = `thinking-${Date.now()}`;
       chat.insertAdjacentHTML("beforeend", `<div class="bubble" id="${thinkingId}">正在为你搭配菜单...</div>`);
+      scrollAiChatToBottom();
 
       try {
         const body = new FormData();
@@ -7891,6 +9260,7 @@
           ? result.reply
           : (result.message || "AI 服务暂时不可用");
         thinking.classList.toggle("error", !response.ok);
+        scrollAiChatToBottom();
         if (response.ok && shouldRecommendFood(value, hadAiImage)) {
           const planResponse = await fetch("/api/ai/recommend", {
             method: "POST",
@@ -7907,6 +9277,7 @@
         aiPreview.classList.remove("open");
       } catch {
         document.querySelector(`#${thinkingId}`).textContent = "网络异常，稍后再试。";
+        scrollAiChatToBottom();
       } finally {
         submit.disabled = false;
         submit.textContent = "发送";
@@ -7943,16 +9314,20 @@
           return;
         }
         const slot = Number(result.prize?.slot ?? 9);
-        const desired = (360 - slot * 36) % 360;
+        const desired = (slot * 36) % 360;
         const current = ((wheelRotation % 360) + 360) % 360;
         const delta = 1440 + ((desired - current + 360) % 360);
         wheelRotation += delta;
-        wheelDisc.style.transition = "transform 3.8s cubic-bezier(.12,.82,.14,1)";
-        void wheelDisc.offsetWidth;
-        wheelDisc.style.transform = `rotate(${wheelRotation}deg)`;
-        await new Promise((resolve) => setTimeout(resolve, 3900));
+        wheelDisc.style.transform = "rotate(0deg)";
+        wheelPointer.style.transition = "transform 4s cubic-bezier(.12,.82,.14,1)";
+        void wheelPointer.offsetWidth;
+        wheelPointer.style.setProperty("--wheel-pointer-rotation", `${wheelRotation}deg`);
+        await new Promise((resolve) => setTimeout(resolve, 4100));
         await loadWallet();
         renderWheelRecords();
+        wheelSpin.disabled = false;
+        document.querySelector("#wheel-center-spin").disabled = false;
+        wheelSpin.textContent = "余额支付 9.9 元转一次";
         await showToast(`转盘停在：${result.prize.title}`, "转盘结果");
       } finally {
         wheelSpin.disabled = false;

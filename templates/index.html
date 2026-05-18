@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -7317,18 +7317,789 @@
     }
 
     .ai-page .ai-glass-chat {
-      height: calc(100svh - 116px) !important;
-      min-height: calc(100svh - 116px) !important;
-      max-height: calc(100svh - 116px) !important;
+      height: calc(100svh - 100px) !important;
+      min-height: calc(100svh - 100px) !important;
+      max-height: calc(100svh - 100px) !important;
       justify-content: stretch !important;
+      padding-bottom: 10px !important;
     }
 
     .ai-page .chat {
       flex: 1 1 auto !important;
+      min-height: 0 !important;
     }
 
     .ai-page .ai-input {
       margin-top: auto !important;
+    }
+
+    .ai-page .ai-actions {
+      margin-top: 4px !important;
+      padding: 8px !important;
+      border-radius: 26px !important;
+      background: rgba(255, 255, 255, .86) !important;
+    }
+
+    .ai-page .ai-actions button {
+      min-height: 54px !important;
+      border-radius: 999px !important;
+      font-family: "STKaiti", "KaiTi", "Microsoft YaHei", sans-serif !important;
+      font-size: 18px !important;
+      font-weight: 950 !important;
+      letter-spacing: 0 !important;
+      box-shadow: 0 14px 28px rgba(216, 62, 115, .14) !important;
+    }
+
+    .ai-page .ai-actions .pill {
+      border: 1px solid rgba(232, 126, 164, .28) !important;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,.92), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,.98), rgba(255,239,247,.92)) !important;
+      color: #2b1830 !important;
+    }
+
+    .ai-page .ai-actions .primary {
+      border: 0 !important;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,.32), transparent 30%),
+        linear-gradient(135deg, #ff9cc2, #e25388) !important;
+      color: #fff !important;
+    }
+
+    /* Final romantic dish-detail and checkout polish. */
+    .dish-detail-page.active {
+      display: block !important;
+      min-height: 100svh !important;
+      padding-bottom: 156px !important;
+      overflow-y: auto !important;
+      background:
+        linear-gradient(180deg, rgba(255,235,244,.74), rgba(245,251,249,.94)),
+        var(--v5-bg) !important;
+      font-family: "STKaiti", "KaiTi", "Microsoft YaHei", sans-serif !important;
+    }
+
+    .dish-detail-page .detail-hero {
+      height: min(50svh, 430px) !important;
+      border-radius: 0 0 36px 36px !important;
+      overflow: hidden !important;
+      box-shadow: 0 24px 46px rgba(65, 28, 42, .18) !important;
+    }
+
+    .dish-detail-page .detail-hero::after {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      background: linear-gradient(180deg, rgba(30,10,18,.08), rgba(30,10,18,.22) 72%, rgba(255,238,246,.92)) !important;
+      pointer-events: none !important;
+    }
+
+    .dish-detail-page .detail-hero img {
+      height: 100% !important;
+      filter: saturate(1.08) contrast(1.03) !important;
+    }
+
+    .dish-detail-page .detail-icon {
+      z-index: 3 !important;
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 20px !important;
+      border: 1px solid rgba(255,255,255,.76) !important;
+      background: rgba(255,247,251,.86) !important;
+      color: #3b2639 !important;
+      box-shadow: 0 14px 28px rgba(55, 27, 39, .14) !important;
+      backdrop-filter: blur(14px) !important;
+    }
+
+    .dish-detail-page .detail-main {
+      margin: -38px 14px 18px !important;
+      padding: 22px 20px !important;
+      border-radius: 34px !important;
+      border: 1px solid rgba(255,255,255,.78) !important;
+      background: rgba(255,255,255,.92) !important;
+      box-shadow: 0 24px 52px rgba(71, 28, 48, .13) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    .dish-detail-page .detail-price-row {
+      align-items: center !important;
+      gap: 12px !important;
+      margin-bottom: 14px !important;
+    }
+
+    .dish-detail-page .detail-price {
+      color: #d83e73 !important;
+      font-size: 44px !important;
+      font-weight: 950 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .dish-detail-page .detail-price small {
+      font-size: 19px !important;
+      margin-right: 4px !important;
+    }
+
+    .dish-detail-page .detail-discount {
+      display: none !important;
+    }
+
+    .dish-detail-page .detail-sales {
+      min-width: max-content !important;
+      padding: 8px 12px !important;
+      border-radius: 999px !important;
+      background: #fff0f6 !important;
+      color: #9b637b !important;
+      font-size: 14px !important;
+    }
+
+    .dish-detail-page .detail-title-row {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 12px !important;
+      padding: 0 0 18px !important;
+      border-bottom: 1px solid rgba(232, 126, 164, .18) !important;
+    }
+
+    .dish-detail-page .detail-title-row h1 {
+      font-size: 30px !important;
+      line-height: 1.18 !important;
+      color: #2b1830 !important;
+      font-weight: 950 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .dish-detail-page .detail-add {
+      min-height: 50px !important;
+      padding: 0 18px !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, #ff8fb8, #d83e73) !important;
+      color: #fff !important;
+      font-size: 17px !important;
+      font-weight: 950 !important;
+      box-shadow: 0 16px 32px rgba(216, 62, 115, .22) !important;
+    }
+
+    .dish-detail-page .detail-section {
+      margin-top: 18px !important;
+      padding: 20px !important;
+      border-radius: 28px !important;
+      border: 1px solid rgba(255,255,255,.78) !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,247,251,.90)) !important;
+      box-shadow: 0 14px 30px rgba(71, 28, 48, .08) !important;
+    }
+
+    .dish-detail-page .detail-section h2 {
+      margin-bottom: 16px !important;
+      color: #2b1830 !important;
+      font-size: 25px !important;
+      letter-spacing: 0 !important;
+    }
+
+    .dish-detail-page .detail-row {
+      grid-template-columns: 76px minmax(0, 1fr) !important;
+      gap: 18px !important;
+      padding: 14px 0 !important;
+      border-bottom: 1px solid rgba(232, 126, 164, .14) !important;
+      font-size: 19px !important;
+      line-height: 1.52 !important;
+    }
+
+    .dish-detail-page .detail-row span:first-child {
+      color: #a17488 !important;
+      font-weight: 950 !important;
+    }
+
+    .dish-detail-page .detail-row span:last-child {
+      color: #2b1830 !important;
+      font-weight: 950 !important;
+    }
+
+    .dish-detail-page .detail-row:last-child {
+      display: none !important;
+    }
+
+    .dish-detail-page .detail-bar {
+      position: fixed !important;
+      left: 50% !important;
+      right: auto !important;
+      bottom: 76px !important;
+      z-index: 82 !important;
+      width: min(430px, 100vw) !important;
+      transform: translateX(-50%) !important;
+      display: grid !important;
+      grid-template-columns: 56px 52px minmax(0, 1fr) !important;
+      gap: 10px !important;
+      padding: 12px 14px !important;
+      border-radius: 28px 28px 0 0 !important;
+      border: 1px solid rgba(255,255,255,.78) !important;
+      border-bottom: 0 !important;
+      background: rgba(255,255,255,.92) !important;
+      box-shadow: 0 -18px 40px rgba(71, 28, 48, .14) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    .dish-detail-page .detail-bar .round {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 18px !important;
+      border: 0 !important;
+      background: #fff0f6 !important;
+      color: #d83e73 !important;
+      font-size: 24px !important;
+      box-shadow: inset 0 0 0 1px rgba(232,126,164,.18) !important;
+    }
+
+    .dish-detail-page #detail-count {
+      display: grid !important;
+      place-items: center !important;
+      color: #2b1830 !important;
+      font-size: 20px !important;
+    }
+
+    .dish-detail-page #detail-cart {
+      min-width: 0 !important;
+      min-height: 54px !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, #ff8fb8, #d83e73) !important;
+      color: #fff !important;
+      font-size: 19px !important;
+      font-weight: 950 !important;
+      box-shadow: 0 16px 32px rgba(216, 62, 115, .22) !important;
+    }
+
+    [data-page="confirm"].active {
+      padding-bottom: 176px !important;
+      overflow-y: auto !important;
+      background:
+        linear-gradient(180deg, rgba(255,236,246,.76), rgba(245,251,249,.96)) !important;
+    }
+
+    [data-page="confirm"] .confirm-card {
+      border-radius: 30px !important;
+      border: 1px solid rgba(255,255,255,.76) !important;
+      background: rgba(255,255,255,.94) !important;
+      box-shadow: 0 20px 46px rgba(71, 28, 48, .10) !important;
+    }
+
+    [data-page="confirm"] .coupon-list {
+      gap: 10px !important;
+      margin-top: 14px !important;
+    }
+
+    [data-page="confirm"] .coupon-option {
+      min-height: 62px !important;
+      padding: 12px 14px !important;
+      border-radius: 22px !important;
+      border: 1px solid rgba(232,126,164,.24) !important;
+      background: rgba(255,246,250,.86) !important;
+      color: #cf4d7c !important;
+      font-size: 16px !important;
+      font-weight: 950 !important;
+      box-shadow: 0 10px 24px rgba(216, 62, 115, .06) !important;
+    }
+
+    [data-page="confirm"] .coupon-option.active {
+      border-color: rgba(216,62,115,.48) !important;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,.90), transparent 32%),
+        linear-gradient(135deg, #fff0f7, #ffd7e6) !important;
+      color: #d83e73 !important;
+      box-shadow: 0 14px 30px rgba(216, 62, 115, .16) !important;
+    }
+
+    [data-page="confirm"] .balance-pay-row {
+      border-color: rgba(232,126,164,.22) !important;
+      background: linear-gradient(135deg, #fff8fb, #fff0f6) !important;
+      color: #d83e73 !important;
+    }
+
+    [data-page="confirm"] .pay-sticky {
+      bottom: 76px !important;
+      z-index: 82 !important;
+      width: min(430px, 100vw) !important;
+      padding: 12px 14px !important;
+      border-radius: 28px 28px 0 0 !important;
+      border: 1px solid rgba(255,255,255,.78) !important;
+      border-bottom: 0 !important;
+      background: rgba(255,255,255,.94) !important;
+      box-shadow: 0 -18px 40px rgba(71, 28, 48, .14) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    [data-page="confirm"] .pay-button {
+      min-height: 56px !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, #ff8fb8, #d83e73) !important;
+      color: #fff !important;
+      font-size: 18px !important;
+      font-weight: 950 !important;
+      box-shadow: 0 16px 32px rgba(216, 62, 115, .20) !important;
+    }
+
+    /* Final repair: drawers above detail bars, compact profile/checkout, pink detail price, ledger page. */
+    .cart-drawer.open {
+      z-index: 140 !important;
+    }
+
+    .cart-sheet {
+      z-index: 141 !important;
+    }
+
+    .dish-detail-page:not(.active) .detail-bar {
+      display: none !important;
+    }
+
+    .dish-detail-page.active .detail-price,
+    .dish-detail-page.active #detail-price {
+      color: #d83e73 !important;
+    }
+
+    .profile-hub-card {
+      padding: 16px !important;
+      border-radius: 28px !important;
+    }
+
+    .profile-hub-card .profile-tile-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 8px !important;
+    }
+
+    .profile-hub-card .profile-tile-grid + .profile-tile-grid {
+      margin-top: 8px !important;
+    }
+
+    .profile-hub-card .profile-metric {
+      min-height: 78px !important;
+      padding: 10px 8px !important;
+      border-radius: 20px !important;
+    }
+
+    .profile-hub-card .profile-metric .muted {
+      font-size: 13px !important;
+    }
+
+    .profile-hub-card .points-number {
+      font-size: 28px !important;
+      line-height: 1.05 !important;
+    }
+
+    .profile-hub-card > .muted {
+      margin-top: 8px !important;
+      font-size: 13px !important;
+      line-height: 1.35 !important;
+    }
+
+    .profile-hub-card #redeem-coupon {
+      min-height: 48px !important;
+      margin-top: 10px !important;
+      border-radius: 999px !important;
+    }
+
+    [data-page="confirm"] .standalone {
+      padding: 16px !important;
+      border-radius: 28px !important;
+    }
+
+    [data-page="confirm"] .standalone .confirm-field {
+      display: grid !important;
+      grid-template-columns: 78px minmax(0, 1fr) !important;
+      gap: 10px !important;
+      align-items: center !important;
+      padding: 8px 0 !important;
+      border-bottom: 1px solid rgba(232,126,164,.14) !important;
+    }
+
+    [data-page="confirm"] .standalone .confirm-field:first-child {
+      grid-template-columns: 1fr !important;
+      padding-top: 0 !important;
+    }
+
+    [data-page="confirm"] .standalone label {
+      margin: 0 !important;
+      color: #9b637b !important;
+      font-size: 15px !important;
+      font-weight: 950 !important;
+    }
+
+    [data-page="confirm"] .standalone input,
+    [data-page="confirm"] .standalone textarea {
+      min-height: 44px !important;
+      padding: 10px 12px !important;
+      border-radius: 16px !important;
+      font-size: 15px !important;
+    }
+
+    [data-page="confirm"] .standalone textarea {
+      min-height: 66px !important;
+    }
+
+    [data-page="confirm"] .address-main {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 10px !important;
+      padding-bottom: 4px !important;
+    }
+
+    [data-page="confirm"] .address-main span:first-child {
+      font-size: 24px !important;
+      font-weight: 950 !important;
+      color: #2b1830 !important;
+    }
+
+    .ledger-page.active {
+      display: block !important;
+      min-height: 100svh !important;
+      padding-bottom: 96px !important;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255,154,194,.28), transparent 28%),
+        linear-gradient(180deg, #fff0f7, #f4fbf8 70%) !important;
+    }
+
+    .ledger-hero,
+    .ledger-form,
+    .ledger-list-card,
+    .ledger-summary-card,
+    .ledger-tabs {
+      border: 1px solid rgba(255,255,255,.76) !important;
+      background: rgba(255,255,255,.86) !important;
+      box-shadow: 0 18px 40px rgba(71, 28, 48, .10) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    .ledger-hero {
+      display: grid !important;
+      gap: 6px !important;
+      margin-bottom: 12px !important;
+      padding: 20px !important;
+      border-radius: 30px !important;
+      background:
+        radial-gradient(circle at 85% 22%, rgba(255,255,255,.55), transparent 30%),
+        linear-gradient(135deg, #ff8fb8, #d83e73) !important;
+      color: #fff !important;
+    }
+
+    .ledger-hero span,
+    .ledger-hero small {
+      color: rgba(255,255,255,.86) !important;
+      font-weight: 850 !important;
+    }
+
+    .ledger-hero strong {
+      font-size: 42px !important;
+      line-height: 1 !important;
+      font-weight: 950 !important;
+    }
+
+    .ledger-tabs {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+      margin-bottom: 12px !important;
+      padding: 8px !important;
+      border-radius: 999px !important;
+    }
+
+    .ledger-tab {
+      min-height: 44px !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: transparent !important;
+      color: #9b637b !important;
+      font-weight: 950 !important;
+    }
+
+    .ledger-tab.active {
+      background: linear-gradient(135deg, #ff9cc2, #d83e73) !important;
+      color: #fff !important;
+      box-shadow: 0 12px 24px rgba(216,62,115,.18) !important;
+    }
+
+    .ledger-summary-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .ledger-summary-card {
+      display: grid !important;
+      gap: 8px !important;
+      min-height: 86px !important;
+      padding: 14px !important;
+      border-radius: 24px !important;
+    }
+
+    .ledger-summary-card span {
+      color: #8a7180 !important;
+      font-size: 14px !important;
+      font-weight: 900 !important;
+    }
+
+    .ledger-summary-card strong {
+      color: #d83e73 !important;
+      font-size: 26px !important;
+      font-weight: 950 !important;
+    }
+
+    .ledger-form {
+      display: grid !important;
+      gap: 10px !important;
+      margin-bottom: 12px !important;
+      padding: 14px !important;
+      border-radius: 28px !important;
+    }
+
+    .ledger-category-row {
+      display: flex !important;
+      gap: 8px !important;
+      overflow-x: auto !important;
+      padding-bottom: 2px !important;
+    }
+
+    .ledger-category {
+      flex: 0 0 auto !important;
+      min-height: 38px !important;
+      padding: 0 14px !important;
+      border: 1px solid rgba(232,126,164,.24) !important;
+      border-radius: 999px !important;
+      background: #fff7fb !important;
+      color: #9b637b !important;
+      font-weight: 950 !important;
+    }
+
+    .ledger-category.active {
+      background: #ffe2ee !important;
+      color: #d83e73 !important;
+      border-color: rgba(216,62,115,.42) !important;
+    }
+
+    .ledger-form input {
+      width: 100% !important;
+      min-height: 48px !important;
+      border: 1px solid rgba(232,126,164,.22) !important;
+      border-radius: 18px !important;
+      padding: 0 14px !important;
+      background: rgba(255,255,255,.9) !important;
+      outline: 0 !important;
+      color: #2b1830 !important;
+      font-weight: 850 !important;
+    }
+
+    .ledger-form .primary {
+      min-height: 50px !important;
+      border-radius: 999px !important;
+    }
+
+    .ledger-list-card {
+      padding: 14px !important;
+      border-radius: 28px !important;
+    }
+
+    .ledger-record {
+      display: grid !important;
+      grid-template-columns: 1fr auto !important;
+      gap: 6px 10px !important;
+      align-items: center !important;
+      padding: 12px 0 !important;
+      border-bottom: 1px solid rgba(232,126,164,.14) !important;
+    }
+
+    .ledger-record:last-child {
+      border-bottom: 0 !important;
+    }
+
+    .ledger-record strong {
+      color: #2b1830 !important;
+      font-size: 16px !important;
+    }
+
+    .ledger-record .amount {
+      color: #d83e73 !important;
+      font-size: 18px !important;
+      font-weight: 950 !important;
+    }
+
+    /* Absolute final polish for this round. */
+    .profile-hub-card {
+      display: grid !important;
+      gap: 10px !important;
+    }
+
+    .profile-hub-card .profile-tile-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 8px !important;
+      margin-top: 0 !important;
+    }
+
+    .profile-hub-card .profile-tile-grid + .profile-tile-grid {
+      display: contents !important;
+    }
+
+    .profile-hub-card .profile-metric {
+      min-height: 76px !important;
+      aspect-ratio: auto !important;
+      padding: 10px 8px !important;
+      border-radius: 20px !important;
+      overflow: hidden !important;
+    }
+
+    .profile-hub-card .profile-metric::after {
+      right: 6px !important;
+      top: 8px !important;
+      font-size: 20px !important;
+      opacity: .42 !important;
+    }
+
+    .profile-hub-card .points-number {
+      font-size: clamp(22px, 5.4vw, 30px) !important;
+      white-space: nowrap !important;
+    }
+
+    .profile-hub-card > .muted,
+    .profile-hub-card #redeem-coupon {
+      grid-column: 1 / -1 !important;
+    }
+
+    .ai-page .chat {
+      max-height: none !important;
+      min-height: 0 !important;
+      padding-bottom: 28px !important;
+    }
+
+    .ai-page .ai-glass-chat {
+      gap: 8px !important;
+    }
+
+    .cart-sheet {
+      padding-bottom: 0 !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    #cart-content {
+      overflow-y: auto !important;
+      max-height: min(52vh, 520px) !important;
+    }
+
+    .cart-sheet-foot {
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 3 !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) minmax(128px, .8fr) !important;
+      gap: 12px !important;
+      align-items: center !important;
+      padding: 14px !important;
+      border-top: 1px solid rgba(232,126,164,.16) !important;
+      background: rgba(255,255,255,.94) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    .cart-sheet-foot .primary {
+      min-height: 52px !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, #ff8fb8, #d83e73) !important;
+      color: #fff !important;
+      font-size: 18px !important;
+      font-weight: 950 !important;
+      box-shadow: 0 14px 28px rgba(216, 62, 115, .18) !important;
+    }
+
+    [data-page="confirm"] .confirm-title {
+      color: #7e5369 !important;
+      font-weight: 950 !important;
+    }
+
+    [data-page="confirm"] .confirm-shop {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Final compact account tiles and complaint hero cleanup. */
+    .profile-hub-card .profile-metric {
+      display: grid !important;
+      grid-template-rows: auto 1fr !important;
+      place-items: center !important;
+      text-align: center !important;
+      gap: 4px !important;
+      min-width: 0 !important;
+    }
+
+    .profile-hub-card .profile-metric .muted {
+      display: block !important;
+      width: 100% !important;
+      color: #7f8da1 !important;
+      font-size: 13px !important;
+      line-height: 1.1 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+    }
+
+    .profile-hub-card .points-number {
+      display: block !important;
+      width: 100% !important;
+      color: #d83e73 !important;
+      font-size: clamp(19px, 4.4vw, 25px) !important;
+      line-height: 1.04 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      transform: none !important;
+    }
+
+    .profile-hub-card #balance-entry .points-number {
+      font-size: clamp(18px, 4.1vw, 23px) !important;
+    }
+
+    .profile-hub-card .profile-metric::after {
+      inset: auto 7px 7px auto !important;
+      font-size: 17px !important;
+      opacity: .22 !important;
+      pointer-events: none !important;
+    }
+
+    .profile-hub-card .profile-tile-head {
+      align-items: center !important;
+    }
+
+    .profile-hub-card .profile-tile-head > span:first-child {
+      font-size: 20px !important;
+      line-height: 1.1 !important;
+    }
+
+    .complaint-page-hero > span,
+    .complaint-email-card > span {
+      display: none !important;
+    }
+
+    .complaint-page-hero {
+      min-height: 0 !important;
+      padding: 28px 26px !important;
+      border-radius: 30px !important;
+      background-position: center !important;
+    }
+
+    .complaint-page-hero h2 {
+      margin-top: 0 !important;
+      max-width: 92% !important;
+      color: #fff !important;
+      text-shadow: 0 2px 12px rgba(42, 12, 24, .34) !important;
+    }
+
+    .complaint-page-hero p {
+      max-width: 94% !important;
+      color: rgba(255,255,255,.92) !important;
+      text-shadow: 0 2px 10px rgba(42, 12, 24, .28) !important;
+    }
+
+    .complaint-email-card {
+      margin-top: 18px !important;
+      padding: 18px 20px !important;
+      border-radius: 24px !important;
+      background: rgba(58, 28, 39, .58) !important;
+      color: #fff !important;
+      backdrop-filter: blur(16px) !important;
     }
 
     /* Last page-visibility guard: layout rules above must never reveal inactive pages. */
@@ -7387,15 +8158,15 @@
               <strong>签到</strong>
               <small id="checkin-hint">领积分</small>
             </button>
-            <button class="quick-action" data-go="wheel" type="button">
-              <span>◎</span>
-              <strong>转盘</strong>
-              <small>9.9 抽奖</small>
+            <button class="quick-action" data-go="ledger" type="button">
+              <span>💞</span>
+              <strong>记账</strong>
+              <small>收支记录</small>
             </button>
-            <button class="quick-action" data-go="coupons" type="button">
-              <span>券</span>
-              <strong>卡包</strong>
-              <small>优惠券</small>
+            <button class="quick-action" data-go="wheel" type="button">
+              <span>🎡</span>
+              <strong>转盘</strong>
+              <small>试试手气</small>
             </button>
             <button class="quick-action" data-tab="ai" type="button">
               <span>AI</span>
@@ -7578,10 +8349,49 @@
         </article>
       </section>
 
+      <section class="page page-pad ledger-page" data-page="ledger">
+        <div class="cart-head">
+          <div>
+            <button class="back-button" data-go="profile" type="button">‹</button>
+            <h1 class="page-title">恋爱记账</h1>
+            <div class="muted">只记录生活收支，不和余额、下单同步。</div>
+          </div>
+        </div>
+        <article class="ledger-hero">
+          <span>本月净额</span>
+          <strong id="ledger-net">￥0.0</strong>
+          <small>把每一顿饭、每一次心动都记下来</small>
+        </article>
+        <article class="ledger-tabs">
+          <button class="ledger-tab active" data-ledger-tab="expense" type="button">支出</button>
+          <button class="ledger-tab" data-ledger-tab="income" type="button">收入</button>
+        </article>
+        <article class="ledger-summary-grid">
+          <div class="ledger-summary-card expense">
+            <span>支出总额</span>
+            <strong id="ledger-expense-total">￥0.0</strong>
+          </div>
+          <div class="ledger-summary-card income">
+            <span>收入总额</span>
+            <strong id="ledger-income-total">￥0.0</strong>
+          </div>
+        </article>
+        <form class="ledger-form" id="ledger-form">
+          <div class="ledger-category-row" id="ledger-categories"></div>
+          <input id="ledger-amount" type="number" min="0" step="0.1" placeholder="金额">
+          <input id="ledger-note" placeholder="备注：比如烛光晚餐、奶茶、打车">
+          <button class="primary" type="submit">记一笔</button>
+        </form>
+        <article class="ledger-list-card">
+          <div class="profile-tile-head"><span>最近记录</span><button class="pill" id="ledger-clear" type="button">清空</button></div>
+          <div class="balance-history" id="ledger-list"></div>
+        </article>
+      </section>
+
       <section class="page confirm-page" data-page="confirm">
         <div class="confirm-top">
           <button class="back-button" data-go="order">‹</button>
-          <div class="confirm-title">适量点餐，环保健康</div>
+          <div class="confirm-title">今晚这一单，留给心动和热气</div>
         </div>
         <section class="confirm-card standalone">
           <div class="confirm-field">
@@ -7607,7 +8417,6 @@
         <section class="confirm-card rounded">
           <div class="confirm-shop">
             <span>雨石屋</span>
-            <span class="muted">准时达</span>
           </div>
           <div id="confirm-items"></div>
           <div class="confirm-row">
@@ -7780,6 +8589,10 @@
           <button class="pill" id="cart-close" type="button">关闭</button>
         </div>
         <div id="cart-content"></div>
+        <div class="cart-sheet-foot">
+          <div class="cart-total">合计：<strong id="cart-drawer-total">￥0</strong></div>
+          <button class="primary" id="checkout-drawer" type="button">去结算</button>
+        </div>
       </section>
     </div>
 
@@ -7887,6 +8700,8 @@
     let wheelRotation = 0;
     let merchantMessageTimer = null;
     let couponPageTab = "unused";
+    let ledgerTab = "expense";
+    let ledgerCategory = "餐饮";
 
     const pages = document.querySelectorAll(".page");
     const navItems = document.querySelectorAll(".nav-item");
@@ -8065,6 +8880,7 @@
       if (tab === "balance") renderBalancePage();
       if (tab === "coupons") renderCouponPage();
       if (tab === "wheel") renderWheelRecords();
+      if (tab === "ledger") renderLedger();
       if (tab === "complaints") loadComplaints();
       if (tab === "order") requestAnimationFrame(syncCategoryFromScroll);
       if (tab === "messages") {
@@ -8583,9 +9399,76 @@
       showToast(result.message, "兑换成功");
     }
 
+    const ledgerCategories = {
+      expense: ["餐饮", "交通", "运动", "化妆", "礼物", "约会", "日用", "其他"],
+      income: ["工资", "红包", "兼职", "退款", "礼金", "其他"]
+    };
+
+    function ledgerRecords() {
+      return JSON.parse(localStorage.getItem("loveLedgerRecords") || "[]");
+    }
+
+    function saveLedgerRecords(records) {
+      localStorage.setItem("loveLedgerRecords", JSON.stringify(records.slice(0, 120)));
+    }
+
+    function renderLedger() {
+      const records = ledgerRecords();
+      const incomeTotal = records.filter((item) => item.type === "income").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const expenseTotal = records.filter((item) => item.type === "expense").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const currentCategories = ledgerCategories[ledgerTab] || ledgerCategories.expense;
+      if (!currentCategories.includes(ledgerCategory)) ledgerCategory = currentCategories[0];
+
+      document.querySelector("#ledger-net").textContent = `￥${(incomeTotal - expenseTotal).toFixed(1)}`;
+      document.querySelector("#ledger-income-total").textContent = `￥${incomeTotal.toFixed(1)}`;
+      document.querySelector("#ledger-expense-total").textContent = `￥${expenseTotal.toFixed(1)}`;
+      document.querySelectorAll("[data-ledger-tab]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.ledgerTab === ledgerTab);
+      });
+      document.querySelector("#ledger-categories").innerHTML = currentCategories.map((category) => `
+        <button class="ledger-category ${category === ledgerCategory ? "active" : ""}" data-ledger-category="${category}" type="button">${category}</button>
+      `).join("");
+
+      const visibleRecords = records.filter((item) => item.type === ledgerTab);
+      document.querySelector("#ledger-list").innerHTML = visibleRecords.length ? visibleRecords.map((item) => `
+        <div class="ledger-record">
+          <div>
+            <strong>${escapeHTML(item.category)} · ${escapeHTML(item.note || "没有备注")}</strong>
+            <div class="muted">${escapeHTML(item.date)}</div>
+          </div>
+          <span class="amount">${item.type === "income" ? "+" : "-"}￥${Number(item.amount || 0).toFixed(1)}</span>
+        </div>
+      `).join("") : '<div class="cart-empty" style="min-height:120px;">还没有记录，先记一笔吧。</div>';
+    }
+
+    function addLedgerRecord() {
+      const amountInput = document.querySelector("#ledger-amount");
+      const noteInput = document.querySelector("#ledger-note");
+      const amount = Number(amountInput.value);
+      if (!amount || amount <= 0) {
+        showToast("先填写金额，再记一笔。", "记账提醒");
+        return;
+      }
+      const records = ledgerRecords();
+      records.unshift({
+        id: Date.now(),
+        type: ledgerTab,
+        category: ledgerCategory,
+        amount,
+        note: noteInput.value.trim(),
+        date: new Date().toLocaleString("zh-CN", { hour12: false })
+      });
+      saveLedgerRecords(records);
+      amountInput.value = "";
+      noteInput.value = "";
+      renderLedger();
+      showToast("这一笔已经记好了。", "记账成功");
+    }
+
     function renderCart() {
       const { items, count, total } = cartStats();
       cartTotal.textContent = `￥${total}`;
+      document.querySelector("#cart-drawer-total").textContent = `￥${total}`;
       cartCountPill.textContent = count;
       cartBadge.hidden = count === 0;
       cartBadge.textContent = count;
@@ -8708,13 +9591,14 @@
         </div>
       `).join("");
 
-      if (availableCoupons.length === 0) {
-        couponList.innerHTML = '<div class="muted">暂无可用优惠券，可使用积分兑换或等待店铺发券</div>';
+      const usableCoupons = availableCoupons.filter((coupon) => coupon.available);
+      if (usableCoupons.length === 0) {
+        couponList.innerHTML = '<div class="muted">当前订单暂无可用优惠券</div>';
       } else {
-        couponList.innerHTML = availableCoupons.map((coupon) => `
-          <button class="coupon-option ${coupon.available ? "" : "disabled"} ${selectedCouponId === coupon.id ? "active" : ""}"
-            data-coupon-id="${coupon.id}" ${coupon.available ? "" : "disabled"}>
-            <span>${coupon.label || coupon.title}${coupon.available ? ` · 可抵￥${Number(coupon.discount || 0).toFixed(1)}` : " · 当前订单不可用"}</span>
+        couponList.innerHTML = usableCoupons.map((coupon) => `
+          <button class="coupon-option ${selectedCouponId === coupon.id ? "active" : ""}"
+            data-coupon-id="${coupon.id}">
+            <span>${coupon.label || coupon.title} · 可抵￥${Number(coupon.discount || 0).toFixed(1)}</span>
             <span>${selectedCouponId === coupon.id ? "已选" : "使用"}</span>
           </button>
         `).join("");
@@ -8891,15 +9775,13 @@
               <span class="muted">优惠券</span>
               <strong class="points-number">${availableCoupons.length}</strong>
             </button>
-          </div>
-          <div class="profile-tile-grid" style="margin-top:10px;">
             <div class="profile-metric">
               <span class="muted">积分</span>
               <strong class="points-number">${walletState.points}</strong>
             </div>
-            <button class="profile-metric profile-action-card" data-go="wheel" type="button">
-              <span class="muted">幸运转盘</span>
-              <strong class="points-number">9.9</strong>
+            <button class="profile-metric profile-action-card" data-go="ledger" type="button">
+              <span class="muted">恋爱记账</span>
+              <strong class="points-number">记</strong>
             </button>
           </div>
           <div class="muted" style="margin-top:10px;">20 积分可兑换 5 元优惠券，点餐时自动带到结算页。</div>
@@ -8938,10 +9820,10 @@
               <strong>点餐</strong>
               <span>回到分类菜单快速加购</span>
             </button>
-            <button class="profile-entry" data-go="wheel" type="button">
-              <span class="profile-entry-icon">💫</span>
-              <strong>转盘</strong>
-              <span>9.9 元抽一次</span>
+            <button class="profile-entry" data-go="ledger" type="button">
+              <span class="profile-entry-icon">💞</span>
+              <strong>记账</strong>
+              <span>收入支出分开记录</span>
             </button>
             <button class="profile-entry" data-profile-panel="favorites" type="button">
               <span class="profile-entry-icon">💕</span>
@@ -8973,6 +9855,8 @@
       const removeFavoriteId = event.target.closest("[data-remove-favorite]")?.dataset.removeFavorite;
       const deleteCouponId = event.target.closest("[data-delete-coupon]")?.dataset.deleteCoupon;
       const couponTab = event.target.closest("[data-coupon-tab]")?.dataset.couponTab;
+      const nextLedgerTab = event.target.closest("[data-ledger-tab]")?.dataset.ledgerTab;
+      const nextLedgerCategory = event.target.closest("[data-ledger-category]")?.dataset.ledgerCategory;
       const cartOpen = event.target.closest("[data-cart-open]");
       const cartPlus = event.target.closest("[data-cart-plus]")?.dataset.cartPlus;
       const cartMinus = event.target.closest("[data-cart-minus]")?.dataset.cartMinus;
@@ -8983,6 +9867,7 @@
         return;
       }
       if (viewId) recordView(viewId);
+      if (tab === "profile") profilePanel = "home";
       if (tab) switchTab(tab);
       if (go) switchTab(go);
       if (homeCategory) openOrderWithSearch("", homeCategory);
@@ -9020,6 +9905,19 @@
         couponPageTab = couponTab;
         renderCouponPage();
       }
+      if (nextLedgerTab) {
+        ledgerTab = nextLedgerTab;
+        ledgerCategory = (ledgerCategories[ledgerTab] || ledgerCategories.expense)[0];
+        renderLedger();
+      }
+      if (nextLedgerCategory) {
+        ledgerCategory = nextLedgerCategory;
+        renderLedger();
+      }
+      if (event.target.closest("#ledger-clear")) {
+        saveLedgerRecords([]);
+        renderLedger();
+      }
       if (nextPanel) {
         profilePanel = nextPanel;
         renderProfilePanel();
@@ -9038,7 +9936,9 @@
       if (event.target.id === "redeem-coupon") redeemCoupon();
       if (event.target.id === "balance-page-recharge") showToast("请联系商家，商家可在后台为你的账号充值。", "充值说明");
       if (event.target.id === "detail-add" && detailDishId) {
+        const dish = dishById(detailDishId);
         addDish(detailDishId, selectedDetailOptions());
+        showToast(`${dish?.name || "菜品"} 已加入购物车`, "加入成功");
         renderDishDetail();
       }
       if (event.target.id === "detail-minus" && detailDishId) {
@@ -9170,6 +10070,13 @@
     });
 
     document.querySelector("#checkout").addEventListener("click", async () => {
+      const { items } = cartStats();
+      if (items.length === 0) return;
+      closeCart();
+      switchTab("confirm");
+    });
+
+    document.querySelector("#checkout-drawer").addEventListener("click", async () => {
       const { items } = cartStats();
       if (items.length === 0) return;
       closeCart();
@@ -9426,6 +10333,11 @@
     });
 
     document.addEventListener("submit", async (event) => {
+      if (event.target.id === "ledger-form") {
+        event.preventDefault();
+        addLedgerRecord();
+        return;
+      }
       if (event.target.id !== "complaint-form") return;
       event.preventDefault();
       const text = document.querySelector("#complaint-text").value.trim();
